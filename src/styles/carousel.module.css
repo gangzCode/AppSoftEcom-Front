@@ -1,5 +1,5 @@
 .carousel {
-  padding-top: 150px;
+  /* padding-top: 150px; */
 }
 
 .card {
@@ -58,7 +58,7 @@
 
 @media screen and (max-width: 768px) {
   .carousel {
-    padding-top: 140px;
+    /* padding-top: 140px; */
   }
 
   .card {
