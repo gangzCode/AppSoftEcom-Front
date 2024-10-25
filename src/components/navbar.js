@@ -69,50 +69,58 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   return (
     <>
-      <Grid container>
-        <Grid md={"3"}>
-          <img src="https://placehold.co/200x40" />
+      <AppBar position="static" elevation={0} color="">
+        <Grid container alignItems={"center"}>
+          <Grid md={"2"}>
+            <img src="https://placehold.co/200x40" />
+          </Grid>
+          <Grid md={"9"}>
+            <Stack>
+              <TextField
+                variant="outlined"
+                placeholder="Search for Products..."
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "50px",
+                  },
+                  input: {
+                    paddingY: ".6em",
+                    borderBlock: "none",
+                  },
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton>
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Stack>
+          </Grid>
+          <Grid md={"1"}>
+            <Box
+              display="flex"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              <IconButton>
+                <AccountCircleOutlined />
+              </IconButton>
+              <IconButton>
+                <FavoriteBorderRounded />
+              </IconButton>
+              <IconButton>
+                <ShoppingCartOutlined />
+              </IconButton>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid md={"7"}>
-          <Stack>
-            <TextField
-              variant="outlined"
-              placeholder="Search for Products..."
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "50px", // Adjust this value to control the roundness
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton>
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Stack>
-        </Grid>
-        <Grid md={"2"}>
-          <Box display="flex" justifyContent="space-around" alignItems="center">
-            <IconButton>
-              <AccountCircleOutlined />
-            </IconButton>
-            <IconButton>
-              <FavoriteBorderRounded />
-            </IconButton>
-            <IconButton>
-              <ShoppingCartOutlined />
-            </IconButton>
-          </Box>
-        </Grid>
-      </Grid>
 
-      <AppBar position="static" color="">
-        <Toolbar>
+        <Grid display={"flex"} paddingY={"1em"}>
           <Button
             color="inherit"
             sx={{
@@ -153,7 +161,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               Computers
             </Link>
           </Box>
-        </Toolbar>
+        </Grid>
       </AppBar>
     </>
   );

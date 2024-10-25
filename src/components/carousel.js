@@ -1,71 +1,113 @@
-import Carousel from "react-material-ui-carousel";
-import styles from "../styles/carousel.module.css";
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
+import Slider from "react-slick";
 
-const CarouselComp = () => {
-  const items = [
+const CarouselSection = () => {
+  const slides = [
     {
-      name: "Computers",
-      description: "Latest machines in the shop!",
-      btnText: "Shop now",
-      src: "/images/carousel-1.jpg",
-      // href: "/product?page=1&cat=668e723aec67be540592142c&catType=C",
-      href: "/product",
-      textColor: styles.textWhite,
+      title: "Welcome to Our Shop",
+      description: "Discover the best products at unbeatable prices.",
+      image: "https://placehold.co/1200x600?text=Slide+1",
+      buttonLink: "#",
     },
     {
-      name: "Headphones",
-      description: "Ultra clarity audio equipment",
-      btnText: "Shop now",
-      src: "/images/carousel-2.jpg",
-      // href: "/product?page=1&cat=668e7474ec67be5405921648&catType=I",
-      href: "/product",
-      textColor: styles.textWhite,
+      title: "New Arrivals",
+      description: "Check out our latest collection now.",
+      image: "https://placehold.co/1200x600?text=Slide+1",
+      buttonLink: "#",
+    },
+    {
+      title: "Special Offers",
+      description: "Save big on our exclusive deals.",
+      image: "https://placehold.co/1200x600?text=Slide+1",
+      buttonLink: "#",
     },
   ];
 
+  const settings = {
+    // dots: true,
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
+
   return (
-    <Carousel
-      className={styles.carousel}
-      indicators={false}
-      navButtonsAlwaysVisible={true}
-      stopAutoPlayOnHover={true}
-      duration={500}
-      interval={5000}
-      fullHeightHover={false}
-      navButtonsProps={{
-        style: {
-          margin: "50px 10px 0 10px",
-          position: "relative",
-          backgroundColor: "transparent",
-          opacity: "0.4",
-          border: "3px solid white",
-          top: "calc(50% - 20px) !important",
-          color: "white",
-          fontSize: "30px",
-          transition: "200ms",
-          cursor: "pointer",
-        },
-      }}
-    >
-      {items.map((item, i) => (
-        <Item key={i} item={item} />
-      ))}
-    </Carousel>
+    <Box sx={{ maxWidth: "100%", overflow: "hidden", paddingBottom: "20px" }}>
+      <Slider {...settings}>
+        {slides.map((slide, index) => (
+          <Box
+            key={index}
+            sx={{
+              height: "500px",
+              backgroundImage: `url(${slide.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              position: "relative",
+              display: "flex !important",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              color: "#fff",
+              // textAlign: "center",
+              padding: "2em",
+            }}
+          >
+            <Box
+              sx={{
+                justifyItems: "flex-start",
+                // backgroundColor: "rgba(0, 0, 0, 0.5)",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
+              <Typography
+                variant="p"
+                fontSize={"12px"}
+                color={"#1e1e1e"}
+                sx={{
+                  position: "relative",
+                  // paddingRight: "20px",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    top: "50%",
+                    marginLeft: "1em",
+                    transform: "translateY(-50%)",
+                    width: "150px",
+                    height: "2px",
+                    backgroundColor: "#2189ff",
+                  },
+                }}
+              >
+                COMPUTER ACCESSORIES
+              </Typography>
+              <Typography
+                color={"#1e1e1e"}
+                fontWeight={"600"}
+                variant="h4"
+                gutterBottom
+              >
+                {slide.title}
+              </Typography>
+              <Typography color={"#1e1e1e"} variant="body1" gutterBottom>
+                {slide.description}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                href={slide.buttonLink}
+                sx={{ borderRadius: "10px", marginTop: "10px" }}
+              >
+                Shop Now
+              </Button>
+            </Box>
+          </Box>
+        ))}
+      </Slider>
+    </Box>
   );
 };
 
-function Item(props) {
-  return (
-    <div
-      className={styles.card}
-      style={{ backgroundImage: "url(" + props.item.src + ")" }}
-    >
-      <div className={`${styles.cardText} ${props.item.textColor}`}>
-        <p className={styles.cardTip}>{props.item.name}</p>
-        <p className={styles.cardHeader}>{props.item.description}</p>
-      </div>
-    </div>
-  );
-}
-
-export default CarouselComp;
+export default CarouselSection;
