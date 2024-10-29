@@ -69,3 +69,13 @@ caption {
   vertical-align: baseline;
   background: transparent;
 }
+
+.slick-slider .slick-prev {
+  left: 1% !important;
+  z-index: 1;
+}
+
+.slick-slider .slick-next {
+  right: 1% !important;
+  z-index: 1;
+}

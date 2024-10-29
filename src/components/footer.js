@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Grid, IconButton } from "@mui/material";
+import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -33,16 +33,42 @@ const Footer = () => {
           </Box>
         </Grid>
 
-        {/* Other sections can be added here */}
-        <Grid item xs={12} md={2.4}>
-          {/* Second Section */}
-          <Typography variant="h6">Quick Links</Typography>
-          {/* Add links or other content here */}
+        <Grid
+          gap={"1em"}
+          display={"flex"}
+          flexDirection={"column"}
+          item
+          xs={12}
+          md={2.4}
+        >
+          <Link
+            fontSize={"20px"}
+            underline={"none"}
+            color={"#1e1e1e"}
+            fontWeight={"600"}
+            variant="h6"
+          >
+            Quick Links
+          </Link>
+          <Link color={"#1e1e1e"} underline={"none"} variant="h6">
+            Home Appliance
+          </Link>
+          <Link color={"#1e1e1e"} underline={"none"} variant="h6">
+            Items
+          </Link>
+          <Link color={"#1e1e1e"} underline={"none"} variant="h6">
+            Items
+          </Link>
+          <Link color={"#1e1e1e"} underline={"none"} variant="h6">
+            Items
+          </Link>
         </Grid>
 
         <Grid item xs={12} md={2.4}>
           {/* Third Section */}
-          <Typography variant="h6">Follow Us</Typography>
+          <Typography color={"#1e1e1e"} variant="h6">
+            Follow Us
+          </Typography>
           {/* Add social media icons or other content here */}
         </Grid>
 

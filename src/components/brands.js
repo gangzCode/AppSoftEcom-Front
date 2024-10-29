@@ -12,8 +12,8 @@ const Brands = () => {
   ];
 
   return (
-    <Box sx={{ padding: "20px" }}>
-      <Grid container spacing={2} justifyContent="center">
+    <Box sx={{ padding: "4em 0" }}>
+      <Grid container spacing={2} justifyContent="space-between">
         {brandImages.map((image, index) => (
           <Grid item key={index} xs={2}>
             <Box
@@ -24,7 +24,7 @@ const Brands = () => {
                 width: "100%",
                 height: "auto",
                 objectFit: "contain",
-                padding: "10px", // Optional padding for spacing around images
+                padding: "10px",
               }}
             />
           </Grid>

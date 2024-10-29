@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import Slider from "react-slick";
+import { ImportContactsOutlined, NextPlanRounded } from "@mui/icons-material";
 
 const CarouselSection = () => {
   const slides = [
@@ -24,8 +25,30 @@ const CarouselSection = () => {
     },
   ];
 
+  function SampleNextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", background: "red" }}
+        onClick={onClick}
+      />
+    );
+  }
+
+  function SamplePrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", background: "green" }}
+        onClick={onClick}
+      />
+    );
+  }
+
   const settings = {
-    // dots: true,
+    dots: true,
     infinite: true,
     speed: 1000,
     slidesToShow: 1,
@@ -52,6 +75,11 @@ const CarouselSection = () => {
               color: "#fff",
               // textAlign: "center",
               padding: "2em",
+
+              "& .slick-prev": {
+                left: "3% !important",
+                zIndex: "1",
+              },
             }}
           >
             <Box

@@ -9,55 +9,55 @@ const BestSeller = () => {
   const products = [
     {
       id: 1,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 1",
       price: "$19.99",
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 2",
       price: "$29.99",
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 3",
       price: "$39.99",
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 4",
       price: "$49.99",
     },
     {
       id: 5,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 5",
       price: "$59.99",
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 4",
       price: "$49.99",
     },
     {
       id: 5,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 5",
       price: "$59.99",
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 4",
       price: "$49.99",
     },
     {
       id: 5,
-      image: "https://via.placeholder.com/200x200", // Replace with your product image URL
+      image: "https://placehold.co/200x200", // Replace with your product image URL
       description: "Product 5",
       price: "$59.99",
     },
@@ -80,17 +80,30 @@ const BestSeller = () => {
   });
 
   return (
-    <Box sx={{ padding: "40px" }}>
+    <Box sx={{ padding: "40px 0" }}>
       {/* Title and Subtitle */}
       <Typography
-        variant="subtitle1"
-        component="p"
-        color="textSecondary"
-        gutterBottom
+        variant="p"
+        fontSize={"12px"}
+        color={"#1e1e1e"}
+        sx={{
+          position: "relative",
+          // paddingRight: "20px",
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            top: "50%",
+            marginLeft: "1em",
+            transform: "translateY(-50%)",
+            width: "150px",
+            height: "2px",
+            backgroundColor: "#2189ff",
+          },
+        }}
       >
         HOTDEALS
       </Typography>
-      <Typography variant="h4" component="h2" gutterBottom>
+      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
         Our Best Selling Products
       </Typography>
       <Box
@@ -102,13 +115,14 @@ const BestSeller = () => {
           whiteSpace: "nowrap", // Prevent wrapping
           gap: 2, // Space between products
           padding: 2, // Padding for the entire section
-          scrollbarColor: "#888 #ccc", // Custom scrollbar color
+          scrollbarColor: "#2189ff #ccc", // Custom scrollbar color
           scrollbarWidth: "thin", // Thin scrollbar for Firefox
+          scrollBehavior: "smooth",
           "&::-webkit-scrollbar": {
             height: "8px", // Custom height for the horizontal scrollbar
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#888", // Thumb (scrolling element) color
+            backgroundColor: "#2189ff", // Thumb (scrolling element) color
             borderRadius: "10px", // Rounded corners for thumb
           },
           "&::-webkit-scrollbar-track": {

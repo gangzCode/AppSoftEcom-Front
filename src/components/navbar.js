@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../styles/navbar.module.css";
 import {
   AppBar,
@@ -15,6 +16,8 @@ import {
   Link,
   List,
   ListItem,
+  Menu,
+  MenuItem,
   Stack,
   TextField,
   Toolbar,
@@ -35,10 +38,11 @@ import {
   FavoriteBorderRounded,
   HeartBroken,
   KeyboardArrowDownRounded,
-  Menu,
   MonitorHeartOutlined,
   PersonOutlineOutlined,
+  PhoneAndroid,
   ShoppingCartOutlined,
+  Tv,
 } from "@mui/icons-material";
 
 import styled from "@emotion/styled";
@@ -49,6 +53,15 @@ import SearchIcon from "@mui/icons-material/Search";
 // import Navmenu from "./navmenu";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const sections = [
     {
       image: "https://via.placeholder.com/600x400", // Replace with your image URL
@@ -135,9 +148,45 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               paddingRight: "3em",
             }}
             endIcon={<ExpandMore />}
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
           >
             All Categories
           </Button>
+          <Menu
+            sx={{
+              width: "100%",
+            }}
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={handleClose}>
+              <PhoneAndroid />
+              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
+                Mobiles and Tablets
+              </Typography>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Tv />
+              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
+                Televisons
+              </Typography>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <PhoneAndroid />
+              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
+                Mobiles and Tablets
+              </Typography>
+            </MenuItem>
+          </Menu>
 
           <Box sx={{ flexGrow: 1 }} />
 

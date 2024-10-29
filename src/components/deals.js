@@ -5,55 +5,68 @@ const Deals = () => {
   const cards = [
     {
       id: 1,
-      image: "https://via.placeholder.com/300x400", // Large left card image
+      image: "https://placehold.co/300x400", // Large left card image
       price: "$99.99",
       description: "This is the big feature product on the left.",
       big: true, // Mark as the big card
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/200x300", // Tall right card
+      image: "https://placehold.co/200x300", // Tall right card
       price: "$29.99",
       description: "Right top tall product 1.",
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/200x300", // Tall right card
+      image: "https://placehold.co/200x300", // Tall right card
       price: "$39.99",
       description: "Right top tall product 2.",
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/200x300", // Tall right card
+      image: "https://placehold.co/200x300", // Tall right card
       price: "$49.99",
       description: "Right top tall product 3.",
     },
     {
       id: 5,
-      image: "https://via.placeholder.com/200x200", // Short right card
+      image: "https://placehold.co/200x200", // Short right card
       price: "$19.99",
       description: "Right bottom short product 1.",
     },
     {
       id: 6,
-      image: "https://via.placeholder.com/200x200", // Short right card
+      image: "https://placehold.co/200x200", // Short right card
       price: "$24.99",
       description: "Right bottom short product 2.",
     },
   ];
 
   return (
-    <Box sx={{ padding: "40px" }}>
+    <Box sx={{ padding: "40px 0" }}>
       {/* Title and Subtitle */}
       <Typography
-        variant="subtitle1"
-        component="p"
-        color="textSecondary"
-        gutterBottom
+        variant="p"
+        fontSize={"12px"}
+        color={"#1e1e1e"}
+        sx={{
+          position: "relative",
+          // paddingRight: "20px",
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            top: "50%",
+            marginLeft: "1em",
+            transform: "translateY(-50%)",
+            width: "150px",
+            height: "2px",
+            backgroundColor: "#2189ff",
+          },
+        }}
       >
         TRENDING DEALS
       </Typography>
-      <Typography variant="h4" component="h2" gutterBottom>
+      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
         Deals on this Month
       </Typography>
       <Box sx={{ padding: "40px" }}>

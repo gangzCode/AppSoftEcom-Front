@@ -6,17 +6,17 @@ const ShopNow = () => {
   // Array of images and content for each section
   const sections = [
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://placehold.co/600x400", // Replace with your image URL
       text: "Get Special Offers on Key Boards",
       link: "#",
     },
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://placehold.co/600x400", // Replace with your image URL
       text: "25% Flat Offers on Smart Phones",
       link: "#",
     },
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://placehold.co/600x400", // Replace with your image URL
       text: "Third Section",
       link: "#",
     },
@@ -52,7 +52,12 @@ const ShopNow = () => {
                 textAlign: "right",
               }}
             >
-              <Typography variant="h5" color={"#333"} gutterBottom>
+              <Typography
+                variant="h5"
+                fontWeight={"700"}
+                color={"#1e1e1e"}
+                gutterBottom
+              >
                 {section.text}
               </Typography>
               <Link
