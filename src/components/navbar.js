@@ -1,59 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "../styles/navbar.module.css";
 import {
   AppBar,
-  Badge,
   Box,
   Button,
-  CircularProgress,
   Container,
-  Dialog,
-  DialogContent,
   Grid,
   IconButton,
   InputAdornment,
-  InputBase,
   Link,
-  List,
-  ListItem,
-  Menu,
-  MenuItem,
-  Stack,
   TextField,
   Toolbar,
   Typography,
+  Drawer,
+  Menu,
+  MenuItem
 } from "@mui/material";
-import { useEffect, useState } from "react";
-
-import CallIcon from "@mui/icons-material/Call";
-import EmailIcon from "@mui/icons-material/Email";
 import {
-  AccountCircle,
   AccountCircleOutlined,
-  ArrowDownward,
-  CategoryOutlined,
-  ExpandMore,
-  Favorite,
-  FavoriteBorderOutlined,
   FavoriteBorderRounded,
-  HeartBroken,
-  KeyboardArrowDownRounded,
-  MonitorHeartOutlined,
-  PersonOutlineOutlined,
   PhoneAndroid,
   ShoppingCartOutlined,
+  ExpandMore,
   Tv,
+  Close // Import Close icon
 } from "@mui/icons-material";
-
-import styled from "@emotion/styled";
-
 import SearchIcon from "@mui/icons-material/Search";
-
-// import Dropdown from "react-multilevel-dropdown";
-// import Navmenu from "./navmenu";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [cartOpen, setCartOpen] = useState(false); // New state for cart slider
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -62,19 +39,23 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     setAnchorEl(null);
   };
 
+  const toggleCart = () => {
+    setCartOpen(!cartOpen);
+  };
+
   const sections = [
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://via.placeholder.com/600x400",
       text: "First Section",
       link: "#",
     },
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://via.placeholder.com/600x400",
       text: "Second Section",
       link: "#",
     },
     {
-      image: "https://via.placeholder.com/600x400", // Replace with your image URL
+      image: "https://via.placeholder.com/600x400",
       text: "Third Section",
       link: "#",
     },
@@ -85,53 +66,76 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       <AppBar position="static" elevation={0} color="">
         <Grid container alignItems={"center"}>
           <Grid md={"2"}>
-            <img src="https://placehold.co/200x40" />
+            <img src="https://placehold.co/200x40" alt="Logo" />
           </Grid>
           <Grid md={"9"}>
-            <Stack>
-              <TextField
-                variant="outlined"
-                placeholder="Search for Products..."
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "50px",
-                  },
-                  input: {
-                    paddingY: ".6em",
-                    borderBlock: "none",
-                  },
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton>
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Stack>
+            <TextField
+              variant="outlined"
+              placeholder="Search for Products..."
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "50px",
+                },
+                input: {
+                  paddingY: ".6em",
+                  borderBlock: "none",
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
           <Grid md={"1"}>
-            <Box
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
+            <Box display="flex" justifyContent="space-around" alignItems="center">
               <IconButton>
                 <AccountCircleOutlined />
               </IconButton>
               <IconButton>
                 <FavoriteBorderRounded />
               </IconButton>
-              <IconButton>
+              <IconButton onClick={toggleCart}>
                 <ShoppingCartOutlined />
               </IconButton>
             </Box>
           </Grid>
         </Grid>
+
+        {/* Drawer for the Cart Sidebar */}
+        <Drawer
+          anchor="right"
+          open={cartOpen}
+          onClose={toggleCart}
+          PaperProps={{
+            sx: { width: 300, padding: 2, bgcolor: "#f7f7f7" },
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6" gutterBottom>
+              Your Cart
+            </Typography>
+            <IconButton onClick={toggleCart}>
+              <Close />
+            </IconButton>
+          </Box>
+          {/* Cart items would go here */}
+          <Typography variant="body2">Cart is currently empty.</Typography>
+          <Box display="flex" justifyContent="space-between" marginTop={2}>
+            <Button variant="contained" color="primary" onClick={toggleCart}>
+              Checkout
+            </Button>
+            <Button variant="contained" color="primary" onClick={toggleCart}>
+              View Cart
+            </Button>
+          </Box>
+        </Drawer>
 
         <Grid display={"flex"} paddingY={"1em"}>
           <Button
@@ -139,9 +143,9 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             sx={{
               backgroundColor: "#2189ff",
               color: "white",
-              borderRadius: "20px", // Adjust for more roundness
+              borderRadius: "20px",
               "&:hover": {
-                backgroundColor: "#", // Darker shade on hover
+                backgroundColor: "#1a76d2",
               },
               padding: ".5em",
               paddingLeft: "3em",
@@ -177,7 +181,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             <MenuItem onClick={handleClose}>
               <Tv />
               <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
-                Televisons
+                Televisions
               </Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
@@ -210,6 +214,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               Computers
             </Link>
           </Box>
+          
         </Grid>
       </AppBar>
     </>

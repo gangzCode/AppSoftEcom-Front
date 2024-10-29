@@ -10,8 +10,8 @@ function App() {
     <Grid paddingX={"8em"} paddingTop={"4em"}>
       <Navbar />
 
-      {/* <HomePage /> */}
-      <ProductsPage />
+       <HomePage />
+      {/* <ProductsPage /> */}
       <Footer />
     </Grid>
   );

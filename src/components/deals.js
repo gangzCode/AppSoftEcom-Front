@@ -51,7 +51,6 @@ const Deals = () => {
         color={"#1e1e1e"}
         sx={{
           position: "relative",
-          // paddingRight: "20px",
           "&::after": {
             content: '""',
             position: "absolute",
@@ -72,16 +71,16 @@ const Deals = () => {
       <Box sx={{ padding: "40px" }}>
         <Grid container spacing={4}>
           {/* Left Large Card */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                height: "100%",
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                 borderRadius: "10px",
                 overflow: "hidden",
                 backgroundColor: "#fff",
+                flexGrow: 1, // Allow the box to fill the height of the grid
               }}
             >
               <Box
@@ -90,11 +89,11 @@ const Deals = () => {
                 alt={cards[0].description}
                 sx={{
                   width: "100%",
-                  height: "60%",
+                  height: "530px", // Set height to 300px
                   objectFit: "cover",
                 }}
               />
-              <Box sx={{ padding: "20px" }}>
+              <Box sx={{ padding: "20px", flex: 1 }}>
                 <Typography variant="h5" color="primary">
                   {cards[0].price}
                 </Typography>
