@@ -14,7 +14,7 @@ import {
   Typography,
   Drawer,
   Menu,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -23,7 +23,7 @@ import {
   ShoppingCartOutlined,
   ExpandMore,
   Tv,
-  Close // Import Close icon
+  Close, // Import Close icon
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -128,10 +128,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {/* Cart items would go here */}
           <Typography variant="body2">Cart is currently empty.</Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Button variant="contained" color="primary" onClick={toggleCart}>
+            <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
               Checkout
             </Button>
-            <Button variant="contained" color="primary" onClick={toggleCart}>
+            <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
               View Cart
             </Button>
           </Box>
@@ -214,7 +214,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               Computers
             </Link>
           </Box>
-          
         </Grid>
       </AppBar>
     </>

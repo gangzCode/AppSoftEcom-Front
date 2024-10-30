@@ -1,21 +1,23 @@
 import React from "react";
-import { Box, Typography, Button, Divider } from "@mui/material";
+import { Box, Typography, Button, Divider, Stack } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import VoucherInput from "./VoucherInput";
 
 function CartSummary() {
   const subtotal = 3700.0;
 
   return (
-    <Box
+    <Stack
       sx={{
-        maxWidth: 400,
-        mx: "auto",
         mt: 3,
-        textAlign: "center",
+        width: "100%",
       }}
+      alignItems={"flex-start"}
+      // justifyContent={""}
+      spacing={2}
     >
       {/* Subtotal Display */}
-      <Typography variant="h6" sx={{ color: "blue", fontWeight: "bold" }}>
+      <Typography variant="h6" color={"primary"} sx={{ fontWeight: "bold" }}>
         Subtotal : ${subtotal.toFixed(2)}
       </Typography>
 
@@ -23,35 +25,25 @@ function CartSummary() {
       <Button
         variant="contained"
         sx={{
-          backgroundColor: "#1E90FF",
           color: "#fff",
-          mt: 2,
-          mb: 2,
-          "&:hover": {
-            backgroundColor: "#1C86EE",
-          },
         }}
-        fullWidth
       >
         Add A Note To Your Order
       </Button>
 
       {/* Information about taxes, shipping, etc. */}
-      <Typography variant="body2" color="text.secondary" sx={{ fontStyle: "italic", mb: 2 }}>
+      <Typography variant="body1" color="text.secondary" sx={{ fontStyle: "italic" }}>
         Shipping, taxes, and discounts will be calculated at checkout.
       </Typography>
+
+      <VoucherInput />
 
       {/* Checkout Button */}
       <Button
         variant="contained"
         fullWidth
         sx={{
-          backgroundColor: "#1E90FF",
           color: "#fff",
-          mb: 2,
-          "&:hover": {
-            backgroundColor: "#1C86EE",
-          },
         }}
       >
         Checkout
@@ -63,16 +55,12 @@ function CartSummary() {
         fullWidth
         endIcon={<ExpandMoreIcon />}
         sx={{
-          backgroundColor: "#1E90FF",
           color: "#fff",
-          "&:hover": {
-            backgroundColor: "#1C86EE",
-          },
         }}
       >
         Get Shipping Estimates
       </Button>
-    </Box>
+    </Stack>
   );
 }
 
