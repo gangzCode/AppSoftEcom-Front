@@ -48,7 +48,6 @@ const CarouselSection = () => {
   }
 
   const settings = {
-    dots: true,
     infinite: true,
     speed: 1000,
     slidesToShow: 1,
@@ -70,6 +69,7 @@ const CarouselSection = () => {
               backgroundPosition: "center",
               position: "relative",
               display: "flex !important",
+              borderRadius: "16px",
               alignItems: "center",
               justifyContent: "flex-start",
               color: "#fff",

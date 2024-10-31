@@ -71,11 +71,17 @@ const Deals = () => {
       <Box sx={{ padding: "40px" }}>
         <Grid container spacing={4}>
           {/* Left Large Card */}
-          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
+                height: "678px",
                 boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                 borderRadius: "10px",
                 overflow: "hidden",
@@ -89,7 +95,7 @@ const Deals = () => {
                 alt={cards[0].description}
                 sx={{
                   width: "100%",
-                  height: "530px", // Set height to 300px
+                  height: "70%",
                   objectFit: "cover",
                 }}
               />

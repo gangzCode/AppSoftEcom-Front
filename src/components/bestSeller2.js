@@ -6,9 +6,8 @@ const BestSeller2 = () => {
     {
       id: 1,
       image: "https://placehold.co/300x200", // Replace with your product image URL
-      title: "Product 1",
-      description:
-        "This is a short description of Product 1. It is a high-quality item.",
+      title: "Buy a Standard Products with Great Offers",
+      description: "$4000",
       buttonText: "Shop Now",
     },
     {
@@ -22,7 +21,7 @@ const BestSeller2 = () => {
   ];
 
   return (
-    <Box sx={{ padding: 4 }}>
+    <Box sx={{}}>
       <Grid container spacing={4}>
         {cards.map((card) => (
           <Grid key={card.id} item xs={12} md={6}>
@@ -37,15 +36,48 @@ const BestSeller2 = () => {
                 backgroundColor: "#fff",
               }}
             >
-              {/* Description Section */}
               <Box sx={{ flex: 1, padding: 3 }}>
-                <Typography variant="h5" component="h2" gutterBottom>
+                <Typography
+                  variant="p"
+                  fontSize={"12px"}
+                  color={"#1e1e1e"}
+                  sx={{
+                    position: "relative",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "50%",
+                      marginLeft: "1em",
+                      transform: "translateY(-50%)",
+                      width: "150px",
+                      height: "2px",
+                      backgroundColor: "#2189ff",
+                    },
+                  }}
+                >
+                  TABLETS
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={"700"}
+                  component="h2"
+                  gutterBottom
+                >
                   {card.title}
                 </Typography>
-                <Typography variant="body1" color="textSecondary" gutterBottom>
+                <Typography
+                  variant="body1"
+                  fontSize={"24px"}
+                  color="textSecondary"
+                  gutterBottom
+                >
                   {card.description}
                 </Typography>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  backgroundColor="#007aff"
+                  color="primary"
+                >
                   {card.buttonText}
                 </Button>
               </Box>
