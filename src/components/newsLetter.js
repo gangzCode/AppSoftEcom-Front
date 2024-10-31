@@ -5,7 +5,8 @@ const Newsletter = () => {
   return (
     <Box
       sx={{
-        padding: "40px 10em",
+        margin: "2em 9.5em 4em",
+        padding: "2em 9em",
         backgroundColor: "#f5f5f5",
         borderRadius: "10px",
       }}
@@ -49,7 +50,6 @@ const Newsletter = () => {
           </Typography>
         </Grid>
 
-        {/* Right Side: Email Input and Subscribe Button */}
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <TextField
@@ -71,7 +71,7 @@ const Newsletter = () => {
                 fontSize: "14px",
                 borderRadius: "30px",
                 padding: "1.1em 3em",
-                marginLeft: "-12em",
+                marginLeft: "-10em",
                 boxShadow: "4.243px 4.243px 10px 0px rgba(30, 30, 30, 0.3)",
               }}
             >

@@ -7,6 +7,7 @@ import Deals from "../components/deals";
 import TabSection from "../components/tabsSection";
 import Brands from "../components/brands";
 import Newsletter from "../components/newsLetter";
+import InfoSection from "../components/infoSection";
 const HomePage = () => {
   return (
     <>
@@ -17,6 +18,7 @@ const HomePage = () => {
       <Deals />
       <TabSection />
       <BestSeller />
+      <InfoSection />
       <Brands />
       <Newsletter />
     </>

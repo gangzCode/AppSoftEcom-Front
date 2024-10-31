@@ -161,7 +161,12 @@ const BestSeller = () => {
               HOTDEALS
             </Typography>
             <Typography variant="body1">{product.description}</Typography>
-            <Box flexDirection={"row"}>
+            <Box
+              display={"flex"}
+              flexDirection={"row"}
+              justifyContent={"space-between"}
+              alignItems={"flex-end"}
+            >
               <Typography variant="h6" fontWeight={"600"} mt={1}>
                 {product.price}
               </Typography>

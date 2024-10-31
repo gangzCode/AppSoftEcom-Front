@@ -1,141 +1,219 @@
 import React, { useState } from "react";
 import {
   Box,
-  Typography,
   Tabs,
   Tab,
+  Typography,
+  Grid,
   Card,
   CardContent,
   CardMedia,
+  Chip,
   IconButton,
-  Grid,
 } from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const TabSection = () => {
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  // Sample data for the tabs
-  const items = [
+const products = {
+  BestSellers: [
     {
       id: 1,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 1",
-      price: "$19.99",
+      category: "Television-Sky",
+      title: "Ultra HD Android Smart LED TV X43",
+      price: 25990,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: false,
     },
     {
       id: 2,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 2",
-      price: "$29.99",
+      category: "Products-Vibe",
+      title: "Newly launched Bluetooth Calling Smartwatch",
+      price: 2999,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: false,
     },
     {
       id: 3,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 3",
-      price: "$39.99",
+      category: "Electro",
+      title: "Isolated Black Desktop computer",
+      price: 2897,
+      originalPrice: 4599,
+      image: "https://via.placeholder.com/200",
+      discount: "35%",
+      soldOut: false,
     },
     {
       id: 4,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 4",
-      price: "$49.99",
+      category: "Products-Vibe",
+      title: "Wireless Earbud Bluetooth Headphone",
+      price: 1290,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: true,
     },
+  ],
+  NewArrivals: [
     {
       id: 5,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 5",
-      price: "$59.99",
+      category: "Television-Sky",
+      title: "4K Ultra HD Smart LED Fire TV",
+      price: 54999,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: false,
     },
     {
       id: 6,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 6",
-      price: "$69.99",
+      category: "Mobile Veritas",
+      title: "Wireless Gaming Controller Joystick",
+      price: 790,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: false,
     },
     {
       id: 7,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 7",
-      price: "$79.99",
+      category: "Electro",
+      title: "Inverter Split AC",
+      price: 34980,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: false,
     },
+  ],
+  TopSellings: [
     {
       id: 8,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 8",
-      price: "$89.99",
+      category: "Mobile Veritas",
+      title: "G21 Android Smartphone Dual SIM",
+      price: 25990,
+      originalPrice: 30000,
+      image: "https://via.placeholder.com/200",
+      discount: "13%",
+      soldOut: false,
     },
     {
       id: 9,
-      image: "https://via.placeholder.com/100", // Replace with your image URL
-      title: "Item 9",
-      price: "$99.99",
+      category: "Products-Vibe",
+      title: "Cozy Padded Earcups Headphones",
+      price: 1544,
+      image: "https://via.placeholder.com/200",
+      discount: null,
+      soldOut: true,
     },
-  ];
+  ],
+};
+
+const TabSection = () => {
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const tabKeys = Object.keys(products);
 
   return (
-    <Box sx={{ width: "100%", padding: "20px" }}>
-      <Tabs value={value} onChange={handleChange} variant="fullWidth">
-        <Tab label="Tab 1" />
-        <Tab label="Tab 2" />
-        <Tab label="Tab 3" />
+    <Box sx={{ width: "100%", padding: 4 }}>
+      <Tabs
+        value={selectedTab}
+        onChange={handleTabChange}
+        centered
+        textColor="primary"
+        indicatorColor="primary"
+      >
+        {tabKeys.map((tab, index) => (
+          <Tab key={index} label={tab.replace(/([A-Z])/g, " $1").trim()} />
+        ))}
       </Tabs>
 
-      {/* Tab Panels */}
-      {Array.from({ length: 3 }).map((_, index) => (
-        <Box
-          role="tabpanel"
-          hidden={value !== index}
-          key={index}
-          sx={{ marginTop: "20px" }}
-        >
-          {value === index && (
-            <Grid container spacing={2}>
-              {items.map((item) => (
-                <Grid item xs={12} sm={6} md={4} key={item.id}>
-                  <Card
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: 2,
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      sx={{ width: 100, height: 100, objectFit: "cover" }}
-                      image={item.image}
-                      alt={item.title}
-                    />
-                    <CardContent
+      <Box sx={{ mt: 3 }}>
+        {tabKeys.map((tab, index) => (
+          <Box
+            key={index}
+            role="tabpanel"
+            hidden={selectedTab !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+          >
+            {selectedTab === index && (
+              <Grid container spacing={2}>
+                {products[tab].map((product) => (
+                  <Grid item xs={12} sm={6} md={4} key={product.id}>
+                    <Card
                       sx={{
-                        flex: "1 0 auto",
                         display: "flex",
-                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: 2,
+                        borderRadius: 2,
+                        position: "relative",
                       }}
                     >
-                      <Typography variant="h6" component="div">
-                        {item.title}
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {item.price}
-                      </Typography>
-                      <IconButton
-                        sx={{ marginTop: "auto", alignSelf: "flex-end" }}
-                      >
-                        <ArrowForwardIcon />
+                      {product.soldOut && (
+                        <Chip
+                          label="Sold Out"
+                          color="error"
+                          sx={{ position: "absolute", top: 16, left: 16 }}
+                        />
+                      )}
+                      {product.discount && (
+                        <Chip
+                          label={product.discount}
+                          color="primary"
+                          sx={{ position: "absolute", top: 16, right: 16 }}
+                        />
+                      )}
+                      <CardMedia
+                        component="img"
+                        image={product.image}
+                        alt={product.title}
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          marginRight: 2,
+                          borderRadius: 1,
+                        }}
+                      />
+                      <CardContent sx={{ flex: 1 }}>
+                        <Typography
+                          variant="caption"
+                          color="textSecondary"
+                          textTransform="uppercase"
+                        >
+                          {product.category}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {product.title}
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          color="primary"
+                          fontWeight="bold"
+                        >
+                          ${product.price.toLocaleString()}
+                        </Typography>
+                        {product.originalPrice && (
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{ textDecoration: "line-through" }}
+                          >
+                            ${product.originalPrice.toLocaleString()}
+                          </Typography>
+                        )}
+                      </CardContent>
+                      <IconButton>
+                        <ChevronRightIcon />
                       </IconButton>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Box>
-      ))}
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 };
