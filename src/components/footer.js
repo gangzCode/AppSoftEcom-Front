@@ -44,7 +44,7 @@ const Footer = () => {
         {/* Other sections can be added here */}
         <Grid
           sx={{
-            "&::before": {
+            ".MuiGrid-grid-md-2.4  &::before": {
               content: "''",
               width: "1px",
               height: "calc(100% - 6%)",
