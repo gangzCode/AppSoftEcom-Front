@@ -44,7 +44,7 @@ function CartSummary() {
         fullWidth
         sx={{
           color: "#fff",
-        }}
+        }} href="/checkout"
       >
         Checkout
       </Button>

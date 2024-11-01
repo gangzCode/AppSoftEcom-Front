@@ -1,7 +1,8 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import Slider from "react-slick";
-import { ImportContactsOutlined, NextPlanRounded } from "@mui/icons-material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const CarouselSection = () => {
   const slides = [
@@ -14,36 +15,78 @@ const CarouselSection = () => {
     {
       title: "New Arrivals",
       description: "Check out our latest collection now.",
-      image: "https://placehold.co/1200x600?text=Slide+1",
+      image: "https://placehold.co/1200x600?text=Slide+2",
       buttonLink: "#",
     },
     {
       title: "Special Offers",
       description: "Save big on our exclusive deals.",
-      image: "https://placehold.co/1200x600?text=Slide+1",
+      image: "https://placehold.co/1200x600?text=Slide+3",
       buttonLink: "#",
     },
   ];
 
   function SampleNextArrow(props) {
-    const { className, style, onClick } = props;
+    const { onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: "block", background: "red" }}
+      <Box
         onClick={onClick}
-      />
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "absolute",
+          top: "50%",
+          right: "10px",
+          transform: "translateY(-50%)",
+          backgroundColor: "#007bff",
+          borderRadius: "8px",
+          width: "40px",
+          height: "40px",
+          cursor: "pointer",
+          opacity: 0,
+          transition: "opacity 0.3s",
+          "&:hover": {
+            backgroundColor: "#0056b3",
+          },
+          zIndex: 1000,
+        }}
+        className="slick-arrow"
+      >
+        <ArrowForwardIosIcon sx={{ color: "#fff", fontSize: "20px" }} />
+      </Box>
     );
   }
 
   function SamplePrevArrow(props) {
-    const { className, style, onClick } = props;
+    const { onClick } = props;
     return (
-      <div
-        className={className}
-        style={{ ...style, display: "block", background: "green" }}
+      <Box
         onClick={onClick}
-      />
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "absolute",
+          top: "50%",
+          left: "10px",
+          transform: "translateY(-50%)",
+          backgroundColor: "#007bff",
+          borderRadius: "8px",
+          width: "40px",
+          height: "40px",
+          cursor: "pointer",
+          opacity: 0,
+          transition: "opacity 0.3s",
+          "&:hover": {
+            backgroundColor: "#0056b3",
+          },
+          zIndex: 1000,
+        }}
+        className="slick-arrow"
+      >
+        <ArrowBackIosNewIcon sx={{ color: "#fff", fontSize: "20px" }} />
+      </Box>
     );
   }
 
@@ -54,86 +97,91 @@ const CarouselSection = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
   };
 
   return (
-    <Box sx={{ maxWidth: "100%", overflow: "hidden", paddingBottom: "20px" }}>
-      <Slider {...settings}>
-        {slides.map((slide, index) => (
-          <Box
-            key={index}
-            sx={{
-              height: "500px",
-              backgroundImage: `url(${slide.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              position: "relative",
-              display: "flex !important",
-              borderRadius: "16px",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              color: "#fff",
-              // textAlign: "center",
-              padding: "2em",
-
-              "& .slick-prev": {
-                left: "3% !important",
-                zIndex: "1",
-              },
-            }}
-          >
+    <Box
+      sx={{
+        maxWidth: "100%",
+        overflow: "hidden",
+        paddingBottom: "20px",
+        position: "relative",
+        height: "500px",
+        "&:hover .slick-arrow": {
+          opacity: 1,
+        },
+      }}
+    >
+      <Box
+        sx={{
+          borderRadius: "16px",
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        <Slider {...settings}>
+          {slides.map((slide, index) => (
             <Box
+              key={index}
               sx={{
-                justifyItems: "flex-start",
-                // backgroundColor: "rgba(0, 0, 0, 0.5)",
-                padding: "20px",
-                borderRadius: "8px",
+                height: "500px",
+                backgroundImage: `url(${slide.image})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                display: "flex !important",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                color: "#fff",
+                padding: "2em",
               }}
             >
-              <Typography
-                variant="p"
-                fontSize={"12px"}
-                color={"#1e1e1e"}
-                sx={{
-                  position: "relative",
-                  // paddingRight: "20px",
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    top: "50%",
-                    marginLeft: "1em",
-                    transform: "translateY(-50%)",
-                    width: "150px",
-                    height: "2px",
-                    backgroundColor: "#2189ff",
-                  },
-                }}
-              >
-                COMPUTER ACCESSORIES
-              </Typography>
-              <Typography
-                color={"#1e1e1e"}
-                fontWeight={"600"}
-                variant="h4"
-                gutterBottom
-              >
-                {slide.title}
-              </Typography>
-              <Typography color={"#1e1e1e"} variant="body1" gutterBottom>
-                {slide.description}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                href={slide.buttonLink}
-                sx={{ borderRadius: "10px", marginTop: "10px" }}
-              >
-                Shop Now
-              </Button>
+              <Box sx={{ justifyItems: "flex-start", padding: "20px", marginLeft: "20px" }}> {/* Adjust marginLeft here */}
+                <Typography
+                  variant="p"
+                  fontSize={"12px"}
+                  color={"#1e1e1e"}
+                  sx={{
+                    position: "relative",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "50%",
+                      marginLeft: "1em",
+                      transform: "translateY(-50%)",
+                      width: "150px",
+                      height: "2px",
+                      backgroundColor: "#2189ff",
+                    },
+                  }}
+                >
+                  COMPUTER ACCESSORIES
+                </Typography>
+                <Typography
+                  color={"#1e1e1e"}
+                  fontWeight={"600"}
+                  variant="h4"
+                  gutterBottom
+                >
+                  {slide.title}
+                </Typography>
+                <Typography color={"#1e1e1e"} fontSize={"12px"}>
+                  {slide.description}
+                </Typography>
+                <Button
+                  variant="contained"
+                  href={slide.buttonLink}
+                  sx={{ marginTop: "20px" }}
+                >
+                  Shop Now
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        ))}
-      </Slider>
+          ))}
+        </Slider>
+      </Box>
     </Box>
   );
 };

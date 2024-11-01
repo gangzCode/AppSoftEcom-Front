@@ -8,6 +8,7 @@ import TabSection from "../components/tabsSection";
 import Brands from "../components/brands";
 import Newsletter from "../components/newsLetter";
 import InfoSection from "../components/infoSection";
+import BestBrand from "../components/bestBrand";
 const HomePage = () => {
   return (
     <>
@@ -17,7 +18,7 @@ const HomePage = () => {
       <BestSeller2 />
       <Deals />
       <TabSection />
-      <BestSeller />
+      <BestBrand />
       <InfoSection />
       <Brands />
       <Newsletter />

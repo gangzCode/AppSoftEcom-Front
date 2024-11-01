@@ -4,6 +4,7 @@ import Footer from "./components/footer";
 import HomePage from "./app/page";
 import { Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
+import ProductDetailsPage from "./app/products/productDetails";
 // import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CartPage from "./app/cart/CartPage";
@@ -20,9 +21,10 @@ function App() {
           <Route exact path="/" Component={HomePage} />
           <Route path="/cart" Component={CartPage} />
           <Route path="/checkout" Component={CheckoutPage} />
+          <Route path="/products" Component={ProductsPage} />
+          <Route path="/productsDetail" Component={ProductDetailsPage} />
         </Routes>
       </BrowserRouter>
-      {/* <ProductsPage /> */}
       <Footer />
     </Grid>
   );

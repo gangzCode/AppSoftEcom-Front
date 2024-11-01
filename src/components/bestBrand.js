@@ -3,7 +3,7 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite, Search, Layers } from "@mui/icons-material";
 
-const BestSeller = () => {
+const BestBrand = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
 
@@ -107,7 +107,7 @@ const BestSeller = () => {
         HOTDEALS
       </Typography>
       <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
-        Our Best Selling Products
+        Best Branded Products
       </Typography>
       <Box
         {...handlers}
@@ -256,4 +256,4 @@ const BestSeller = () => {
   );
 };
 
-export default BestSeller;
+export default BestBrand;

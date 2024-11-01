@@ -14,7 +14,7 @@ import {
   Typography,
   Drawer,
   Menu,
-  MenuItem,
+  MenuItem
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -23,13 +23,14 @@ import {
   ShoppingCartOutlined,
   ExpandMore,
   Tv,
-  Close, // Import Close icon
+  Close
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [cartOpen, setCartOpen] = useState(false); // New state for cart slider
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -63,7 +64,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   return (
     <>
-      <AppBar position="static" elevation={0} color="">
+      <AppBar position="sticky" elevation={isScrolled ? 4 : 0} sx={{top: 0, zIndex: 1100,transition: "top 0.2s", }} color="">
         <Grid container alignItems={"center"}>
           <Grid md={"2"}>
             <img src="https://placehold.co/200x40" alt="Logo" />
@@ -128,10 +129,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {/* Cart items would go here */}
           <Typography variant="body2">Cart is currently empty.</Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
+            <Button variant="contained" color="primary" onClick={toggleCart} href="/checkout">
               Checkout
             </Button>
-            <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
+            <Button variant="contained" color="primary" onClick={toggleCart} href="/cart">
               View Cart
             </Button>
           </Box>
@@ -214,6 +215,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               Computers
             </Link>
           </Box>
+          
         </Grid>
       </AppBar>
     </>
