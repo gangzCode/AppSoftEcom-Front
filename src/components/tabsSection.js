@@ -18,7 +18,7 @@ const products = {
     {
       id: 1,
       category: "Television-Sky",
-      title: "Ultra HD Android Smart LED TV X43",
+      title: "Ultra HD Android Smart LED TV X43 ultrs plus hd",
       price: 25990,
       image: "https://via.placeholder.com/200",
       discount: null,
@@ -122,6 +122,26 @@ const TabSection = () => {
         centered
         textColor="primary"
         indicatorColor="primary"
+        TabIndicatorProps={{ style: { display: "none" } }}
+        sx={{
+          borderBottom: "1px solid #1e1e1e",
+          "& .MuiTab-root": {
+            textTransform: "none",
+            fontSize: 18,
+            fontWeight: "bold",
+            padding: "12px 24px",
+            color: "#333",
+            transition: "0.3s",
+            borderRadius: "8px 8px 0 0",
+          },
+          "& .MuiTab-root[tabIndex='0']": {
+            color: "#fff",
+            backgroundColor: "#007bff",
+          },
+          "& .MuiTab-root:hover": {
+            backgroundColor: "#d3e5ff",
+          },
+        }}
       >
         {tabKeys.map((tab, index) => (
           <Tab key={index} label={tab.replace(/([A-Z])/g, " $1").trim()} />
@@ -138,16 +158,26 @@ const TabSection = () => {
             aria-labelledby={`tab-${index}`}
           >
             {selectedTab === index && (
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 {products[tab].map((product) => (
                   <Grid item xs={12} sm={6} md={4} key={product.id}>
                     <Card
+                      elevation={0}
                       sx={{
+                        backgroundColor: "#f3f3f3",
                         display: "flex",
                         alignItems: "center",
-                        padding: 2,
-                        borderRadius: 2,
+                        padding: 4,
+                        borderRadius: "20px",
                         position: "relative",
+                        // boxShadow: 3,
+
+                        transition: "transform 0.3s, box-shadow 0.3s",
+                        cursor: "pointer",
+                        "&:hover": {
+                          transform: "translateY(-4px)",
+                          boxShadow: 4,
+                        },
                       }}
                     >
                       {product.soldOut && (
@@ -169,13 +199,13 @@ const TabSection = () => {
                         image={product.image}
                         alt={product.title}
                         sx={{
-                          width: 80,
-                          height: 80,
+                          width: 100,
+                          height: 100,
                           marginRight: 2,
                           borderRadius: 1,
                         }}
                       />
-                      <CardContent sx={{ flex: 1 }}>
+                      <CardContent sx={{ flex: 1, paddingLeft: 0 }}>
                         <Typography
                           variant="caption"
                           color="textSecondary"

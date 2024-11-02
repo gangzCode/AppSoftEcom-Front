@@ -9,6 +9,7 @@ import Brands from "../components/brands";
 import Newsletter from "../components/newsLetter";
 import InfoSection from "../components/infoSection";
 import BestBrand from "../components/bestBrand";
+import PromoSection from "../components/promoSection";
 const HomePage = () => {
   return (
     <>
@@ -17,6 +18,7 @@ const HomePage = () => {
       <BestSeller />
       <BestSeller2 />
       <Deals />
+      <PromoSection />
       <TabSection />
       <BestBrand />
       <InfoSection />

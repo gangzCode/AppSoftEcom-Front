@@ -1,3 +1,8 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CartPage from "./app/cart/CartPage";
+import CheckoutPage from "./app/checkout/CheckoutPage";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
@@ -5,28 +10,33 @@ import HomePage from "./app/page";
 import { Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
-// import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import CartPage from "./app/cart/CartPage";
-import CheckoutPage from "./app/checkout/CheckoutPage";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins, Arial, sans-serif",
+  },
+});
 
 function App() {
   return (
-    <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"4em"}>
-      <Navbar />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"4em"}>
+        <Navbar />
 
-      {/* <HomePage /> */}
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" Component={HomePage} />
-          <Route path="/cart" Component={CartPage} />
-          <Route path="/checkout" Component={CheckoutPage} />
-          <Route path="/products" Component={ProductsPage} />
-          <Route path="/productsDetail" Component={ProductDetailsPage} />
-        </Routes>
-      </BrowserRouter>
-      <Footer />
-    </Grid>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/productsDetail" element={<ProductDetailsPage />} />
+          </Routes>
+        </BrowserRouter>
+
+        <Footer />
+      </Grid>
+    </ThemeProvider>
   );
 }
 

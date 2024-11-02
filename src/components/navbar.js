@@ -14,7 +14,7 @@ import {
   Typography,
   Drawer,
   Menu,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -23,14 +23,13 @@ import {
   ShoppingCartOutlined,
   ExpandMore,
   Tv,
-  Close
+  Close, // Import Close icon
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [cartOpen, setCartOpen] = useState(false); // New state for cart slider
-  const [isScrolled, setIsScrolled] = useState(false);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -64,7 +63,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   return (
     <>
-      <AppBar position="sticky" elevation={isScrolled ? 4 : 0} sx={{top: 0, zIndex: 1100,transition: "top 0.2s", }} color="">
+      <AppBar position="sticky" elevation={0} color="">
         <Grid container alignItems={"center"}>
           <Grid md={"2"}>
             <img src="https://placehold.co/200x40" alt="Logo" />
@@ -77,10 +76,16 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "50px",
+                  backgroundColor: "#f3f3f3",
                 },
                 input: {
                   paddingY: ".6em",
                   borderBlock: "none",
+                  backgroundColor: "#f3f3f3",
+                  borderRadius: "50px",
+                },
+                fieldset: {
+                  border: "none",
                 },
               }}
               InputProps={{
@@ -95,7 +100,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             />
           </Grid>
           <Grid md={"1"}>
-            <Box display="flex" justifyContent="space-around" alignItems="center">
+            <Box
+              display="flex"
+              justifyContent="space-around"
+              alignItems="center"
+            >
               <IconButton>
                 <AccountCircleOutlined />
               </IconButton>
@@ -118,7 +127,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             sx: { width: 300, padding: 2, bgcolor: "#f7f7f7" },
           }}
         >
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography variant="h6" gutterBottom>
               Your Cart
             </Typography>
@@ -129,28 +142,37 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {/* Cart items would go here */}
           <Typography variant="body2">Cart is currently empty.</Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Button variant="contained" color="primary" onClick={toggleCart} href="/checkout">
+            <Button
+              variant="contained"
+              color="primary"
+              href="/checkout"
+              onClick={toggleCart}
+            >
               Checkout
             </Button>
-            <Button variant="contained" color="primary" onClick={toggleCart} href="/cart">
+            <Button
+              variant="contained"
+              color="primary"
+              href="/cart"
+              onClick={toggleCart}
+            >
               View Cart
             </Button>
           </Box>
         </Drawer>
 
-        <Grid display={"flex"} paddingY={"1em"}>
+        <Grid display={"flex"} paddingY={"2em"}>
           <Button
             color="inherit"
             sx={{
               backgroundColor: "#2189ff",
+              boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
               color: "white",
               borderRadius: "20px",
               "&:hover": {
                 backgroundColor: "#1a76d2",
               },
-              padding: ".5em",
-              paddingLeft: "3em",
-              paddingRight: "3em",
+              padding: ".7em 4em",
             }}
             endIcon={<ExpandMore />}
             id="basic-button"
@@ -159,7 +181,9 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
           >
-            All Categories
+            <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
+              All Categories
+            </Typography>
           </Button>
           <Menu
             sx={{
@@ -195,27 +219,72 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: "flex", gap: 6 }}>
-            <Link href="#" color="inherit" underline="none">
+          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
               Computers
             </Link>
-            <Link href="#" color="inherit" underline="none">
-              Computers
+
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
+              Electronics
             </Link>
-            <Link href="#" color="inherit" underline="none">
-              Computers
+
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
+              Computer Parts
             </Link>
-            <Link href="#" color="inherit" underline="none">
-              Computers
+
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
+              Home Appliance
             </Link>
-            <Link href="#" color="inherit" underline="none">
-              Computers
+
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
+              Digital Camera
             </Link>
-            <Link href="#" color="inherit" underline="none">
-              Computers
+            <Link
+              href="#"
+              fontSize={"16px"}
+              fontWeight={"500"}
+              variant="h5"
+              color="inherit"
+              underline="none"
+            >
+              New ins
             </Link>
           </Box>
-          
         </Grid>
       </AppBar>
     </>
