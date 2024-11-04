@@ -23,9 +23,12 @@ import {
   ShoppingCartOutlined,
   ExpandMore,
   Tv,
-  Close, // Import Close icon
+  Close,
+  Gamepad,
+  Keyboard, // Import Close icon
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
+import styled from "styled-components";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,10 +64,21 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     },
   ];
 
+  const FlipText = styled(Typography)(({ theme }) => ({
+    display: "inline-block",
+    transition: "transform 0.5s",
+    transformOrigin: "center",
+    transformStyle: "preserve-3d",
+    perspective: "1000px",
+    "&:hover": {
+      transform: "rotateY(180deg)",
+    },
+  }));
+
   return (
     <>
       <AppBar position="sticky" elevation={0} color="">
-        <Grid container alignItems={"center"}>
+        <Grid pt={"2em"} container alignItems={"center"}>
           <Grid md={"2"}>
             <img src="https://placehold.co/200x40" alt="Logo" />
           </Grid>
@@ -188,6 +202,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           <Menu
             sx={{
               width: "100%",
+              "& .MuiPaper-root": {
+                borderRadius: "0 0 20px 20px",
+                backgroundColor: "#f3f3f3",
+              },
             }}
             id="basic-menu"
             anchorEl={anchorEl}
@@ -197,24 +215,102 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem onClick={handleClose}>
-              <PhoneAndroid />
-              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
-                Mobiles and Tablets
-              </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Tv />
-              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
-                Televisions
-              </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <PhoneAndroid />
-              <Typography paddingLeft={".2em"} fontSize={"19px"} variant="p">
-                Mobiles and Tablets
-              </Typography>
-            </MenuItem>
+            <Grid
+              display={"flex"}
+              flexDirection={"column"}
+              padding={"1em"}
+              gap={"1em"}
+              md="4"
+              borderRadius={"200px"}
+            >
+              <MenuItem sx={{}} onClick={handleClose}>
+                <PhoneAndroid />
+                <Typography
+                  paddingLeft={"1em"}
+                  fontSize={"16px"}
+                  fontWeight={"500"}
+                >
+                  Mobiles and Tablets
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Tv />
+                <Typography
+                  paddingLeft={"1em"}
+                  fontWeight={"500"}
+                  fontSize={"16px"}
+                >
+                  Televisions
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Gamepad />
+                <Typography
+                  paddingLeft={"1em"}
+                  fontWeight={"500"}
+                  fontSize={"16px"}
+                >
+                  Personal Care
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Keyboard />
+                <Typography
+                  paddingLeft={"1em"}
+                  fontWeight={"500"}
+                  fontSize={"16px"}
+                >
+                  Accessories
+                </Typography>
+              </MenuItem>
+            </Grid>
+            {/* <Grid display={"flex"} flexDirection={"row"} padding={"2em"} md="4">
+              <Box>
+                <Typography fontSize={"14px"} fontWeight={"600"} variant="p">
+                  Television
+                </Typography>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Notebook Mini Computer
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Chrome Book Laptop
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Notebook Computer
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Two in One Laptop
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Business Smart Laptop
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Touch Screen Mini Laptop
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Ultra Book Personal Laptop
+                  </Typography>
+                </MenuItem>
+                <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                  <Typography fontSize={"14px"} variant="p">
+                    Ultra Portable Mini Laptop
+                  </Typography>
+                </MenuItem>
+              </Box>
+            </Grid> */}
           </Menu>
 
           <Box sx={{ flexGrow: 1 }} />
@@ -227,6 +323,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               variant="h5"
               color="inherit"
               underline="none"
+              sx={{}}
             >
               Computers
             </Link>

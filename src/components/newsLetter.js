@@ -5,18 +5,19 @@ const Newsletter = () => {
   return (
     <Box
       sx={{
-        margin: "2em 9.5em 4em",
+        margin: "2em 0 4em",
         padding: "2em 9em",
         backgroundColor: "#f5f5f5",
-        borderRadius: "10px",
+        borderRadius: "20px",
       }}
     >
       <Grid container spacing={4} alignItems="center">
         {/* Left Side: Title and Description */}
         <Grid item xs={12} md={6}>
           <Typography
-            variant="p"
-            fontSize={"12px"}
+            fontSize={"10px"}
+            fontWeight={"500"}
+            letterSpacing={"2px"}
             color={"#1e1e1e"}
             sx={{
               position: "relative",
@@ -36,17 +37,17 @@ const Newsletter = () => {
             NEWSLETTER
           </Typography>
           <Typography
-            fontWeight={"600"}
+            fontWeight={"700"}
             variant="h4"
             component="h1"
+            fontSize={"36px"}
             marginBottom={"0"}
             gutterBottom
           >
-            Subscribe to Our Newsletter
+            Sign Up Our News Letter
           </Typography>
           <Typography variant="body1">
-            Stay updated with the latest news and special offers. Join our
-            community today!
+            join our mail list and get 25% offers
           </Typography>
         </Grid>
 
@@ -54,10 +55,16 @@ const Newsletter = () => {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <TextField
               variant="outlined"
-              placeholder="Enter your email"
+              placeholder="Your Email here"
               fullWidth
               sx={{
+                // height: "1em",
+                backgroundColor: "#fff",
+                border: "none",
                 borderRadius: "30px",
+                input: {
+                  padding: "13px 20px",
+                },
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "30px",
                 },
@@ -67,11 +74,13 @@ const Newsletter = () => {
               variant="contained"
               color="primary"
               sx={{
+                backgroundColor: "#2189ff",
+                textTransform: "unset",
                 fontWeight: "600",
-                fontSize: "14px",
+                fontSize: "16px",
                 borderRadius: "30px",
-                padding: "1.1em 3em",
-                marginLeft: "-10em",
+                padding: ".7em 2em",
+                marginLeft: "-9em",
                 boxShadow: "4.243px 4.243px 10px 0px rgba(30, 30, 30, 0.3)",
               }}
             >
