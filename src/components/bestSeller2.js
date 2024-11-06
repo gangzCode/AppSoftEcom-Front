@@ -5,17 +5,16 @@ const BestSeller2 = () => {
   const cards = [
     {
       id: 1,
-      image: "https://placehold.co/300x200", // Replace with your product image URL
+      image: "https://placehold.co/300x200",
       title: "Buy a Standard Products with Great Offers",
-      description: "$4000",
+      price: "$4000",
       buttonText: "Shop Now",
     },
     {
       id: 2,
-      image: "https://placehold.co/300x200", // Replace with your product image URL
-      title: "Product 2",
-      description:
-        "This is a short description of Product 2. It is a premium item.",
+      image: "https://placehold.co/300x200",
+      title: "Best Quality Products Under Your Budget",
+      price: "$10000",
       buttonText: "Shop Now",
     },
   ];
@@ -28,12 +27,12 @@ const BestSeller2 = () => {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "row" }, // Column on small screens, row on larger
+                flexDirection: { xs: "column", md: "row" },
                 alignItems: "center",
                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                borderRadius: "10px",
+                borderRadius: "30px",
                 overflow: "hidden",
-                backgroundColor: "#fff",
+                backgroundColor: "#f3f3f3",
               }}
             >
               <Box sx={{ flex: 1, padding: 3 }}>
@@ -68,27 +67,33 @@ const BestSeller2 = () => {
                 <Typography
                   variant="body1"
                   fontSize={"24px"}
+                  fontWeight={"500"}
                   color="textSecondary"
                   gutterBottom
                 >
-                  {card.description}
+                  {card.price}
                 </Typography>
                 <Button
+                  sx={{
+                    backgroundColor: "#2189ff",
+                    padding: ".4em 1.8em",
+                    borderRadius: "8px",
+                    textTransform: "unset",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                  }}
                   variant="contained"
-                  backgroundColor="#007aff"
-                  color="primary"
                 >
                   {card.buttonText}
                 </Button>
               </Box>
 
-              {/* Image Section */}
               <Box
                 component="img"
                 src={card.image}
                 alt={card.title}
                 sx={{
-                  width: { xs: "100%", md: "300px" }, // Full width on small screens, fixed width on larger
+                  width: { xs: "100%", md: "300px" },
                   height: "auto",
                 }}
               />

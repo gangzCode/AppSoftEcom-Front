@@ -16,6 +16,10 @@ const TopBar = () => {
   return (
     <>
       <Box
+        sx={{
+          background: "#f6f6f8",
+          padding: ".4em 8em",
+        }}
         display="flex"
         alignItems="center"
         justifyContent={"flex-end"}
@@ -34,7 +38,13 @@ const TopBar = () => {
             onChange={handleLanguageChange}
             variant="outlined"
             size="small"
-            sx={{ minWidth: 70, fontSize: "0.8rem" }}
+            sx={{
+              "& .MuiSelect-select": {
+                padding: "4px 12px",
+              },
+              minWidth: 70,
+              fontSize: "0.8rem",
+            }}
           >
             <MenuItem value="EN">EN</MenuItem>
             <MenuItem value="ES">ES</MenuItem>
@@ -56,7 +66,13 @@ const TopBar = () => {
             onChange={handleCurrencyChange}
             variant="outlined"
             size="small"
-            sx={{ minWidth: 70, fontSize: "0.8rem" }}
+            sx={{
+              "& .MuiSelect-select": {
+                padding: "4px 12px",
+              },
+              minWidth: 70,
+              fontSize: "0.8rem",
+            }}
           >
             <MenuItem value="USD">USD</MenuItem>
             <MenuItem value="EUR">EUR</MenuItem>

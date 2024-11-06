@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import {
   Facebook,
   Instagram,
@@ -41,7 +40,6 @@ const Footer = () => {
           </Box>
         </Grid>
 
-        {/* First Column */}
         <Grid
           item
           xs={12}
@@ -77,7 +75,6 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        {/* Second Column */}
         <Grid
           item
           xs={12}
@@ -113,7 +110,6 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        {/* Third Column */}
         <Grid
           item
           xs={12}
@@ -145,7 +141,6 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        {/* Fourth Column */}
         <Grid
           item
           xs={12}
@@ -182,7 +177,6 @@ const Footer = () => {
         </Grid>
       </Grid>
 
-      {/* Social Media Icons */}
       <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-start" }}>
         <IconButton
           sx={{ color: "#1e1e1e" }}

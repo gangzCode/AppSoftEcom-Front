@@ -11,35 +11,36 @@ import { Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
+import Copyright from "./components/copyright";
 
-// const theme = createTheme({
-//   typography: {
-//     fontFamily: "Poppins, Arial, sans-serif",
-//   },
-// });
+// Define theme
+/* const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins, Arial, sans-serif",
+  },
+}); */
 
 function App() {
   return (
-    // <ThemeProvider theme={theme}>
-    //   <CssBaseline />
-    <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"2em"}>
-      <TopBar />
+  <>
+      <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"2em"}>
+        <TopBar />
+        <Navbar />
 
-      <Navbar />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:productId" element={<ProductDetailsPage />} />
+          </Routes>
+        </BrowserRouter>
 
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/productsDetail" element={<ProductDetailsPage />} />
-        </Routes>
-      </BrowserRouter>
-
-      <Footer />
-    </Grid>
-    // </ThemeProvider>
+        <Footer />
+      </Grid>
+      <Copyright />
+    </>
   );
 }
 

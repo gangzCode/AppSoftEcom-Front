@@ -1,7 +1,13 @@
 import React, { useRef, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
-import { ChevronRight, ShoppingCart, Favorite, Search, Layers } from "@mui/icons-material";
+import {
+  ChevronRight,
+  ShoppingCart,
+  Favorite,
+  Search,
+  Layers,
+} from "@mui/icons-material";
 
 const BestBrand = () => {
   const scrollContainerRef = useRef(null);
@@ -10,7 +16,8 @@ const BestBrand = () => {
   const products = [
     {
       id: 1,
-      image: "https://dt-elektrix.myshopify.com/cdn/shop/products/Electro07.jpg?v=1666157970&width=360",
+      image:
+        "https://dt-elektrix.myshopify.com/cdn/shop/products/Electro07.jpg?v=1666157970&width=360",
       hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
       description: "Product 1",
       price: "$19.99",
@@ -139,7 +146,6 @@ const BestBrand = () => {
               position: "relative",
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
               minWidth: "280px",
               padding: "20px",
               borderRadius: "20px",
@@ -154,7 +160,6 @@ const BestBrand = () => {
             onMouseEnter={() => setHoveredProductId(product.id)}
             onMouseLeave={() => setHoveredProductId(null)}
           >
-            {/* Product Image */}
             <Box
               sx={{
                 position: "relative",
@@ -171,8 +176,8 @@ const BestBrand = () => {
                 sx={{
                   width: "100%",
                   height: "auto",
-                  transition: "opacity 0.5s ease", // Smooth transition for the original image
-                  opacity: hoveredProductId === product.id ? 0 : 1, // Fade out when hovered
+                  transition: "opacity 0.5s ease",
+                  opacity: hoveredProductId === product.id ? 0 : 1,
                 }}
               />
               <Box
@@ -185,13 +190,12 @@ const BestBrand = () => {
                   left: 0,
                   width: "100%",
                   height: "auto",
-                  transition: "opacity 0.5s ease", // Smooth transition for the hover image
-                  opacity: hoveredProductId === product.id ? 1 : 0, // Fade in when hovered
+                  transition: "opacity 0.5s ease",
+                  opacity: hoveredProductId === product.id ? 1 : 0,
                 }}
               />
             </Box>
 
-            {/* Hover Icons */}
             <Box
               className="hover-icons"
               sx={{
@@ -201,8 +205,9 @@ const BestBrand = () => {
                 transform: "translate(-50%, -50%)",
                 display: "flex",
                 gap: "8px",
-                opacity: hoveredProductId === product.id ? 1 : 0, // Show icons when hovered
-                visibility: hoveredProductId === product.id ? "visible" : "hidden", // Make icons visible when hovered
+                opacity: hoveredProductId === product.id ? 1 : 0,
+                visibility:
+                  hoveredProductId === product.id ? "visible" : "hidden",
                 transition: "opacity 0.3s ease, visibility 0.3s ease",
               }}
             >
@@ -217,11 +222,11 @@ const BestBrand = () => {
                   sx={{
                     backgroundColor: "#2189ff",
                     color: "#fff",
-                    borderRadius: "10px", // Rounded corners
-                    width: "40px", // Square shape
-                    height: "40px", // Square shape
+                    borderRadius: "10px",
+                    width: "40px",
+                    height: "40px",
                     "&:hover": {
-                      backgroundColor: "#000", // Change to black on hover
+                      backgroundColor: "#000",
                     },
                   }}
                 >
@@ -229,22 +234,27 @@ const BestBrand = () => {
                 </IconButton>
               ))}
             </Box>
-            {/* Category Text */}
-            <Typography variant="caption" fontSize={"12px"} color={"#bebebe"} sx={{ letterSpacing: "1px", marginBottom: "8px" }}>
+            <Typography
+              variant="caption"
+              fontSize={"12px"}
+              color={"#bebebe"}
+              sx={{ letterSpacing: "1px", marginBottom: "3x" }}
+            >
               PRODUCTS-VIBE
             </Typography>
-            {/* Product Description */}
-            <Typography variant="body1" fontWeight="bold" textAlign="center" sx={{ marginBottom: "8px" }}>
+            <Typography
+              variant="body1"
+              fontWeight="400"
+              sx={{ marginBottom: "8px" }}
+            >
               {product.description}
             </Typography>
-            {/* Price and Chevron */}
             <Box
               display={"flex"}
-              display="flex" alignItems="center" justifyContent="center" sx={{ marginTop: "auto" }}
-              justifyContent={"space-between"}
-              alignItems={"flex-end"}
+              justifyContent="space-between"
+              sx={{ marginTop: "auto" }}
             >
-              <Typography variant="h6" fontWeight="600">
+              <Typography variant="h6" fontSize={"22px"} fontWeight="600">
                 {product.price}
               </Typography>
               <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />

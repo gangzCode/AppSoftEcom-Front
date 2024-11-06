@@ -16,7 +16,7 @@ const promoItems = [
     title: "Grab Our Hot Deals",
     price: 18800,
     originalPrice: 29000,
-    image: "https://placehold.co/1000x400?text=Smartphones", // Replace with actual image
+    image: "https://placehold.co/1000x400?text=Smartphones",
   },
   {
     id: 2,
@@ -24,15 +24,14 @@ const promoItems = [
     title: "Get 20% Flat Off",
     price: 1500,
     originalPrice: 4500,
-    image: "https://placehold.co/400x200?text=Smartwatches", // Replace with actual image
+    image: "https://placehold.co/400x200?text=Smartwatches",
   },
 ];
 
 const PromoSection = () => {
   return (
-    <Box sx={{ padding: 4 }}>
+    <Box sx={{ padding: "30px 0" }}>
       <Grid container spacing={3} justifyContent="center">
-        {/* First grid item with md=8 */}
         <Grid item xs={12} sm={6} md={8} key={promoItems[0].id}>
           <Card
             elevation={0}
@@ -49,23 +48,34 @@ const PromoSection = () => {
           >
             <CardContent sx={{ flex: 1, padding: 3 }}>
               <Typography
-                variant="caption"
-                color="textSecondary"
-                sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+                variant="p"
+                fontSize={"12px"}
+                color={"#1e1e1e"}
+                sx={{
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    top: "50%",
+                    marginLeft: "1em",
+                    transform: "translateY(-50%)",
+                    width: "150px",
+                    height: "2px",
+                    backgroundColor: "#2189ff",
+                  },
+                }}
               >
                 {promoItems[0].category}
               </Typography>
-              <Box
-                sx={{
-                  width: "50px",
-                  borderBottom: "2px solid #007bff",
-                  marginY: 1,
-                }}
-              />
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+              <Typography
+                variant="h6"
+                fontSize={"24px"}
+                fontWeight="600"
+                sx={{ mb: 1 }}
+              >
                 {promoItems[0].title}
               </Typography>
-              <Typography variant="h4" color="primary" fontWeight="bold">
+              <Typography variant="h4" fontSize={"24px"} fontWeight="500">
                 ${promoItems[0].price.toLocaleString()}
               </Typography>
               <Typography
@@ -76,15 +86,15 @@ const PromoSection = () => {
                 ${promoItems[0].originalPrice.toLocaleString()}
               </Typography>
               <Button
-                variant="contained"
-                color="primary"
                 sx={{
-                  textTransform: "none",
-                  paddingX: 3,
-                  paddingY: 1,
-                  fontWeight: "bold",
-                  borderRadius: 2,
+                  backgroundColor: "#2189ff",
+                  padding: ".4em 1.8em",
+                  borderRadius: "8px",
+                  textTransform: "unset",
+                  fontSize: "16px",
+                  fontWeight: "500",
                 }}
+                variant="contained"
               >
                 Shop Now
               </Button>
@@ -102,13 +112,13 @@ const PromoSection = () => {
           </Card>
         </Grid>
 
-        {/* Second grid item with md=4 */}
         <Grid item xs={12} sm={6} md={4} key={promoItems[1].id}>
           <Card
             sx={{
               display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
               alignItems: "center",
+              textAlign: "right",
+              flexDirection: "row-reverse",
               borderRadius: 2,
               overflow: "hidden",
               backgroundColor: "#f8f9fa",
@@ -118,25 +128,36 @@ const PromoSection = () => {
           >
             <CardContent sx={{ flex: 1, padding: 3 }}>
               <Typography
-                variant="caption"
-                color="textSecondary"
-                sx={{ textTransform: "uppercase", fontWeight: "bold" }}
+                variant="p"
+                fontSize={"12px"}
+                color={"#1e1e1e"}
+                sx={{
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    top: "50%",
+                    marginLeft: "1em",
+                    transform: "translateX(-185%)",
+                    width: "150px",
+                    height: "2px",
+                    backgroundColor: "#2189ff",
+                  },
+                }}
               >
                 {promoItems[1].category}
               </Typography>
-              <Box
-                sx={{
-                  width: "50px",
-                  borderBottom: "2px solid #007bff",
-                  marginY: 1,
-                }}
-              />
-              <Typography variant="h6" fontWeight="bold" sx={{ mb: 1 }}>
+              <Typography
+                variant="h6"
+                fontSize={"24px"}
+                fontWeight="600"
+                sx={{ mb: 1 }}
+              >
                 {promoItems[1].title}
               </Typography>
-              <Typography variant="h4" color="primary" fontWeight="bold">
+              <Typography variant="h4" fontSize={"24px"} fontWeight="500">
                 ${promoItems[1].price.toLocaleString()}
-              </Typography>
+              </Typography>{" "}
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -145,15 +166,15 @@ const PromoSection = () => {
                 ${promoItems[1].originalPrice.toLocaleString()}
               </Typography>
               <Button
-                variant="contained"
-                color="primary"
                 sx={{
-                  textTransform: "none",
-                  paddingX: 3,
-                  paddingY: 1,
-                  fontWeight: "bold",
-                  borderRadius: 2,
+                  backgroundColor: "#2189ff",
+                  padding: ".4em 1.8em",
+                  borderRadius: "8px",
+                  textTransform: "unset",
+                  fontSize: "16px",
+                  fontWeight: "500",
                 }}
+                variant="contained"
               >
                 Shop Now
               </Button>
