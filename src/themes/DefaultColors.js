@@ -65,10 +65,10 @@ const baselightTheme = createTheme({
     divider: "#e5eaef",
   },
   typography: {
-    // fontFamily: "Poppins",
+    fontFamily: "Poppins, Arial, sans-serif",
     h1: {
       fontWeight: 600,
-      fontSize: "2.25rem",
+      fontSize: "2.5rem",
       lineHeight: "2.75rem",
       // fontFamily: plus.style.fontFamily,
     },
@@ -143,6 +143,13 @@ const baselightTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "10px",
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          borderBottom: "0",
         },
       },
     },
