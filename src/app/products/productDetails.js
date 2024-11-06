@@ -10,6 +10,9 @@ import {
   Divider,
   ButtonGroup,
   Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -18,6 +21,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { ExpandMore } from "@mui/icons-material";
 
 const product = {
   title: "Sample Product",
@@ -57,7 +61,6 @@ const ProductDetailsPage = () => {
   return (
     <Box padding={4}>
       <Grid container spacing={4}>
-        {/* Left Section: Product Images */}
         <Grid item xs={12} md={6}>
           <Box display="flex" flexDirection="column" alignItems="center">
             <CardMedia
@@ -90,19 +93,15 @@ const ProductDetailsPage = () => {
           </Box>
         </Grid>
 
-        {/* Right Section: Product Details */}
         <Grid item xs={12} md={6}>
-          {/* Product Title */}
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             {product.title}
           </Typography>
 
-          {/* Product Price */}
           <Typography variant="h5" color="primary" gutterBottom>
             ${product.price.toFixed(2)}
           </Typography>
 
-          {/* Specifications with Selectable Chips */}
           {product.specifications.map((spec) => (
             <Box key={spec} sx={{ mb: 2 }}>
               <Typography variant="subtitle1" fontWeight="bold">
@@ -126,21 +125,18 @@ const ProductDetailsPage = () => {
             </Box>
           ))}
 
-          {/* Total Price with Chip Style */}
           <Chip
             label={`Total Price: $${(product.price * quantity).toFixed(2)}`}
             color="primary"
             sx={{ mb: 2 }}
           />
 
-          {/* Availability */}
           <Chip
             label={product.availability}
             color={product.availability === "In Stock" ? "success" : "error"}
             sx={{ mb: 2 }}
           />
 
-          {/* Quantity Selector */}
           <Box display="flex" alignItems="center" gap={2} mb={2}>
             <Typography>Quantity:</Typography>
             <ButtonGroup size="small">
@@ -160,7 +156,6 @@ const ProductDetailsPage = () => {
             </ButtonGroup>
           </Box>
 
-          {/* Buttons Row */}
           <Box display="flex" gap={2} mb={2}>
             <Button
               variant="contained"
@@ -180,7 +175,6 @@ const ProductDetailsPage = () => {
             </Button>
           </Box>
 
-          {/* Buy Now Button */}
           <Button
             variant="contained"
             color="secondary"
@@ -190,12 +184,10 @@ const ProductDetailsPage = () => {
             Buy It Now
           </Button>
 
-          {/* Estimated Delivery */}
           <Typography color="text.secondary" sx={{ mb: 2 }}>
             Estimated Delivery: {product.estimatedDelivery}
           </Typography>
 
-          {/* Share Section */}
           <Typography color="text.secondary" sx={{ mb: 1 }}>
             Share with us:
           </Typography>
@@ -212,6 +204,69 @@ const ProductDetailsPage = () => {
           </Box>
         </Grid>
       </Grid>
+
+      <Box my={4}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+            sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              backgroundColor: "#fafafa",
+            }}
+          >
+            <Typography>Specification</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>
+              Here you can add details about the product specification.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel2a-content"
+            id="panel2a-header"
+            sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              backgroundColor: "#fafafa",
+            }}
+          >
+            <Typography>Shipping Information</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>
+              Information about shipping can be detailed here.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel3a-content"
+            id="panel3a-header"
+            sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: "8px",
+              marginBottom: "8px",
+              backgroundColor: "#fafafa",
+            }}
+          >
+            <Typography>Reviews</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>Add customer reviews or feedback here.</Typography>
+          </AccordionDetails>
+        </Accordion>
+      </Box>
     </Box>
   );
 };

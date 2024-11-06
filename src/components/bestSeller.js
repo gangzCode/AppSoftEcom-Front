@@ -146,7 +146,7 @@ const BestSeller = () => {
               position: "relative",
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              // alignItems: "center",
               minWidth: "280px",
               padding: "20px",
               borderRadius: "20px",
@@ -239,25 +239,25 @@ const BestSeller = () => {
               variant="caption"
               fontSize={"12px"}
               color={"#bebebe"}
-              sx={{ letterSpacing: "1px", marginBottom: "8px" }}
+              sx={{ letterSpacing: "1px", marginBottom: "3x" }}
             >
               PRODUCTS-VIBE
             </Typography>
             <Typography
               variant="body1"
-              fontWeight="bold"
-              textAlign="center"
+              fontWeight="400"
+              // textAlign="center"
               sx={{ marginBottom: "8px" }}
             >
               {product.description}
             </Typography>
             <Box
               display={"flex"}
-              alignItems="center"
-              justifyContent="center"
+              // alignItems="center"
+              justifyContent="space-between"
               sx={{ marginTop: "auto" }}
             >
-              <Typography variant="h6" fontWeight="600">
+              <Typography variant="h6" fontSize={"22px"} fontWeight="600">
                 {product.price}
               </Typography>
               <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />

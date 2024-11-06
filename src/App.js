@@ -11,6 +11,7 @@ import { Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
+import Copyright from "./components/copyright";
 
 const theme = createTheme({
   typography: {
@@ -22,9 +23,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"2em"}>
-        <TopBar />
 
+      <TopBar />
+      <Grid paddingX={{ xs: "1em", md: "8em" }}>
         <Navbar />
 
         <BrowserRouter>
@@ -36,9 +37,9 @@ function App() {
             <Route path="/productsDetail" element={<ProductDetailsPage />} />
           </Routes>
         </BrowserRouter>
-
         <Footer />
       </Grid>
+      <Copyright />
     </ThemeProvider>
   );
 }

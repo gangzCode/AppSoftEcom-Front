@@ -73,7 +73,7 @@ const Deals = () => {
           <Grid
             item
             xs={12}
-            md={6}
+            md={5}
             sx={{ display: "flex", flexDirection: "column", height: "100%" }}
           >
             <Box
@@ -128,7 +128,7 @@ const Deals = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={7}>
             <Grid container spacing={4}>
               {cards.slice(1, 4).map((card) => (
                 <Grid item xs={12} sm={4} key={card.id}>
