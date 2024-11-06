@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { alpha, createTheme, getContrastRatio } from "@mui/material/styles";
 // import { Plus_Jakarta_Sans } from "next/font/google";
 
 // export const plus = Plus_Jakarta_Sans({
@@ -45,6 +45,19 @@ const baselightTheme = createTheme({
       dark: "#ae8e59",
       contrastText: "#ffffff",
     },
+
+    bluebutton: {
+      main: "#2189ff",
+      light: alpha("#2189ff", 0.5),
+      dark: alpha("#000000", 0.9),
+      contrastText: getContrastRatio(alpha("#000000", 0.9), "#fff") > 4.5 ? "#fff" : "#111",
+    },
+    blackbutton: {
+      main: alpha("#000000", 0.9),
+      light: alpha("#000000", 0.5),
+      dark: "#2189ff",
+      contrastText: getContrastRatio(alpha("#000000", 0.9), "#fff") > 4.5 ? "#fff" : "#111",
+    },
     grey: {
       100: "#F2F6FA",
       200: "#EAEFF4",
@@ -68,58 +81,58 @@ const baselightTheme = createTheme({
     fontFamily: "Poppins, Arial, sans-serif",
     h1: {
       fontWeight: 600,
-      fontSize: "2.5rem",
-      lineHeight: "2.75rem",
+      // fontSize: "2.5rem",
+      // lineHeight: "2.75rem",
       // fontFamily: plus.style.fontFamily,
     },
     h2: {
       fontWeight: 600,
-      fontSize: "1.875rem",
-      lineHeight: "2.25rem",
+      // fontSize: "1.875rem",
+      // lineHeight: "2.25rem",
       // fontFamily: plus.style.fontFamily,
     },
     h3: {
       fontWeight: 600,
-      fontSize: "1.5rem",
-      lineHeight: "1.75rem",
+      // fontSize: "1.5rem",
+      // lineHeight: "1.75rem",
       // fontFamily: plus.style.fontFamily,
     },
     h4: {
       fontWeight: 600,
-      fontSize: "1.3125rem",
-      lineHeight: "1.6rem",
+      // fontSize: "1.3125rem",
+      // lineHeight: "1.6rem",
     },
     h5: {
       fontWeight: 600,
-      fontSize: "1.125rem",
-      lineHeight: "1.6rem",
+      // fontSize: "1.125rem",
+      // lineHeight: "1.6rem",
     },
     h6: {
       fontWeight: 600,
-      fontSize: "1rem",
-      lineHeight: "1.2rem",
+      // fontSize: "1rem",
+      // lineHeight: "1.2rem",
     },
     button: {
       textTransform: "capitalize",
       fontWeight: 500,
     },
     body1: {
-      fontSize: "0.875rem",
+      // fontSize: "0.875rem",
       fontWeight: 400,
-      lineHeight: "1.334rem",
+      // lineHeight: "1.334rem",
     },
     body2: {
-      fontSize: "0.75rem",
+      // fontSize: "0.75rem",
       letterSpacing: "0rem",
       fontWeight: 400,
-      lineHeight: "1rem",
+      // lineHeight: "1rem",
     },
     subtitle1: {
-      fontSize: "0.875rem",
+      // fontSize: "0.875rem",
       fontWeight: 400,
     },
     subtitle2: {
-      fontSize: "0.875rem",
+      // fontSize: "0.875rem",
       fontWeight: 400,
     },
   },

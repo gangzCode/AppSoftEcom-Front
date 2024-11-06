@@ -114,11 +114,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             />
           </Grid>
           <Grid md={"1"}>
-            <Box
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
+            <Box display="flex" justifyContent="space-around" alignItems="center">
               <IconButton>
                 <AccountCircleOutlined />
               </IconButton>
@@ -141,11 +137,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             sx: { width: 300, padding: 2, bgcolor: "#f7f7f7" },
           }}
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" gutterBottom>
               Your Cart
             </Typography>
@@ -156,20 +148,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {/* Cart items would go here */}
           <Typography variant="body2">Cart is currently empty.</Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              href="/checkout"
-              onClick={toggleCart}
-            >
+            <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
               Checkout
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              href="/cart"
-              onClick={toggleCart}
-            >
+            <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
               View Cart
             </Button>
           </Box>
@@ -225,41 +207,25 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             >
               <MenuItem sx={{}} onClick={handleClose}>
                 <PhoneAndroid />
-                <Typography
-                  paddingLeft={"1em"}
-                  fontSize={"16px"}
-                  fontWeight={"500"}
-                >
+                <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
                   Mobiles and Tablets
                 </Typography>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Tv />
-                <Typography
-                  paddingLeft={"1em"}
-                  fontWeight={"500"}
-                  fontSize={"16px"}
-                >
+                <Typography paddingLeft={"1em"} fontWeight={"500"} fontSize={"16px"}>
                   Televisions
                 </Typography>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Gamepad />
-                <Typography
-                  paddingLeft={"1em"}
-                  fontWeight={"500"}
-                  fontSize={"16px"}
-                >
+                <Typography paddingLeft={"1em"} fontWeight={"500"} fontSize={"16px"}>
                   Personal Care
                 </Typography>
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Keyboard />
-                <Typography
-                  paddingLeft={"1em"}
-                  fontWeight={"500"}
-                  fontSize={"16px"}
-                >
+                <Typography paddingLeft={"1em"} fontWeight={"500"} fontSize={"16px"}>
                   Accessories
                 </Typography>
               </MenuItem>
@@ -315,7 +281,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 10, alignItems: "center" }}>
             <Link
               href="#"
               fontSize={"16px"}
