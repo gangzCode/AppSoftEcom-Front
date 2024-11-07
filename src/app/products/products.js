@@ -35,6 +35,8 @@ import {
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
+import CarouselSection from "../../components/carousel";
+import BestsellerSlider from "../../components/bestsellerSlider";
 
 const products = [
   {
@@ -170,84 +172,89 @@ const ProductsPage = () => {
         </Breadcrumbs>
       </Box>
       <Box sx={{ display: "flex", padding: "20px" }}>
-        <Box sx={{ width: "25%", paddingRight: "20px" }}>
-          <TextField
-            label="Search for Product"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{
-              mb: 2,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "25px",
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+        <Box sx={{ width: "20%", paddingRight: "2.5em" }}>
+          <Box>
+            <TextField
+              label="Search for Product"
+              variant="outlined"
+              fullWidth
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "25px",
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <Accordion>
-            <AccordionSummary expandIcon={<Add />}>
-              <Typography>Category</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <FormControl fullWidth>
-                <InputLabel>Category</InputLabel>
-                <Select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  label="Category"
-                >
-                  <MenuItem value="">All</MenuItem>
-                  <MenuItem value="Category A">Category A</MenuItem>
-                  <MenuItem value="Category B">Category B</MenuItem>
-                </Select>
-              </FormControl>
-            </AccordionDetails>
-          </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<Add />}>
+                <Typography>Category</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FormControl fullWidth>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    label="Category"
+                  >
+                    <MenuItem value="">All</MenuItem>
+                    <MenuItem value="Category A">Category A</MenuItem>
+                    <MenuItem value="Category B">Category B</MenuItem>
+                  </Select>
+                </FormControl>
+              </AccordionDetails>
+            </Accordion>
 
-          <Accordion>
-            <AccordionSummary expandIcon={<Add />}>
-              <Typography>Availability</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={availability}
-                    onChange={(e) => setAvailability(e.target.checked)}
-                  />
-                }
-                label="In Stock"
-              />
-            </AccordionDetails>
-          </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<Add />}>
+                <Typography>Availability</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={availability}
+                      onChange={(e) => setAvailability(e.target.checked)}
+                    />
+                  }
+                  label="In Stock"
+                />
+              </AccordionDetails>
+            </Accordion>
 
-          <Accordion>
-            <AccordionSummary expandIcon={<Add />}>
-              <Typography>Price Range</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Slider
-                value={priceRange}
-                onChange={handlePriceRangeChange}
-                valueLabelDisplay="auto"
-                min={0}
-                max={100}
-              />
-            </AccordionDetails>
-          </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<Add />}>
+                <Typography>Price Range</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Slider
+                  value={priceRange}
+                  onChange={handlePriceRangeChange}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={100}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </Box>
+          <Box padding={"2em 0"}>
+            <BestsellerSlider />
+          </Box>
         </Box>
 
-        <Box sx={{ width: "75%" }}>
+        <Box sx={{ width: "80%" }}>
           <Box
             sx={{
               marginBottom: "30px",
