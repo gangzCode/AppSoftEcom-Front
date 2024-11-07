@@ -23,7 +23,7 @@ import Copyright from "./components/copyright";
 function App() {
   return (
   <>
-      <Grid paddingX={{ xs: "1em", md: "8em" }} paddingTop={"2em"}>
+      <Grid paddingX={{ xs: "1em", md: "8em" }}>
         <TopBar />
         <Navbar />
 
