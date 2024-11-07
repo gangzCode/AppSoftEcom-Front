@@ -1,11 +1,15 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
-import React from "react";
+import { Favorite, Layers, Search, ShoppingCart } from "@mui/icons-material";
+import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
+import React, { useState } from "react";
 
 const Deals = () => {
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+
   const cards = [
     {
       id: 1,
       image: "https://placehold.co/300x400",
+      hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
       price: "$25999.99",
       description:
         "Acer Frameless 80 cm (32 inch) HD Ready LED Smart Android TV with Google Assistant",
@@ -14,18 +18,24 @@ const Deals = () => {
     {
       id: 2,
       image: "https://placehold.co/200x300",
+      hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
+
       price: "$29.99",
       description: "Right top tall product 1.",
     },
     {
       id: 3,
       image: "https://placehold.co/200x300",
+      hoverImage: "https://placehold.co/360x340?text=Hover+Image+3",
+
       price: "$39.99",
       description: "Right top tall product 2.",
     },
     {
       id: 4,
       image: "https://placehold.co/200x300",
+      hoverImage: "https://placehold.co/360x340?text=Hover+Image+4",
+
       price: "$49.99",
       description: "Right top tall product 3.",
     },
@@ -147,17 +157,83 @@ const Deals = () => {
                         boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                       },
                     }}
+                    onMouseEnter={() => setHoveredCardId(card.id)}
+                    onMouseLeave={() => setHoveredCardId(null)}
                   >
                     <Box
-                      component="img"
-                      src={card.image}
-                      alt={card.description}
                       sx={{
+                        position: "relative",
                         width: "100%",
-                        height: "300px",
-                        objectFit: "cover",
+                        borderRadius: "10px",
+                        overflow: "hidden",
                       }}
-                    />
+                    >
+                      <Box
+                        component="img"
+                        src={card.image}
+                        alt={card.description}
+                        sx={{
+                          width: "100%",
+                          height: "auto",
+                          transition: "opacity 0.5s ease",
+                          opacity: hoveredCardId === card.id ? 0 : 1,
+                        }}
+                      />
+                      <Box
+                        component="img"
+                        src={card.hoverImage}
+                        alt={card.description}
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "auto",
+                          transition: "opacity 0.5s ease",
+                          opacity: hoveredCardId === card.id ? 1 : 0,
+                        }}
+                      />
+                    </Box>
+
+                    <Box
+                      className="hover-icons"
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        display: "flex",
+                        gap: "8px",
+                        opacity: hoveredCardId === card.id ? 1 : 0,
+                        visibility:
+                          hoveredCardId === card.id ? "visible" : "hidden",
+                        transition: "opacity 0.3s ease, visibility 0.3s ease",
+                      }}
+                    >
+                      {[
+                        { icon: <ShoppingCart />, id: "cart" },
+                        { icon: <Layers />, id: "layers" },
+                        { icon: <Favorite />, id: "favorite" },
+                        { icon: <Search />, id: "search" },
+                      ].map((item) => (
+                        <IconButton
+                          key={item.id}
+                          sx={{
+                            backgroundColor: "#2189ff",
+                            color: "#fff",
+                            borderRadius: "10px",
+                            width: "40px",
+                            height: "40px",
+                            "&:hover": {
+                              backgroundColor: "#000",
+                            },
+                          }}
+                        >
+                          {item.icon}
+                        </IconButton>
+                      ))}
+                    </Box>
+
                     <Box sx={{ padding: "10px" }}>
                       <Typography variant="h6" color="primary">
                         {card.price}

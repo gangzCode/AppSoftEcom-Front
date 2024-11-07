@@ -25,55 +25,70 @@ import {
   Tv,
   Close,
   Gamepad,
-  Keyboard, // Import Close icon
+  Keyboard,
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "styled-components";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [cartOpen, setCartOpen] = useState(false); // New state for cart slider
+  const [anchorCat, setAnchorCat] = useState(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [anchorMenu, setAnchorMenu] = useState(null);
+  const [menuIndex, setMenuIndex] = useState(null);
+  let closeMenuTimer;
 
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleHover = (event, index) => {
+    clearTimeout(closeMenuTimer);
+    setAnchorMenu(event.currentTarget);
+    setMenuIndex(index);
   };
+
+  const handleHoverClose = () => {
+    closeMenuTimer = setTimeout(() => {
+      setAnchorMenu(null);
+      setMenuIndex(null);
+    }, 100);
+  };
+
+  const open = Boolean(anchorCat);
+  const handleCatClick = (event) => {
+    setAnchorCat(event.currentTarget);
+  };
+
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorCat(null);
   };
 
   const toggleCart = () => {
     setCartOpen(!cartOpen);
   };
 
-  const sections = [
+  const menus = [
     {
-      image: "https://via.placeholder.com/600x400",
-      text: "First Section",
-      link: "#",
+      label: "Computers",
+      items: ["Phones", "Laptops", "Tablets", "Accessories"],
     },
     {
-      image: "https://via.placeholder.com/600x400",
-      text: "Second Section",
-      link: "#",
+      label: "Electronics",
+      items: ["Repair", "Consulting", "Support"],
     },
     {
-      image: "https://via.placeholder.com/600x400",
-      text: "Third Section",
-      link: "#",
+      label: "Computer Parts",
+      items: ["Our Story", "Careers", "Contact Us"],
+    },
+    {
+      label: "Home Appliance",
+      items: ["Our Story", "Careers", "Contact Us"],
+    },
+    {
+      label: "Digital Camera",
+      items: ["Our Story", "Careers", "Contact Us"],
+    },
+    {
+      label: "New Ins",
+      items: ["Our Story", "Careers", "Contact Us"],
     },
   ];
-
-  const FlipText = styled(Typography)(({ theme }) => ({
-    display: "inline-block",
-    transition: "transform 0.5s",
-    transformOrigin: "center",
-    transformStyle: "preserve-3d",
-    perspective: "1000px",
-    "&:hover": {
-      transform: "rotateY(180deg)",
-    },
-  }));
 
   return (
     <>
@@ -132,7 +147,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           </Grid>
         </Grid>
 
-        {/* Drawer for the Cart Sidebar */}
         <Drawer
           anchor="right"
           open={cartOpen}
@@ -153,7 +167,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               <Close />
             </IconButton>
           </Box>
-          {/* Cart items would go here */}
           <Typography variant="body2">Cart is currently empty.</Typography>
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Button
@@ -193,7 +206,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
+            onClick={handleCatClick}
           >
             <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
               All Categories
@@ -208,7 +221,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               },
             }}
             id="basic-menu"
-            anchorEl={anchorEl}
+            anchorEl={anchorCat}
+            anc
             open={open}
             onClose={handleClose}
             MenuListProps={{
@@ -315,7 +329,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+          {/* <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
             <Link
               href="#"
               fontSize={"16px"}
@@ -327,6 +341,128 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             >
               Computers
             </Link>
+
+            <Menu
+              sx={{
+                width: "100%",
+                "& .MuiPaper-root": {
+                  borderRadius: "0 0 20px 20px",
+                  backgroundColor: "#f3f3f3",
+                },
+              }}
+              id="basic-menu"
+              anchorEl={anchorMenu}
+              open={Boolean(anchorMenu)}
+              onClose={handleHoverClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <Grid
+                display={"flex"}
+                flexDirection={"column"}
+                padding={"1em"}
+                gap={"1em"}
+                md="4"
+                borderRadius={"200px"}
+              >
+                <MenuItem
+                  sx={{}}
+                >
+                  <PhoneAndroid />
+                  <Typography
+                    paddingLeft={"1em"}
+                    fontSize={"16px"}
+                    fontWeight={"500"}
+                  >
+                    Mobiles and Tablets
+                  </Typography>
+                </MenuItem>
+
+                <MenuItem onClick={handleClose}>
+                  <Tv />
+                  <Typography
+                    paddingLeft={"1em"}
+                    fontWeight={"500"}
+                    fontSize={"16px"}
+                  >
+                    Televisions
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <Gamepad />
+                  <Typography
+                    paddingLeft={"1em"}
+                    fontWeight={"500"}
+                    fontSize={"16px"}
+                  >
+                    Personal Care
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <Keyboard />
+                  <Typography
+                    paddingLeft={"1em"}
+                    fontWeight={"500"}
+                    fontSize={"16px"}
+                  >
+                    Accessories
+                  </Typography>
+                </MenuItem>
+              </Grid>
+              <Grid
+                display={"flex"}
+                flexDirection={"row"}
+                padding={"2em"}
+                md="4"
+              >
+                <Box>
+                  <Typography fontSize={"14px"} fontWeight={"600"} variant="p">
+                    Television
+                  </Typography>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Notebook Mini Computer
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Chrome Book Laptop
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Notebook Computer
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Two in One Laptop
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Business Smart Laptop
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Touch Screen Mini Laptop
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Ultra Book Personal Laptop
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                    <Typography fontSize={"14px"} variant="p">
+                      Ultra Portable Mini Laptop
+                    </Typography>
+                  </MenuItem>
+                </Box>
+              </Grid>
+            </Menu>
 
             <Link
               href="#"
@@ -381,6 +517,417 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             >
               New ins
             </Link>
+          </Box> */}
+
+          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+            {menus.map((menu, index) => (
+              <Box
+                key={index}
+                onMouseEnter={(e) => handleHover(e, index)}
+                onMouseLeave={handleHoverClose}
+              >
+                <Link
+                  href="#"
+                  fontSize={"16px"}
+                  fontWeight={"500"}
+                  variant="h5"
+                  color="inherit"
+                  underline="none"
+                  sx={{}}
+                >
+                  {menu.label}
+                </Link>
+
+                <Menu
+                  id={`menu-${index}`}
+                  anchorEl={anchorMenu}
+                  open={Boolean(anchorMenu) && menuIndex === index}
+                  onClose={handleHoverClose}
+                  MenuListProps={{ onMouseLeave: handleHoverClose }}
+                >
+                  {/* {menu.items.map((item, idx) => (
+                    <MenuItem key={idx} onClick={handleHoverClose}>
+                      {item}
+                    </MenuItem>
+                  ))} */}
+
+                  <Grid
+                    display={"flex"}
+                    flexDirection={"row"}
+                    padding={"2em"}
+                    gap={6}
+                    md="4"
+                  >
+                    <Box>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                        mb={"30px"}
+                      >
+                        Television
+                      </Typography>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Mini Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Chrome Book Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Two in One Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Business Smart Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Touch Screen Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Book Personal Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Portable Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                    <Box>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                      >
+                        Television
+                      </Typography>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Mini Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Chrome Book Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Two in One Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Business Smart Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Touch Screen Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Book Personal Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Portable Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                    <Box>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                      >
+                        Television
+                      </Typography>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Mini Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Chrome Book Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Two in One Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Business Smart Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Touch Screen Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Book Personal Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Portable Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                    <Box>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                      >
+                        Television
+                      </Typography>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Mini Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Chrome Book Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Two in One Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Business Smart Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Touch Screen Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Book Personal Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Portable Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                    <Box>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                      >
+                        Television
+                      </Typography>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Mini Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Chrome Book Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Notebook Computer
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Two in One Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Business Smart Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Touch Screen Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Book Personal Laptop
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
+                        <Typography fontSize={"14px"} variant="p">
+                          Ultra Portable Mini Laptop
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                  </Grid>
+                </Menu>
+              </Box>
+            ))}
           </Box>
         </Grid>
       </AppBar>
