@@ -54,8 +54,8 @@ const baselightTheme = createTheme({
       600: "#2A3547",
     },
     text: {
-      primary: "#2A3547",
-      secondary: "#5A6A85",
+      primary: "#1E1E1E",
+      secondary: "#1E1E1E",
     },
     action: {
       disabledBackground: "rgba(73,82,88,0.12)",
@@ -65,7 +65,7 @@ const baselightTheme = createTheme({
     divider: "#e5eaef",
   },
   typography: {
-    // fontFamily: "Poppins",
+    fontFamily: "Poppins, Arial, sans-serif",
     h1: {
       fontWeight: 600,
       fontSize: "2.25rem",

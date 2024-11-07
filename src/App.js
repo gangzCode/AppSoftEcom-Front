@@ -12,22 +12,18 @@ import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
 import Copyright from "./components/copyright";
-
-const theme = createTheme({
-  typography: {
-    fontFamily: "Poppins, Arial, sans-serif",
-  },
-});
+import ScrollToTopButton from "./components/ScrollToTop";
+import { baselightTheme } from "./themes/DefaultColors";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={baselightTheme}>
       <CssBaseline />
 
       <TopBar />
       <Grid paddingX={{ xs: "1em", md: "8em" }}>
         <Navbar />
-
+        <ScrollToTopButton />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />

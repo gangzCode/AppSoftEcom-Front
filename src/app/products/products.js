@@ -20,6 +20,7 @@ import {
   IconButton,
   Breadcrumbs,
   Link,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -156,6 +157,22 @@ const ProductsPage = () => {
     if (newDisplayMode) setDisplayMode(newDisplayMode);
   };
 
+  const getPriceRange = (products) => {
+    if (products.length === 0) return { lowest: null, highest: null };
+
+    let lowest = products[0].price;
+    let highest = products[0].price;
+
+    products.forEach((product) => {
+      if (product.price < lowest) lowest = product.price;
+      if (product.price > highest) highest = product.price;
+    });
+
+    return { lowest, highest };
+  };
+
+  const realPriceRange = getPriceRange(products);
+
   return (
     <Box>
       <Box>
@@ -171,7 +188,7 @@ const ProductsPage = () => {
           </Link>
         </Breadcrumbs>
       </Box>
-      <Box sx={{ display: "flex", padding: "20px" }}>
+      <Box sx={{ display: "flex", padding: "20px 0" }}>
         <Box sx={{ width: "20%", paddingRight: "2.5em" }}>
           <Box>
             <TextField
@@ -197,7 +214,7 @@ const ProductsPage = () => {
               }}
             />
 
-            <Accordion>
+            <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Category</Typography>
               </AccordionSummary>
@@ -217,7 +234,7 @@ const ProductsPage = () => {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion>
+            <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Availability</Typography>
               </AccordionSummary>
@@ -234,23 +251,130 @@ const ProductsPage = () => {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion>
+            <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Price Range</Typography>
               </AccordionSummary>
               <AccordionDetails>
+                <Typography
+                  fontSize={"16px"}
+                  fontWeight={"400"}
+                  color={"#1e1e1e"}
+                  textAlign="left"
+                  sx={{ marginBottom: "4px" }}
+                >
+                  The highest price is ${realPriceRange.highest}
+                </Typography>
                 <Slider
                   value={priceRange}
                   onChange={handlePriceRangeChange}
                   valueLabelDisplay="auto"
-                  min={0}
-                  max={100}
+                  min={realPriceRange.lowest}
+                  max={realPriceRange.highest}
                 />
+                <Box display={"flex"} gap={3} flexDirection={"row"}>
+                  <Box>
+                    <Typography
+                      fontSize={"16px"}
+                      fontWeight={"400"}
+                      color={"#1e1e1e"}
+                      textAlign="left"
+                      sx={{ marginBottom: "4px" }}
+                    >
+                      From $
+                    </Typography>
+                    <TextField
+                      variant="outlined"
+                      placeholder=""
+                      value={realPriceRange.lowest}
+                      fullWidth
+                      sx={{
+                        border: "none",
+                        input: {
+                          padding: "13px 20px",
+                        },
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "20px",
+                          backgroundColor: "#f3f3f3",
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  <Box>
+                    <Typography
+                      fontSize={"16px"}
+                      fontWeight={"400"}
+                      color={"#1e1e1e"}
+                      textAlign="left"
+                      sx={{ marginBottom: "4px" }}
+                    >
+                      To $
+                    </Typography>
+                    <TextField
+                      variant="outlined"
+                      placeholder=""
+                      value={realPriceRange.highest}
+                      fullWidth
+                      sx={{
+                        border: "none",
+                        input: {
+                          padding: "13px 20px",
+                        },
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "20px",
+                          backgroundColor: "#f3f3f3",
+                        },
+                      }}
+                    />
+                  </Box>
+                </Box>
               </AccordionDetails>
             </Accordion>
           </Box>
-          <Box padding={"2em 0"}>
+          <Box padding={"2em 0 0"}>
             <BestsellerSlider />
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: "#f5f5f5",
+              padding: "2em 1em",
+              borderRadius: "16px",
+            }}
+          >
+            <Typography
+              fontSize={"20px"}
+              fontWeight={"600"}
+              color={"#1e1e1e"}
+              textAlign="left"
+              sx={{ marginBottom: "8px", padding: "0 1em 1.5em" }}
+            >
+              Today's Trends
+            </Typography>
+
+            <Box
+              component="img"
+              src={"https://placehold.co/380x360"}
+              sx={{
+                width: { xs: "100%", md: "300px" },
+                height: "auto",
+                margin: "2em 0",
+              }}
+            />
+
+            <Button
+              sx={{
+                backgroundColor: "#2189ff",
+                padding: ".4em 1.8em",
+                borderRadius: "8px",
+                textTransform: "unset",
+                fontSize: "16px",
+                fontWeight: "500",
+              }}
+              variant="contained"
+            >
+              Shop Now
+            </Button>
           </Box>
         </Box>
 
@@ -512,13 +636,13 @@ const ProductsPage = () => {
                   fontSize={"12px"}
                   color={"#bebebe"}
                   textAlign="left"
-                  sx={{ letterSpacing: "1px", marginBottom: "8px" }}
+                  sx={{ letterSpacing: "1px", marginBottom: "4px" }}
                 >
                   {product.category}
                 </Typography>
                 <Typography
                   variant="body1"
-                  fontWeight="bold"
+                  fontWeight="500"
                   textAlign="left"
                   sx={{ marginBottom: "8px" }}
                 >
