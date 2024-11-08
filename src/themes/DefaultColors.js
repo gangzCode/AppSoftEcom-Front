@@ -58,6 +58,12 @@ const baselightTheme = createTheme({
       dark: "#2189ff",
       contrastText: getContrastRatio(alpha("#000000", 0.9), "#fff") > 4.5 ? "#fff" : "#111",
     },
+    blackiconbutton: {
+      main: alpha("#000000", 0.9),
+      light: "#2189ff",
+      dark: "#2189ff",
+      contrastText: getContrastRatio(alpha("#000000", 0.9), "#fff") > 4.5 ? "#fff" : "#111",
+    },
     grey: {
       100: "#F2F6FA",
       200: "#EAEFF4",
