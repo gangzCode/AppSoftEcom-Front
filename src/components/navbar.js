@@ -15,6 +15,7 @@ import {
   Drawer,
   Menu,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -29,6 +30,8 @@ import {
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "styled-components";
+import CartSliderItem from "./CartSlider/cartSliderItem";
+import CartSliderNotes from "./CartSlider/cartSliderNotes";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -134,19 +137,44 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           open={cartOpen}
           onClose={toggleCart}
           PaperProps={{
-            sx: { width: 300, padding: 2, bgcolor: "#f7f7f7" },
+            sx: { width: { xs: "100%", md: 400 }, p: 4, bgcolor: "#f7f7f7" },
           }}
         >
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" gutterBottom>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            flexDirection={"row"}
+            alignItems="flex-end"
+          >
+            <Typography variant="h4" fontWeight={"light"} gutterBottom>
               Your Cart
             </Typography>
-            <IconButton onClick={toggleCart}>
+            <IconButton onClick={toggleCart} color="blackbutton">
               <Close />
             </IconButton>
           </Box>
+          <Divider />
           {/* Cart items would go here */}
-          <Typography variant="body2">Cart is currently empty.</Typography>
+          <CartSliderItem />
+          <CartSliderItem />
+          <CartSliderNotes />
+          <Box
+            sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
+            display={"flex"}
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+          >
+            <Typography variant="body1" fontWeight="bold">
+              Total
+            </Typography>
+            <Typography variant="body1" fontWeight="bold">
+              ${"1000"}
+            </Typography>
+          </Box>
+          <Typography variant="body1" mt={2} fontSize={14}>
+            Shipping, taxes, and discounts will be calculated at checkout.
+          </Typography>
+          {/* <Typography variant="body2">Cart is currently empty.</Typography> */}
           <Box display="flex" justifyContent="space-between" marginTop={2}>
             <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
               Checkout
