@@ -13,6 +13,8 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Paper,
+  Grow,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -37,9 +39,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [menuIndex, setMenuIndex] = useState(null);
   let closeMenuTimer;
 
-  const handleHover = (event, index) => {
+  const handleHover = ( index) => {
     clearTimeout(closeMenuTimer);
-    setAnchorMenu(event.currentTarget);
+    // console.log(event.currentTarget);
+
+    // setAnchorMenu(event.currentTarget);
     setMenuIndex(index);
   };
 
@@ -196,7 +200,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           </Box>
         </Drawer>
 
-      <Grid display={"flex"} paddingY={"2em"}>
+      <Grid display={"flex"} alignItems={"center"} py={2}>
         <Button
           color="inherit"
           sx={{
@@ -204,6 +208,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
             color: "white",
             borderRadius: "20px",
+            height: "fit-content",
             "&:hover": {
               backgroundColor: "#1a76d2",
             },
@@ -267,10 +272,12 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {menus.map((menu, index) => (
             <Box
               key={index}
-              onMouseEnter={(e) => handleHover(e, index)}
+              onMouseEnter={(e) => handleHover( index)}
               onMouseLeave={handleHoverClose}
               sx={{
                 position: "relative",
+                // bgcolor: "primary.main",
+                py: 3,
                 "& .MuiMenu-paper": {
                   opacity: 0,
                   visibility: "hidden",
@@ -295,11 +302,21 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 {menu.label}
               </Link>
 
-              <Menu
+              {/* <Menu
                 id={`menu-${index}`}
                 anchorEl={anchorMenu}
                 open={Boolean(anchorMenu) && menuIndex === index}
+                // onMouseLeave={handleHoverClose}
                 onClose={handleHoverClose}
+                // transitionDuration={0.2}
+
+                MenuListProps={{
+                  // onMouseEnter: handleMouseEnter,
+                  onMouseLeave: handleHoverClose,
+                  sx: {
+                    pointerEvents: "all",
+                  },
+                }}
                 sx={{
                   "& .MuiPaper-root": {
                     borderRadius: "0 0 20px 20px",
@@ -307,6 +324,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                     opacity: 1, // Set opacity to 1 when menu is open
                     visibility: "visible",
                     transition: "opacity 0.3s ease", // Smooth transition for submenu
+                    pointerEvents: "none",
                   },
                 }}
               >
@@ -324,11 +342,50 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                     </Box>
                   ))}
                 </Grid>
-              </Menu>
+              </Menu> */}
             </Box>
           ))}
         </Box>
       </Grid>
+      <Box position={"relative"} width={"100%"}>
+        {menus.map((menu, index) => (
+          <Grow in={menuIndex === index}>
+            <Box
+              py={4}
+              px={6}
+              sx={{
+                position: "absolute",
+                left: 0,
+                top: -25,
+                bgcolor: "#f3f3f3",
+                width: "100%",
+                // display: Boolean(anchorMenu) && menuIndex === index ? "block" : "none",
+                boxShadow: "0 1px 5px rgba(0,0,0,.1)",
+              }}
+              onMouseEnter={() => handleHover(index)}
+              onMouseLeave={handleHoverClose}
+              // onMouseHover={handleHover}
+            >
+              <Grid container>
+                {menu.items.map((item, idx) => (
+                  <Grid item xs={3}>
+                    <Box key={idx}>
+                      <Typography fontSize={"14px"} fontWeight={"600"} variant="p" mb={"30px"}>
+                        {menu.label}
+                      </Typography>
+                      <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                        <Typography fontSize={"14px"} variant="p">
+                          {item}
+                        </Typography>
+                      </MenuItem>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          </Grow>
+        ))}
+      </Box>
     </AppBar>
   );
 };

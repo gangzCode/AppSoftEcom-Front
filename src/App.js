@@ -7,7 +7,7 @@ import React from "react";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import HomePage from "./app/page";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
@@ -22,11 +22,12 @@ import Copyright from "./components/copyright";
 
 function App() {
   return (
-  <>
-      <Grid paddingX={{ xs: "1em", md: "8em" }}>
+    <>
+      <Box>
         <TopBar />
+      </Box>
+      <Box paddingX={{ xs: "1em", md: "8em" }}>
         <Navbar />
-
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -38,7 +39,7 @@ function App() {
         </BrowserRouter>
 
         <Footer />
-      </Grid>
+      </Box>
       <Copyright />
     </>
   );
