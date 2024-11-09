@@ -39,7 +39,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [menuIndex, setMenuIndex] = useState(null);
   let closeMenuTimer;
 
-  const handleHover = ( index) => {
+  const handleHover = (index) => {
     clearTimeout(closeMenuTimer);
     // console.log(event.currentTarget);
 
@@ -66,6 +66,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const toggleCart = () => {
     setCartOpen(!cartOpen);
   };
+
+  // console.log([...Array(5 - 3)]);
 
   const menus = [
     {
@@ -146,59 +148,59 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Grid>
       </Grid>
 
-        {/* Drawer for the Cart Sidebar */}
-        <Drawer
-          anchor="right"
-          open={cartOpen}
-          onClose={toggleCart}
-          PaperProps={{
-            sx: { width: { xs: "100%", md: 400 }, p: 4, bgcolor: "#f7f7f7" },
-          }}
+      {/* Drawer for the Cart Sidebar */}
+      <Drawer
+        anchor="right"
+        open={cartOpen}
+        onClose={toggleCart}
+        PaperProps={{
+          sx: { width: { xs: "100%", md: 400 }, p: 4, bgcolor: "#f7f7f7" },
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexDirection={"row"}
+          alignItems="flex-end"
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            flexDirection={"row"}
-            alignItems="flex-end"
-          >
-            <Typography variant="h4" fontWeight={"light"} gutterBottom>
-              Your Cart
-            </Typography>
-            <IconButton onClick={toggleCart} color="blackbutton">
-              <Close />
-            </IconButton>
-          </Box>
-          <Divider />
-          {/* Cart items would go here */}
-          <CartSliderItem />
-          <CartSliderItem />
-          <CartSliderNotes />
-          <Box
-            sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
-            display={"flex"}
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-          >
-            <Typography variant="body1" fontWeight="bold">
-              Total
-            </Typography>
-            <Typography variant="body1" fontWeight="bold">
-              ${"1000"}
-            </Typography>
-          </Box>
-          <Typography variant="body1" mt={2} fontSize={14}>
-            Shipping, taxes, and discounts will be calculated at checkout.
+          <Typography variant="h4" fontWeight={"light"} gutterBottom>
+            Your Cart
           </Typography>
-          {/* <Typography variant="body2">Cart is currently empty.</Typography> */}
-          <Box display="flex" justifyContent="space-between" marginTop={2}>
-            <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
-              Checkout
-            </Button>
-            <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
-              View Cart
-            </Button>
-          </Box>
-        </Drawer>
+          <IconButton onClick={toggleCart} color="blackbutton">
+            <Close />
+          </IconButton>
+        </Box>
+        <Divider />
+        {/* Cart items would go here */}
+        <CartSliderItem />
+        <CartSliderItem />
+        <CartSliderNotes />
+        <Box
+          sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+        >
+          <Typography variant="body1" fontWeight="bold">
+            Total
+          </Typography>
+          <Typography variant="body1" fontWeight="bold">
+            ${"1000"}
+          </Typography>
+        </Box>
+        <Typography variant="body1" mt={2} fontSize={14}>
+          Shipping, taxes, and discounts will be calculated at checkout.
+        </Typography>
+        {/* <Typography variant="body2">Cart is currently empty.</Typography> */}
+        <Box display="flex" justifyContent="space-between" marginTop={2}>
+          <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
+            Checkout
+          </Button>
+          <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
+            View Cart
+          </Button>
+        </Box>
+      </Drawer>
 
       <Grid display={"flex"} alignItems={"center"} py={2}>
         <Button
@@ -272,7 +274,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           {menus.map((menu, index) => (
             <Box
               key={index}
-              onMouseEnter={(e) => handleHover( index)}
+              onMouseEnter={(e) => handleHover(index)}
               onMouseLeave={handleHoverClose}
               sx={{
                 position: "relative",
@@ -368,7 +370,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             >
               <Grid container>
                 {menu.items.map((item, idx) => (
-                  <Grid item xs={3}>
+                  <Grid item xs={2.4}>
                     <Box key={idx}>
                       <Typography fontSize={"14px"} fontWeight={"600"} variant="p" mb={"30px"}>
                         {menu.label}
@@ -381,6 +383,20 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                     </Box>
                   </Grid>
                 ))}
+
+                {[...Array(5 - menu.items.length)].map((item, i) => {
+                  return (
+                    <Grid item xs={2.4}>
+                      <Box
+                        key={i}
+                        component={"img"}
+                        src="https://dt-elektrix.myshopify.com/cdn/shop/files/Elektrix_Mega_Menu_3.png?v=1667563640"
+                        height={"100%"}
+                        width={"auto"}
+                      />
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Box>
           </Grow>
