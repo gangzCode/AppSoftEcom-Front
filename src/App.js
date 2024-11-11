@@ -7,36 +7,44 @@ import React from "react";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import HomePage from "./app/page";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import ProductsPage from "./app/products/products";
 import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
 import Copyright from "./components/copyright";
-import ScrollToTopButton from "./components/ScrollToTop";
-import { baselightTheme } from "./themes/DefaultColors";
+
+// Define theme
+/* const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins, Arial, sans-serif",
+  },
+}); */
 
 function App() {
   return (
-    <ThemeProvider theme={baselightTheme}>
-      <CssBaseline />
-
-      <TopBar />
-      <Grid paddingX={{ xs: "1em", md: "8em" }}>
+    <>
+      <Box>
+        <TopBar />
+      </Box>
+      <Box paddingX={{ xs: "1em", md: "8em" }}>
         <Navbar />
-        <ScrollToTopButton />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/products" element={<ProductsPage />} />
-            <Route path="/productsDetail" element={<ProductDetailsPage />} />
+            <Route
+              path="/products/:productId"
+              element={<ProductDetailsPage />}
+            />
           </Routes>
         </BrowserRouter>
+
         <Footer />
-      </Grid>
+      </Box>
       <Copyright />
-    </ThemeProvider>
+    </>
   );
 }
 
