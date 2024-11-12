@@ -14,6 +14,7 @@ import TopBar from "./components/topBar";
 import Copyright from "./components/copyright";
 import ProfilePage from "./app/Profile/page";
 import SignInSignUpPage from "./app/SignIn/page";
+import ScrollToTopButton from "./components/ScrollToTop";
 
 // Define theme
 /* const theme = createTheme({
@@ -47,6 +48,7 @@ function Layout() {
         {!isAuthPage && <Footer />}
       </Box>
       <Copyright />
+      <ScrollToTopButton />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -32,7 +32,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
-import {getCategoriesForAllCategoriesDrop} from "../services/apiCalls";
+import { getCategoriesForAllCategoriesDrop } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -43,7 +43,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   let closeMenuTimer;
 
-
   const handleCatClick = async (event) => {
     setAnchorCat(event.currentTarget);
 
@@ -52,11 +51,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       try {
         const response = await getCategoriesForAllCategoriesDrop();
         setCategories(response.data);
-        console.log('responseee',response.data);
+        console.log("responseee", response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
-
     }
   };
 
@@ -274,7 +272,12 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           open={open}
           onClose={handleClose}
         >
-          <Grid display={"flex"} flexDirection={"column"} padding={"1em"} gap={"1em"}>
+          <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            padding={"1em"}
+            gap={"1em"}
+          >
             {categories.map((category) => (
               <MenuItem key={category.id} onClick={handleClose}>
                 <img
@@ -282,7 +285,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   alt={category.name.En} // Alt text using the category name
                   style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
                 />
-                <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+                <Typography
+                  paddingLeft={"1em"}
+                  fontSize={"16px"}
+                  fontWeight={"500"}
+                >
                   {category.name.En}
                 </Typography>
               </MenuItem>
