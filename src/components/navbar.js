@@ -52,9 +52,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       try {
         const response = await getCategoriesForAllCategoriesDrop();
         setCategories(response.data);
+        console.log('responseee',response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
+
     }
   };
 
@@ -272,52 +274,19 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           open={open}
           onClose={handleClose}
         >
-          <Grid
-            display={"flex"}
-            flexDirection={"column"}
-            padding={"1em"}
-            gap={"1em"}
-          >
-            <MenuItem onClick={handleClose}>
-              <PhoneAndroid />
-              <Typography
-                paddingLeft={"1em"}
-                fontSize={"16px"}
-                fontWeight={"500"}
-              >
-                Mobiles and Tablets
-              </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Tv />
-              <Typography
-                paddingLeft={"1em"}
-                fontSize={"16px"}
-                fontWeight={"500"}
-              >
-                Televisions
-              </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Gamepad />
-              <Typography
-                paddingLeft={"1em"}
-                fontSize={"16px"}
-                fontWeight={"500"}
-              >
-                Personal Care
-              </Typography>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Keyboard />
-              <Typography
-                paddingLeft={"1em"}
-                fontSize={"16px"}
-                fontWeight={"500"}
-              >
-                Accessories
-              </Typography>
-            </MenuItem>
+          <Grid display={"flex"} flexDirection={"column"} padding={"1em"} gap={"1em"}>
+            {categories.map((category) => (
+              <MenuItem key={category.id} onClick={handleClose}>
+                <img
+                  src={category.image} // Use the category's image URL from the API
+                  alt={category.name.En} // Alt text using the category name
+                  style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
+                />
+                <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+                  {category.name.En}
+                </Typography>
+              </MenuItem>
+            ))}
           </Grid>
         </Menu>
 
