@@ -11,6 +11,7 @@ import {
   Tabs,
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 const SignInSignUpPage = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -77,9 +78,16 @@ const SignInSignUpPage = () => {
               type="password"
             />
           )}
-          <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-            {tabIndex === 0 ? "Sign In" : "Sign Up"}
-          </Button>
+          <Link to={"/profile"}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              {tabIndex === 0 ? "Sign In" : "Sign Up"}
+            </Button>
+          </Link>
         </Box>
       </Paper>
     </Container>
