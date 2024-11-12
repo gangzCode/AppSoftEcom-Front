@@ -6,7 +6,7 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  Link,
+  Link as MuiLink,
   TextField,
   Typography,
   Drawer,
@@ -16,6 +16,8 @@ import {
   Paper,
   Grow,
 } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+
 import {
   AccountCircleOutlined,
   FavoriteBorderRounded,
@@ -28,7 +30,6 @@ import {
   Keyboard,
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "styled-components";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
 import {getCategoriesForAllCategoriesDrop} from "../services/apiCalls";
@@ -115,7 +116,9 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     <AppBar position="sticky" elevation={0} color="">
       <Grid pt={"2em"} container alignItems={"center"}>
         <Grid md={2}>
-          <img src="https://placehold.co/200x40" alt="Logo" />
+          <RouterLink to={"/"}>
+            <img src="https://placehold.co/200x40" alt="Logo" />
+          </RouterLink>
         </Grid>
         <Grid md={9}>
           <TextField
@@ -151,19 +154,24 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <Grid md={1}>
           <Box display="flex" justifyContent="space-around" alignItems="center">
             <IconButton>
-              <AccountCircleOutlined />
+              <RouterLink to={"/signin"}>
+                <AccountCircleOutlined />
+              </RouterLink>
             </IconButton>
             <IconButton>
-              <FavoriteBorderRounded />
+              <RouterLink>
+                <FavoriteBorderRounded />
+              </RouterLink>
             </IconButton>
             <IconButton onClick={toggleCart}>
-              <ShoppingCartOutlined />
+              <RouterLink>
+                <ShoppingCartOutlined />
+              </RouterLink>
             </IconButton>
           </Box>
         </Grid>
       </Grid>
 
-      {/* Drawer for the Cart Sidebar */}
       <Drawer
         anchor="right"
         open={cartOpen}
@@ -186,7 +194,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           </IconButton>
         </Box>
         <Divider />
-        {/* Cart items would go here */}
         <CartSliderItem />
         <CartSliderItem />
         <CartSliderNotes />
@@ -208,10 +215,20 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Typography>
         {/* <Typography variant="body2">Cart is currently empty.</Typography> */}
         <Box display="flex" justifyContent="space-between" marginTop={2}>
-          <Button variant="contained" color="primary" href="/checkout" onClick={toggleCart}>
+          <Button
+            variant="contained"
+            color="primary"
+            href="/checkout"
+            onClick={toggleCart}
+          >
             Checkout
           </Button>
-          <Button variant="contained" color="primary" href="/cart" onClick={toggleCart}>
+          <Button
+            variant="contained"
+            color="primary"
+            href="/cart"
+            onClick={toggleCart}
+          >
             View Cart
           </Button>
         </Box>
@@ -255,28 +272,49 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           open={open}
           onClose={handleClose}
         >
-          <Grid display={"flex"} flexDirection={"column"} padding={"1em"} gap={"1em"}>
+          <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            padding={"1em"}
+            gap={"1em"}
+          >
             <MenuItem onClick={handleClose}>
               <PhoneAndroid />
-              <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+              <Typography
+                paddingLeft={"1em"}
+                fontSize={"16px"}
+                fontWeight={"500"}
+              >
                 Mobiles and Tablets
               </Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <Tv />
-              <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+              <Typography
+                paddingLeft={"1em"}
+                fontSize={"16px"}
+                fontWeight={"500"}
+              >
                 Televisions
               </Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <Gamepad />
-              <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+              <Typography
+                paddingLeft={"1em"}
+                fontSize={"16px"}
+                fontWeight={"500"}
+              >
                 Personal Care
               </Typography>
             </MenuItem>
             <MenuItem onClick={handleClose}>
               <Keyboard />
-              <Typography paddingLeft={"1em"} fontSize={"16px"} fontWeight={"500"}>
+              <Typography
+                paddingLeft={"1em"}
+                fontSize={"16px"}
+                fontWeight={"500"}
+              >
                 Accessories
               </Typography>
             </MenuItem>
@@ -298,11 +336,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 "& .MuiMenu-paper": {
                   opacity: 0,
                   visibility: "hidden",
-                  transition: "opacity 0.3s ease, visibility 0.3s ease", // Smooth fade-in
+                  transition: "opacity 0.3s ease, visibility 0.3s ease",
                 },
               }}
             >
-              <Link
+              <MuiLink
                 href="#"
                 fontSize={"16px"}
                 fontWeight={"500"}
@@ -311,13 +349,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 underline="none"
                 sx={{
                   "&:hover": {
-                    color: "#2189ff", // Change color to blue on hover
+                    color: "#2189ff",
                   },
-                  transition: "color 0.3s ease", // Smooth color transition
+                  transition: "color 0.3s ease",
                 }}
               >
                 {menu.label}
-              </Link>
+              </MuiLink>
 
               {/* <Menu
                 id={`menu-${index}`}
@@ -387,10 +425,18 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 {menu.items.map((item, idx) => (
                   <Grid item xs={2.4}>
                     <Box key={idx}>
-                      <Typography fontSize={"14px"} fontWeight={"600"} variant="p" mb={"30px"}>
+                      <Typography
+                        fontSize={"14px"}
+                        fontWeight={"600"}
+                        variant="p"
+                        mb={"30px"}
+                      >
                         {menu.label}
                       </Typography>
-                      <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
+                      <MenuItem
+                        sx={{ padding: "10px 0" }}
+                        onClick={handleClose}
+                      >
                         <Typography fontSize={"14px"} variant="p">
                           {item}
                         </Typography>
