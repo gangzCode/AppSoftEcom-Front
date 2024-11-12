@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import {
   AppBar,
   Box,
@@ -31,13 +31,31 @@ import SearchIcon from "@mui/icons-material/Search";
 import styled from "styled-components";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
+import {getCategoriesForAllCategoriesDrop} from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [anchorMenu, setAnchorMenu] = useState(null);
   const [menuIndex, setMenuIndex] = useState(null);
+  const [categories, setCategories] = useState([]);
+
   let closeMenuTimer;
+
+
+  const handleCatClick = async (event) => {
+    setAnchorCat(event.currentTarget);
+
+    // Fetch categories only if they haven't been loaded already
+    if (categories.length === 0) {
+      try {
+        const response = await getCategoriesForAllCategoriesDrop();
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+  };
 
   const handleHover = (index) => {
     clearTimeout(closeMenuTimer);
@@ -55,9 +73,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   };
 
   const open = Boolean(anchorCat);
-  const handleCatClick = (event) => {
-    setAnchorCat(event.currentTarget);
-  };
 
   const handleClose = () => {
     setAnchorCat(null);
