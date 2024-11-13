@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Grid, Typography, Link } from "@mui/material";
 import { ArrowRightAlt, ChevronRight, ExpandMore } from "@mui/icons-material";
 
-const ShopNow = () => {
+const HomeBetweenBanner = () => {
   const sections = [
     {
       image: "https://placehold.co/600x400",
@@ -73,4 +73,4 @@ const ShopNow = () => {
   );
 };
 
-export default ShopNow;
+export default HomeBetweenBanner;
