@@ -1,110 +1,166 @@
 import React from "react";
 import {
   Container,
-  Box,
-  Avatar,
+  Grid,
   Typography,
+  TextField,
   Button,
-  Paper,
+  Avatar,
   Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
   IconButton,
+  Box,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import EmailIcon from "@mui/icons-material/Email";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PaymentIcon from "@mui/icons-material/Payment";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  Email,
+  AccountCircle,
+  CalendarToday,
+  Phone,
+  Person,
+} from "@mui/icons-material";
 
-const ProfilePage = () => {
+function ProfilePage() {
   return (
-    <Container maxWidth="md">
-      <Paper elevation={3} sx={{ p: 3, my: 3 }}>
-        <Box display="flex" alignItems="center">
+    <Container sx={{ marginY: 8 }}>
+      {/* Breadcrumb */}
+      <Typography variant="body2" color="textSecondary">
+        Home / Account
+      </Typography>
+
+      {/* Page Title */}
+      <Typography variant="h4" sx={{ fontWeight: "bold", marginTop: 2 }}>
+        My Account
+      </Typography>
+
+      {/* Profile Section */}
+      <Grid container alignItems="center" spacing={2} sx={{ marginTop: 3 }}>
+        <Grid item xs={12} sm="auto">
           <Avatar
-            alt="User Name"
-            src="/profile-picture.jpg"
-            sx={{ width: 80, height: 80, mr: 2 }}
+            alt="User Profile"
+            src="/path-to-profile-picture.jpg"
+            sx={{ width: 100, height: 100, borderRadius: 2 }}
           />
-          <Box flexGrow={1}>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              John Doe
+        </Grid>
+        <Grid item xs>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Brinthan
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Email fontSize="small" sx={{ marginRight: 0.5 }} />{" "}
+            brinthsega@gmail.com
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ padding: "8px 16px", textTransform: "none" }}
+          >
+            Sign Out
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ my: 3 }} />
+
+      <Grid container spacing={4}>
+        <Grid item xs={12} sm={3}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Typography
+              variant="subtitle1"
+              color="primary"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <Person sx={{ marginRight: 1 }} /> Account Overview
             </Typography>
-            <Typography variant="body2" color="textSecondary">
-              johndoe@example.com
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            >
+              <AccountCircle sx={{ marginRight: 1 }} /> Address Book
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            >
+              <Phone sx={{ marginRight: 1 }} /> My Orders
             </Typography>
           </Box>
-          <IconButton color="primary" aria-label="edit-profile">
-            <EditIcon />
-          </IconButton>
-        </Box>
-      </Paper>
+        </Grid>
 
-      <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Profile Information
-        </Typography>
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <EmailIcon />
-            </ListItemIcon>
-            <ListItemText primary="Email" secondary="johndoe@example.com" />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <LocationOnIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Address"
-              secondary="123 Main Street, City, Country"
-            />
-          </ListItem>
-        </List>
-      </Paper>
+        <Grid item xs={12} sm={9}>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Account Overview
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ marginBottom: 2 }}
+          >
+            Feel free to edit any of your details so your account is totally up
+            to date.
+          </Typography>
 
-      <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Payment & Orders
-        </Typography>
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <PaymentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Payment History" secondary="$189" />
-            <Button variant="outlined" color="primary" size="small">
-              Manage
-            </Button>
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <ListItemIcon>
-              <ShoppingCartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Order History" secondary="View all orders" />
-            <Button variant="outlined" color="primary" size="small">
-              View
-            </Button>
-          </ListItem>
-        </List>
-      </Paper>
-
-      <Box textAlign="center" sx={{ mt: 3 }}>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<LogoutIcon />}
-        >
-          Logout
-        </Button>
-      </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField fullWidth label="Your Name" required />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField fullWidth label="E-mail Address" required />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Date of Birth"
+                placeholder="MM/DD/YYYY"
+                InputProps={{
+                  endAdornment: (
+                    <IconButton position="end">
+                      <CalendarToday fontSize="small" />
+                    </IconButton>
+                  ),
+                }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                select
+                SelectProps={{ native: true }}
+                required
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Phone Number" required />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{
+                  padding: 2,
+                  fontSize: "16px",
+                  // "&:hover": { backgroundColor: "#333" },
+                }}
+              >
+                Save Changes
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </Container>
   );
-};
+}
 
 export default ProfilePage;
