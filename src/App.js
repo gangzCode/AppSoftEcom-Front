@@ -15,6 +15,8 @@ import Copyright from "./components/copyright";
 import ProfilePage from "./app/Profile/page";
 import SignInSignUpPage from "./app/SignIn/page";
 import ScrollToTopButton from "./components/ScrollToTop";
+import FAQPage from "./app/Faq/page";
+import NotFoundPage from "./components/404";
 
 // Define theme
 /* const theme = createTheme({
@@ -42,7 +44,9 @@ function Layout() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signin" element={<SignInSignUpPage />} />
-          <Route path="/products/:productId" element={<ProductDetailsPage />} />
+          <Route path="/product" element={<ProductDetailsPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
         {!isAuthPage && <Footer />}
