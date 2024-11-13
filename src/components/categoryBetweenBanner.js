@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 
-const BestSeller2 = () => {
+const CategoryBetweenBanner = () => {
   const cards = [
     {
       id: 1,
@@ -105,4 +105,4 @@ const BestSeller2 = () => {
   );
 };
 
-export default BestSeller2;
+export default CategoryBetweenBanner;

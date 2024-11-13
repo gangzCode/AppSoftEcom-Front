@@ -290,7 +290,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   fontSize={"16px"}
                   fontWeight={"500"}
                 >
-                  {category.name.En}
+                  {category.name}
                 </Typography>
               </MenuItem>
             ))}

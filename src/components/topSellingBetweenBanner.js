@@ -28,7 +28,7 @@ const promoItems = [
   },
 ];
 
-const PromoSection = () => {
+const TopSellingBetweenBanner = () => {
   return (
     <Box sx={{ padding: "30px 0" }}>
       <Grid container spacing={3} justifyContent="center">
@@ -196,4 +196,4 @@ const PromoSection = () => {
   );
 };
 
-export default PromoSection;
+export default TopSellingBetweenBanner;
