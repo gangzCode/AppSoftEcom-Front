@@ -132,13 +132,23 @@ const Deals = () => {
                 >
                   Laptops
                 </Typography>
-                <Typography
-                  variant="body1"
-                  fontSize={"16px"}
-                  fontWeight={"500"}
+
+                <Box
+                  display={"flex"}
+                  // alignItems="center"
+
+                  justifyContent="space-between"
+                  sx={{ marginTop: "auto" }}
                 >
-                  {cards[0].description}
-                </Typography>
+                  <Typography
+                    variant="body1"
+                    fontSize={"16px"}
+                    fontWeight={"500"}
+                  >
+                    {cards[0].description}
+                  </Typography>
+                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
+                </Box>
               </Box>
             </Box>
           </Grid>
