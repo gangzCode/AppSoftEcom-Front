@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Tabs,
@@ -12,101 +12,191 @@ import {
   IconButton,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { getTopSellingProducts } from "../services/apiCalls";
 
-const products = {
-  BestSellers: [
-    {
-      id: 1,
-      category: "Television-Sky",
-      title: "Ultra HD Android Smart LED TV X43 ultrs plus hd",
-      price: 25990,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 2,
-      category: "Products-Vibe",
-      title: "Newly launched Bluetooth Calling Smartwatch",
-      price: 2999,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 3,
-      category: "Electro",
-      title: "Isolated Black Desktop computer",
-      price: 2897,
-      originalPrice: 4599,
-      image: "https://via.placeholder.com/200",
-      discount: "35%",
-      soldOut: false,
-    },
-    {
-      id: 4,
-      category: "Products-Vibe",
-      title: "Wireless Earbud Bluetooth Headphone",
-      price: 1290,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: true,
-    },
-  ],
-  NewArrivals: [
-    {
-      id: 5,
-      category: "Television-Sky",
-      title: "4K Ultra HD Smart LED Fire TV",
-      price: 54999,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 6,
-      category: "Mobile Veritas",
-      title: "Wireless Gaming Controller Joystick",
-      price: 790,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 7,
-      category: "Electro",
-      title: "Inverter Split AC",
-      price: 34980,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-  ],
-  TopSellings: [
-    {
-      id: 8,
-      category: "Mobile Veritas",
-      title: "G21 Android Smartphone Dual SIM",
-      price: 25990,
-      originalPrice: 30000,
-      image: "https://via.placeholder.com/200",
-      discount: "13%",
-      soldOut: false,
-    },
-    {
-      id: 9,
-      category: "Products-Vibe",
-      title: "Cozy Padded Earcups Headphones",
-      price: 1544,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: true,
-    },
-  ],
-};
+// const products = {
+//   BestSellers: [
+//     {
+//       id: 1,
+//       category: "Television-Sky",
+//       name: "Ultra HD Android Smart LED TV X43 ultrs plus hd",
+//       price: 25990,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: false,
+//     },
+//     {
+//       id: 2,
+//       category: "Products-Vibe",
+//       title: "Newly launched Bluetooth Calling Smartwatch",
+//       price: 2999,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: false,
+//     },
+//     {
+//       id: 3,
+//       category: "Electro",
+//       title: "Isolated Black Desktop computer",
+//       price: 2897,
+//       originalPrice: 4599,
+//       image: "https://via.placeholder.com/200",
+//       discount: "35%",
+//       soldOut: false,
+//     },
+//     {
+//       id: 4,
+//       category: "Products-Vibe",
+//       title: "Wireless Earbud Bluetooth Headphone",
+//       price: 1290,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: true,
+//     },
+//   ],
+//   NewArrivals: [
+//     {
+//       id: 5,
+//       category: "Television-Sky",
+//       title: "4K Ultra HD Smart LED Fire TV",
+//       price: 54999,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: false,
+//     },
+//     {
+//       id: 6,
+//       category: "Mobile Veritas",
+//       title: "Wireless Gaming Controller Joystick",
+//       price: 790,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: false,
+//     },
+//     {
+//       id: 7,
+//       category: "Electro",
+//       title: "Inverter Split AC",
+//       price: 34980,
+//       image: "https://via.placeholder.com/200",
+//       discount: null,
+//       soldOut: false,
+//     },
+//   ],
+//   // TopSellings: [
+//   //   {
+//   //     id: 8,
+//   //     category: "Mobile Veritas",
+//   //     title: "G21 Android Smartphone Dual SIM",
+//   //     price: 25990,
+//   //     originalPrice: 30000,
+//   //     image: "https://via.placeholder.com/200",
+//   //     discount: "13%",
+//   //     soldOut: false,
+//   //   },
+//   //   {
+//   //     id: 9,
+//   //     category: "Products-Vibe",
+//   //     title: "Cozy Padded Earcups Headphones",
+//   //     price: 1544,
+//   //     image: "https://via.placeholder.com/200",
+//   //     discount: null,
+//   //     soldOut: true,
+//   //   },
+//   // ],
+// };
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [products, setproducts] = useState({
+    BestSellers: [
+      {
+        id: 1,
+        category_name: "Television-Sky",
+        name: "Ultra HD Android Smart LED TV X43 ultrs plus hd",
+        price: 25990,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: false,
+      },
+      {
+        id: 2,
+        category_name: "Products-Vibe",
+        name: "Newly launched Bluetooth Calling Smartwatch",
+        price: 2999,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: false,
+      },
+      {
+        id: 3,
+        category_name: "Electro",
+        name: "Isolated Black Desktop computer",
+        price: 2897,
+        originalPrice: 4599,
+        image: "https://via.placeholder.com/200",
+        discount: "35%",
+        soldOut: false,
+      },
+      {
+        id: 4,
+        category_name: "Products-Vibe",
+        name: "Wireless Earbud Bluetooth Headphone",
+        price: 1290,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: true,
+      },
+    ],
+    NewArrivals: [
+      {
+        id: 5,
+        category_name: "Television-Sky",
+        name: "4K Ultra HD Smart LED Fire TV",
+        price: 54999,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: false,
+      },
+      {
+        id: 6,
+        category_name: "Mobile Veritas",
+        name: "Wireless Gaming Controller Joystick",
+        price: 790,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: false,
+      },
+      {
+        id: 7,
+        category_name: "Electro",
+        name: "Inverter Split AC",
+        price: 34980,
+        image: "https://via.placeholder.com/200",
+        discount: null,
+        soldOut: false,
+      },
+    ],
+    TopSellings: [],
+  });
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await getTopSellingProducts();
+        const data = await response.data;
+        setproducts((prevProducts) => ({
+          ...prevProducts,
+          BestSellers: data,
+        }));
+        console.log("Featured products ", response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -197,7 +287,7 @@ const TabSection = () => {
                       <CardMedia
                         component="img"
                         image={product.image}
-                        alt={product.title}
+                        alt={product.name}
                         sx={{
                           width: 100,
                           height: 100,
@@ -211,10 +301,10 @@ const TabSection = () => {
                           color="textSecondary"
                           textTransform="uppercase"
                         >
-                          {product.category}
+                          {product.name}
                         </Typography>
                         <Typography variant="h6" gutterBottom>
-                          {product.title}
+                          {product.name}
                         </Typography>
                         <Typography
                           variant="h5"

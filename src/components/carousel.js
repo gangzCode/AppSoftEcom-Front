@@ -22,7 +22,7 @@ const CarouselSection = () => {
     if (slides.length === 0) {
       fetchFeaturedProducts();
     }
-  }, []);
+  }, [slides.length]);
 
   // const slides = [
   //   {

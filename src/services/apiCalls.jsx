@@ -4,7 +4,7 @@ const baseUrl = "https://ecom-test2.yalpos.com/api";
 
 export const getCategoriesForAllCategoriesDrop = async () => {
   try {
-    const res = await axios.get(baseUrl + "/all-categories", {
+    const res = await axios.get(baseUrl + "/top-categories?items=", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -15,9 +15,24 @@ export const getCategoriesForAllCategoriesDrop = async () => {
   }
 };
 
-export const getFeaturesProducts = async () => {
+export const getTopCategoriesForMenu = async () => {
   try {
-    const res = await axios.get(baseUrl + "/products", {
+    const res = await axios.get(baseUrl + "/all-categories?items=", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(res.data);
+
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
+export const getTopSellingProducts = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/products?items=", {
       headers: {
         "Content-Type": "application/json",
       },

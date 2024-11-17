@@ -32,22 +32,23 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
-import { getCategoriesForAllCategoriesDrop } from "../services/apiCalls";
+import {
+  getCategoriesForAllCategoriesDrop,
+  getTopCategoriesForMenu,
+} from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [menus, setmenus] = useState([]);
   const [anchorMenu, setAnchorMenu] = useState(null);
   const [menuIndex, setMenuIndex] = useState(null);
   const [categories, setCategories] = useState([]);
 
   let closeMenuTimer;
 
-  const handleCatClick = async (event) => {
-    setAnchorCat(event.currentTarget);
-
-    // Fetch categories only if they haven't been loaded already
-    if (categories.length === 0) {
+  useEffect(() => {
+    const fetchMainCategories = async () => {
       try {
         const response = await getCategoriesForAllCategoriesDrop();
         setCategories(response.data);
@@ -55,7 +56,31 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
+    };
+
+    if (categories.length === 0) {
+      fetchMainCategories();
     }
+
+    const fetchCategoriesMenu = async () => {
+      try {
+        const response = await getTopCategoriesForMenu();
+        setmenus(response.data);
+        console.log("responseee menu", response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    if (menus.length === 0) {
+      fetchCategoriesMenu();
+    }
+
+    return () => {};
+  }, []);
+
+  const handleCatClick = async (event) => {
+    setAnchorCat(event.currentTarget);
   };
 
   const handleHover = (index) => {
@@ -85,32 +110,32 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   // console.log([...Array(5 - 3)]);
 
-  const menus = [
-    {
-      label: "Computers",
-      items: ["Phones", "Laptops", "Tablets", "Accessories"],
-    },
-    {
-      label: "Electronics",
-      items: ["Repair", "Consulting", "Support"],
-    },
-    {
-      label: "Computer Parts",
-      items: ["Our Story", "Careers", "Contact Us"],
-    },
-    {
-      label: "Home Appliance",
-      items: ["Our Story", "Careers", "Contact Us"],
-    },
-    {
-      label: "Digital Camera",
-      items: ["Our Story", "Careers", "Contact Us"],
-    },
-    {
-      label: "New Ins",
-      items: ["Our Story", "Careers", "Contact Us"],
-    },
-  ];
+  // const menus = [
+  //   {
+  //     label: "Computers",
+  //     items: ["Phones", "Laptops", "Tablets", "Accessories"],
+  //   },
+  //   {
+  //     label: "Electronics",
+  //     items: ["Repair", "Consulting", "Support"],
+  //   },
+  //   {
+  //     label: "Computer Parts",
+  //     items: ["Our Story", "Careers", "Contact Us"],
+  //   },
+  //   {
+  //     label: "Home Appliance",
+  //     items: ["Our Story", "Careers", "Contact Us"],
+  //   },
+  //   {
+  //     label: "Digital Camera",
+  //     items: ["Our Story", "Careers", "Contact Us"],
+  //   },
+  //   {
+  //     label: "New Ins",
+  //     items: ["Our Story", "Careers", "Contact Us"],
+  //   },
+  // ];
 
   return (
     <AppBar position="sticky" elevation={0} color="">
@@ -300,7 +325,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <Box sx={{ flexGrow: 1 }} />
 
         <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {menus.map((menu, index) => (
+          {menus.slice(0, 4).map((menu, index) => (
             <Box
               key={index}
               onMouseEnter={(e) => handleHover(index)}
@@ -330,7 +355,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   transition: "color 0.3s ease",
                 }}
               >
-                {menu.label}
+                {menu.name}
               </MuiLink>
 
               {/* <Menu
@@ -379,49 +404,52 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Box>
       </Grid>
       <Box position={"relative"} width={"100%"}>
-        {menus.map((menu, index) => (
-          <Grow in={menuIndex === index}>
-            <Box
-              py={4}
-              px={6}
-              sx={{
-                position: "absolute",
-                left: 0,
-                top: -25,
-                bgcolor: "#f3f3f3",
-                width: "100%",
-                // display: Boolean(anchorMenu) && menuIndex === index ? "block" : "none",
-                boxShadow: "0 1px 5px rgba(0,0,0,.1)",
-              }}
-              onMouseEnter={() => handleHover(index)}
-              onMouseLeave={handleHoverClose}
-              // onMouseHover={handleHover}
-            >
-              <Grid container>
-                {menu.items.map((item, idx) => (
-                  <Grid item xs={2.4}>
-                    <Box key={idx}>
-                      <Typography
-                        fontSize={"14px"}
-                        fontWeight={"600"}
-                        variant="p"
-                        mb={"30px"}
-                      >
-                        {menu.label}
-                      </Typography>
-                      <MenuItem
-                        sx={{ padding: "10px 0" }}
-                        onClick={handleClose}
-                      >
-                        <Typography fontSize={"14px"} variant="p">
-                          {item}
-                        </Typography>
-                      </MenuItem>
-                    </Box>
-                  </Grid>
-                ))}
+        {menus.map(
+          (menu, index) =>
+            menu.sub_category.length > 0 && (
+              <Grow in={menuIndex === index}>
+                <Box
+                  py={4}
+                  px={6}
+                  sx={{
+                    position: "absolute",
+                    left: 0,
+                    top: -25,
+                    bgcolor: "#f3f3f3",
+                    width: "100%",
+                    // display: Boolean(anchorMenu) && menuIndex === index ? "block" : "none",
+                    boxShadow: "0 1px 5px rgba(0,0,0,.1)",
+                  }}
+                  onMouseEnter={() => handleHover(index)}
+                  onMouseLeave={handleHoverClose}
+                  // onMouseHover={handleHover}
+                >
+                  {
+                    <Grid container>
+                      {menu.sub_category.map((item, idx) => (
+                        <Grid item xs={2.4}>
+                          <Box key={idx}>
+                            <Typography
+                              fontSize={"14px"}
+                              fontWeight={"600"}
+                              variant="p"
+                              mb={"30px"}
+                            >
+                              {menu.label}
+                            </Typography>
+                            <MenuItem
+                              sx={{ padding: "10px 0" }}
+                              onClick={handleClose}
+                            >
+                              <Typography fontSize={"14px"} variant="p">
+                                {item.name}
+                              </Typography>
+                            </MenuItem>
+                          </Box>
+                        </Grid>
+                      ))}
 
-                {[...Array(5 - menu.items.length)].map((item, i) => {
+                      {/* {[...Array(5 - menu.sub_category.length)].map((item, i) => {
                   return (
                     <Grid item xs={2.4}>
                       <Box
@@ -433,11 +461,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                       />
                     </Grid>
                   );
-                })}
-              </Grid>
-            </Box>
-          </Grow>
-        ))}
+                })} */}
+                    </Grid>
+                  }
+                </Box>
+              </Grow>
+            )
+        )}
       </Box>
     </AppBar>
   );
