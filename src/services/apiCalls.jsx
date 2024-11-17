@@ -4,7 +4,7 @@ const baseUrl = "https://ecom-test2.yalpos.com/api";
 
 export const getCategoriesForAllCategoriesDrop = async () => {
   try {
-    const res = await axios.get(baseUrl + "/top-categories?items=", {
+    const res = await axios.get(baseUrl + "/all-categories?items=", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -17,7 +17,7 @@ export const getCategoriesForAllCategoriesDrop = async () => {
 
 export const getTopCategoriesForMenu = async () => {
   try {
-    const res = await axios.get(baseUrl + "/all-categories?items=", {
+    const res = await axios.get(baseUrl + "/top-categories?items=", {
       headers: {
         "Content-Type": "application/json",
       },
