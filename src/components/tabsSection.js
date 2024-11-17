@@ -23,7 +23,7 @@ const products = {
       image: "https://via.placeholder.com/200",
       discount: null,
       soldOut: false,
-    },
+},
     {
       id: 2,
       category: "Products-Vibe",

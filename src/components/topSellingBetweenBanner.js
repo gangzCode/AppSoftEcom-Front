@@ -30,7 +30,7 @@ const promoItems = [
 
 const TopSellingBetweenBanner = () => {
   return (
-    <Box sx={{ padding: "30px 0" }}>
+    <Box sx={{ margin: "3em 0", padding: "30px 0" }}>
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12} sm={6} md={8} key={promoItems[0].id}>
           <Card
