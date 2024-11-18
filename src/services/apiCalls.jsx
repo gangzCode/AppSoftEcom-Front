@@ -68,3 +68,29 @@ export const getPromotions = async () => {
     throw error.response ? error.response.status : error;
   }
 };
+
+export const getProducts = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/products", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
+export const getProductById = async (id) => {
+  try {
+    const res = await axios.get(baseUrl + `/products/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};

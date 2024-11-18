@@ -44,9 +44,9 @@ function Layout() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signin" element={<SignInSignUpPage />} />
-          <Route path="/product" element={<ProductDetailsPage />} />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
           <Route path="/faq" element={<FAQPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
 
         {!isAuthPage && <Footer />}
