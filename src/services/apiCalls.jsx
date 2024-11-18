@@ -55,3 +55,16 @@ export const getSliders = async () => {
     throw error.response ? error.response.status : error;
   }
 };
+
+export const getPromotions = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/promotions", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};

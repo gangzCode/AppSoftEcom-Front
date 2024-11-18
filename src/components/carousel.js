@@ -22,7 +22,7 @@ const CarouselSection = () => {
     if (slides.length === 0) {
       fetchFeaturedProducts();
     }
-  }, [slides.length]);
+  }, []);
 
   // const slides = [
   //   {
@@ -125,7 +125,7 @@ const CarouselSection = () => {
       sx={{
         maxWidth: "100%",
         overflow: "hidden",
-        paddingBottom: "20px",
+        paddingBottom: "5em",
         position: "relative",
         height: "500px",
         "&:hover .slick-arrow": {
