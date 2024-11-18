@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -38,85 +39,86 @@ import {
 } from "@mui/icons-material";
 import CarouselSection from "../../components/carousel";
 import BestsellerSlider from "../../components/bestsellerSlider";
+import { getProducts } from "../../services/apiCalls";
 
-const products = [
-  {
-    id: 1,
-    title: "Product 1",
-    price: 29.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-    hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
-    description: "Product 1",
-  },
-  {
-    id: 2,
-    title: "Product 2",
-    price: 59.99,
-    image: "https://placehold.co/380x360",
-    available: false,
-    category: "Category B",
-    hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
-    description: "Product 2",
-  },
-  {
-    id: 3,
-    title: "Product 3",
-    price: 19.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-  },
-  {
-    id: 4,
-    title: "Product 4",
-    price: 29.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-  },
-  {
-    id: 5,
-    title: "Product 5",
-    price: 59.99,
-    image: "https://placehold.co/380x360",
-    available: false,
-    category: "Category B",
-  },
-  {
-    id: 6,
-    title: "Product 6",
-    price: 19.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-  },
-  {
-    id: 7,
-    title: "Product 7",
-    price: 29.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-  },
-  {
-    id: 8,
-    title: "Product 8",
-    price: 59.99,
-    image: "https://placehold.co/380x360",
-    available: false,
-    category: "Category B",
-  },
-  {
-    id: 9,
-    title: "Product 9",
-    price: 19.99,
-    image: "https://placehold.co/380x360",
-    available: true,
-    category: "Category A",
-  },
-];
+// const products = [
+//   {
+//     id: 1,
+//     title: "Product 1",
+//     price: 29.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//     hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
+//     description: "Product 1",
+//   },
+//   {
+//     id: 2,
+//     title: "Product 2",
+//     price: 59.99,
+//     image: "https://placehold.co/380x360",
+//     available: false,
+//     category: "Category B",
+//     hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
+//     description: "Product 2",
+//   },
+//   {
+//     id: 3,
+//     title: "Product 3",
+//     price: 19.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//   },
+//   {
+//     id: 4,
+//     title: "Product 4",
+//     price: 29.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//   },
+//   {
+//     id: 5,
+//     title: "Product 5",
+//     price: 59.99,
+//     image: "https://placehold.co/380x360",
+//     available: false,
+//     category: "Category B",
+//   },
+//   {
+//     id: 6,
+//     title: "Product 6",
+//     price: 19.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//   },
+//   {
+//     id: 7,
+//     title: "Product 7",
+//     price: 29.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//   },
+//   {
+//     id: 8,
+//     title: "Product 8",
+//     price: 59.99,
+//     image: "https://placehold.co/380x360",
+//     available: false,
+//     category: "Category B",
+//   },
+//   {
+//     id: 9,
+//     title: "Product 9",
+//     price: 19.99,
+//     image: "https://placehold.co/380x360",
+//     available: true,
+//     category: "Category A",
+//   },
+// ];
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -127,6 +129,23 @@ const ProductsPage = () => {
   const [priceRange, setPriceRange] = useState([0, 100]);
   const [displayMode, setDisplayMode] = useState("grid");
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [products, setproducts] = useState([]);
+
+  useEffect(() => {
+    const fetchGetProducts = async () => {
+      try {
+        const response = await getProducts();
+        setproducts(response.data);
+        console.log("Featured ::::: ", response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    if (products.length === 0) {
+      fetchGetProducts();
+    }
+  }, []);
 
   const handleSortChange = (event) => {
     setSort(event.target.value);
@@ -142,12 +161,12 @@ const ProductsPage = () => {
 
   const filteredProducts = products
     .filter((product) =>
-      product.title.toLowerCase().includes(searchTerm.toLowerCase())
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((product) =>
-      selectedCategory ? product.category === selectedCategory : true
+      selectedCategory ? product.category_name === selectedCategory : true
     )
-    .filter((product) => (availability ? product.available : true))
+    .filter((product) => (availability ? product.is_single_product : true))
     .filter(
       (product) =>
         product.price >= priceRange[0] && product.price <= priceRange[1]
@@ -557,109 +576,113 @@ const ProductsPage = () => {
                 onMouseEnter={() => setHoveredProductId(product.id)}
                 onMouseLeave={() => setHoveredProductId(null)}
               >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    maxWidth: "360px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                >
+                <RouterLink to={`/product/${product.id}`}>
                   <Box
-                    component="img"
-                    src={product.image}
-                    alt={product.description}
                     sx={{
+                      position: "relative",
                       width: "100%",
-                      height: "auto",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 0 : 1,
+                      maxWidth: "360px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
                     }}
-                  />
+                  >
+                    <Box
+                      component="img"
+                      src={product.image}
+                      alt={product.description}
+                      sx={{
+                        width: "100%",
+                        height: "auto",
+                        transition: "opacity 0.5s ease",
+                        opacity: hoveredProductId === product.id ? 0 : 1,
+                      }}
+                    />
+                    <Box
+                      component="img"
+                      src={product.hoverImage}
+                      alt={product.description}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "auto",
+                        transition: "opacity 0.5s ease",
+                        opacity: hoveredProductId === product.id ? 1 : 0,
+                      }}
+                    />
+                  </Box>
+
                   <Box
-                    component="img"
-                    src={product.hoverImage}
-                    alt={product.description}
+                    className="hover-icons"
                     sx={{
                       position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "auto",
-                      transition: "opacity 0.5s ease",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      display: "flex",
+                      gap: "8px",
                       opacity: hoveredProductId === product.id ? 1 : 0,
+                      visibility:
+                        hoveredProductId === product.id ? "visible" : "hidden",
+                      transition: "opacity 0.3s ease, visibility 0.3s ease",
                     }}
-                  />
-                </Box>
-
-                <Box
-                  className="hover-icons"
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    display: "flex",
-                    gap: "8px",
-                    opacity: hoveredProductId === product.id ? 1 : 0,
-                    visibility:
-                      hoveredProductId === product.id ? "visible" : "hidden",
-                    transition: "opacity 0.3s ease, visibility 0.3s ease",
-                  }}
-                >
-                  {[
-                    { icon: <ShoppingCart />, id: "cart" },
-                    { icon: <Layers />, id: "layers" },
-                    { icon: <Favorite />, id: "favorite" },
-                    { icon: <Search />, id: "search" },
-                  ].map((item) => (
-                    <IconButton
-                      key={item.id}
-                      sx={{
-                        backgroundColor: "#2189ff",
-                        color: "#fff",
-                        borderRadius: "10px",
-                        width: "40px",
-                        height: "40px",
-                        "&:hover": {
-                          backgroundColor: "#000",
-                        },
-                      }}
-                    >
-                      {item.icon}
-                    </IconButton>
-                  ))}
-                </Box>
-                <Typography
-                  variant="caption"
-                  fontSize={"12px"}
-                  color={"#bebebe"}
-                  textAlign="left"
-                  sx={{ letterSpacing: "1px", marginBottom: "4px" }}
-                >
-                  {product.category}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight="500"
-                  textAlign="left"
-                  sx={{ marginBottom: "8px" }}
-                >
-                  {product.description}
-                </Typography>
-                <Box
-                  display={"flex"}
-                  alignItems="center"
-                  justifyContent="space-between"
-                  textAlign="left"
-                  sx={{ marginTop: "auto" }}
-                >
-                  <Typography variant="h6" fontWeight="600">
-                    ${product.price}
+                  >
+                    {[
+                      { icon: <ShoppingCart />, id: "cart" },
+                      { icon: <Layers />, id: "layers" },
+                      { icon: <Favorite />, id: "favorite" },
+                      { icon: <Search />, id: "search" },
+                    ].map((item) => (
+                      <IconButton
+                        key={item.id}
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          color: "#fff",
+                          borderRadius: "10px",
+                          width: "40px",
+                          height: "40px",
+                          "&:hover": {
+                            backgroundColor: "#000",
+                          },
+                        }}
+                      >
+                        {item.icon}
+                      </IconButton>
+                    ))}
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    fontSize={"12px"}
+                    color={"#bebebe"}
+                    textAlign="left"
+                    sx={{ letterSpacing: "1px", marginBottom: "4px" }}
+                  >
+                    {product.category_name}
                   </Typography>
-                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
-                </Box>
+                  <Typography
+                    variant="body1"
+                    fontWeight="500"
+                    textAlign="left"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    {product.name}
+                  </Typography>
+                  <Box
+                    display={"flex"}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    textAlign="left"
+                    sx={{ marginTop: "auto" }}
+                  >
+                    <Typography variant="h6" fontWeight="600">
+                      ${product.price}
+                    </Typography>
+                    <ChevronRight
+                      sx={{ color: "#2189ff", marginLeft: "8px" }}
+                    />
+                  </Box>
+                </RouterLink>
               </Box>
             ))}
           </Grid>

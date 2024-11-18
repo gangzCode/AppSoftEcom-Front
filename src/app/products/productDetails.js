@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -26,30 +27,56 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ProductDetailAccordian from "./ProductDetailAccordian";
+import { getProductById } from "../../services/apiCalls";
 
-const product = {
-  title: "Sample Product",
-  price: 59.99,
-  images: ["https://placehold.co/400", "https://placehold.co/400", "https://placehold.co/400"],
-  specifications: ["Color", "Size", "Material"],
-  availableOptions: {
-    Color: ["Red", "Blue", "Green"],
-    Size: ["S", "M", "L", "XL"],
-    Material: ["Cotton", "Polyester", "Leather"],
-  },
-  availability: "In Stock",
-  estimatedDelivery: "2-5 Business Days",
-};
+// const product = {
+//   title: "Sample Product",
+//   price: 59.99,
+//   images: [
+//     "https://placehold.co/400",
+//     "https://placehold.co/400",
+//     "https://placehold.co/400",
+//   ],
+//   specifications: ["Color", "Size", "Material"],
+//   availableOptions: {
+//     Color: ["Red", "Blue", "Green"],
+//     Size: ["S", "M", "L", "XL"],
+//     Material: ["Cotton", "Polyester", "Leather"],
+//   },
+//   availability: "In Stock",
+//   estimatedDelivery: "2-5 Business Days",
+// };
 
 const ProductDetailsPage = () => {
+  const [product, setproduct] = useState([]);
   const [selectedImage, setSelectedImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSpecification, setSelectedSpecification] = useState(
     product.specifications.reduce((acc, spec) => ({ ...acc, [spec]: "" }), {})
   );
+  const { id } = useParams();
+  // const product = productDetails[id];
+
+  useEffect(() => {
+    const fetchGetProductDetails = async () => {
+      try {
+        const response = await getProductById(id);
+        setproduct(response.data);
+        console.log("Featured ::::: ", response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    if (product.length === 0) {
+      fetchGetProductDetails();
+    }
+  }, []);
 
   const handleQuantityChange = (type) => {
-    setQuantity((prev) => (type === "increment" ? prev + 1 : Math.max(1, prev - 1)));
+    setQuantity((prev) =>
+      type === "increment" ? prev + 1 : Math.max(1, prev - 1)
+    );
   };
 
   const handleSpecificationChange = (spec, value) => {
@@ -58,7 +85,8 @@ const ProductDetailsPage = () => {
   const SpecSelectChip = styled(Chip)(({ theme, variant }) => ({
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: variant === "outlined" ? "#7ab8ff" : theme.palette.primary.main,
+    borderColor:
+      variant === "outlined" ? "#7ab8ff" : theme.palette.primary.main,
     color: variant === "outlined" ? "#7ab8ff" : theme.palette.primary,
     fontWeight: 400,
     fontSize: 18,
@@ -67,19 +95,29 @@ const ProductDetailsPage = () => {
   return (
     <Box>
       <Box>
-        <Breadcrumbs aria-label="breadcrumb" sx={{ display: "inline-flex", opacity: 0.8 }}>
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          sx={{ display: "inline-flex", opacity: 0.8 }}
+        >
           <Link underline="hover" color="inherit" href="/">
             Home
           </Link>
           <Link underline="hover" color="inherit" href="/products">
             Products
           </Link>
-          <Link underline="hover" color="inherit" href="/products/productsDetail">
+          <Link
+            underline="hover"
+            color="inherit"
+            href="/products/productsDetail"
+          >
             {product.title}
           </Link>
         </Breadcrumbs>
       </Box>
-      <Box padding={{ xs: 1, md: 4 }} sx={{ width: { xs: "100%", md: "1300px" }, marginX: "auto" }}>
+      <Box
+        padding={{ xs: 1, md: 4 }}
+        sx={{ width: { xs: "100%", md: "1300px" }, marginX: "auto" }}
+      >
         <Grid container spacing={4}>
           {/* Left Section: Product Images */}
           <Grid item xs={12} md={6}>
@@ -102,7 +140,10 @@ const ProductDetailsPage = () => {
                       height: 60,
                       borderRadius: 1,
                       cursor: "pointer",
-                      border: selectedImage === img ? "2px solid #1976d2" : "1px solid gray",
+                      border:
+                        selectedImage === img
+                          ? "2px solid #1976d2"
+                          : "1px solid gray",
                     }}
                     onClick={() => setSelectedImage(img)}
                   />
@@ -114,12 +155,22 @@ const ProductDetailsPage = () => {
           {/* Right Section: Product Details */}
           <Grid item xs={12} md={6}>
             {/* Product Title */}
-            <Typography variant="h4" fontWeight={400} fontSize={"36px"} gutterBottom>
+            <Typography
+              variant="h4"
+              fontWeight={400}
+              fontSize={"36px"}
+              gutterBottom
+            >
               {product.title}
             </Typography>
 
             {/* Product Price */}
-            <Typography variant="h5" color="primary" fontWeight={"bold"} gutterBottom>
+            <Typography
+              variant="h5"
+              color="primary"
+              fontWeight={"bold"}
+              gutterBottom
+            >
               ${product.price.toFixed(2)}
             </Typography>
 
@@ -138,12 +189,15 @@ const ProductDetailsPage = () => {
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option ? "filled" : "outlined"
+                                selectedSpecification[spec] === option
+                                  ? "filled"
+                                  : "outlined"
                               }
                               avatar={
                                 <Box
                                   sx={{
-                                    backgroundColor: option.toLowerCase() + " !important",
+                                    backgroundColor:
+                                      option.toLowerCase() + " !important",
                                     borderRadius: 999,
                                     filter: "greyscale(80%)",
                                     // zIndex: 100,
@@ -156,8 +210,14 @@ const ProductDetailsPage = () => {
                                 "& .MuiChip-avatar": { width: 12, height: 12 },
                               }}
                               clickable
-                              color={selectedSpecification[spec] === option ? "primary" : "default"}
-                              onClick={() => handleSpecificationChange(spec, option)}
+                              color={
+                                selectedSpecification[spec] === option
+                                  ? "primary"
+                                  : "default"
+                              }
+                              onClick={() =>
+                                handleSpecificationChange(spec, option)
+                              }
                             />
                           ))
                         : product.availableOptions[spec].map((option) => (
@@ -165,11 +225,19 @@ const ProductDetailsPage = () => {
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option ? "filled" : "outlined"
+                                selectedSpecification[spec] === option
+                                  ? "filled"
+                                  : "outlined"
                               }
                               clickable
-                              color={selectedSpecification[spec] === option ? "primary" : "default"}
-                              onClick={() => handleSpecificationChange(spec, option)}
+                              color={
+                                selectedSpecification[spec] === option
+                                  ? "primary"
+                                  : "default"
+                              }
+                              onClick={() =>
+                                handleSpecificationChange(spec, option)
+                              }
                             />
                           ))}
                     </Box>
@@ -193,7 +261,11 @@ const ProductDetailsPage = () => {
                 <TableCell>
                   <Typography
                     variant="subtitle1"
-                    color={product.availability === "In Stock" ? "success.dark" : "error"}
+                    color={
+                      product.availability === "In Stock"
+                        ? "success.dark"
+                        : "error"
+                    }
                   >
                     {product.availability}
                   </Typography>
@@ -262,7 +334,11 @@ const ProductDetailsPage = () => {
             </Table>
 
             {/* MOBILE Specifications with Selectable Chips */}
-            <Box display={{ xs: "flex", md: "none" }} mb={2} flexDirection={"column"}>
+            <Box
+              display={{ xs: "flex", md: "none" }}
+              mb={2}
+              flexDirection={"column"}
+            >
               {product.specifications.map((spec) => (
                 <Box key={spec} sx={{ mb: 2 }}>
                   <Typography variant="subtitle1">{spec}</Typography>
@@ -285,12 +361,15 @@ const ProductDetailsPage = () => {
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option ? "filled" : "outlined"
+                                selectedSpecification[spec] === option
+                                  ? "filled"
+                                  : "outlined"
                               }
                               avatar={
                                 <Box
                                   sx={{
-                                    backgroundColor: option.toLowerCase() + " !important",
+                                    backgroundColor:
+                                      option.toLowerCase() + " !important",
                                     borderRadius: 999,
                                     filter: "greyscale(80%)",
                                     // zIndex: 100,
@@ -303,8 +382,14 @@ const ProductDetailsPage = () => {
                                 ".MuiChip-avatar": { width: 16, height: 16 },
                               }}
                               clickable
-                              color={selectedSpecification[spec] === option ? "primary" : "default"}
-                              onClick={() => handleSpecificationChange(spec, option)}
+                              color={
+                                selectedSpecification[spec] === option
+                                  ? "primary"
+                                  : "default"
+                              }
+                              onClick={() =>
+                                handleSpecificationChange(spec, option)
+                              }
                             />
                           </Grid>
                         ))
@@ -314,12 +399,20 @@ const ProductDetailsPage = () => {
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option ? "filled" : "outlined"
+                                selectedSpecification[spec] === option
+                                  ? "filled"
+                                  : "outlined"
                               }
                               sx={{ borderRadius: 2, borderWidth: 2 }}
                               clickable
-                              color={selectedSpecification[spec] === option ? "primary" : "default"}
-                              onClick={() => handleSpecificationChange(spec, option)}
+                              color={
+                                selectedSpecification[spec] === option
+                                  ? "primary"
+                                  : "default"
+                              }
+                              onClick={() =>
+                                handleSpecificationChange(spec, option)
+                              }
                             />
                           </Grid>
                         ))}
@@ -336,7 +429,11 @@ const ProductDetailsPage = () => {
                 <Typography variant="subtitle1">Availability</Typography>
                 <Typography
                   variant="subtitle1"
-                  color={product.availability === "In Stock" ? "success.dark" : "error"}
+                  color={
+                    product.availability === "In Stock"
+                      ? "success.dark"
+                      : "error"
+                  }
                 >
                   {product.availability}
                 </Typography>
@@ -466,7 +563,12 @@ const ProductDetailsPage = () => {
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <Button variant="contained" color="blackbutton" fullWidth sx={{ py: 1, mb: 2 }}>
+                <Button
+                  variant="contained"
+                  color="blackbutton"
+                  fullWidth
+                  sx={{ py: 1, mb: 2 }}
+                >
                   Buy It Now
                 </Button>
               </Grid>
@@ -500,7 +602,8 @@ const ProductDetailsPage = () => {
 
             {/* Estimated Delivery */}
             <Typography color="text.secondary" sx={{ mb: 2 }}>
-              <LocalShippingIcon /> Estimated Delivery: {product.estimatedDelivery}
+              <LocalShippingIcon /> Estimated Delivery:{" "}
+              {product.estimatedDelivery}
             </Typography>
 
             {/* Share Section */}
@@ -573,7 +676,9 @@ const ProductDetailsPage = () => {
                 <Typography variant="body2" color="text.secondary">
                   Warranty
                 </Typography>
-                <Typography variant="body1">2-years manufacturing Warranty</Typography>
+                <Typography variant="body1">
+                  2-years manufacturing Warranty
+                </Typography>
               </Grid>
               <Grid item xs={6} sm={4}>
                 <Typography variant="body2" color="text.secondary">
@@ -585,7 +690,9 @@ const ProductDetailsPage = () => {
                 <Typography variant="body2" color="text.secondary">
                   Manufacturer Address
                 </Typography>
-                <Typography variant="body1">California, United States</Typography>
+                <Typography variant="body1">
+                  California, United States
+                </Typography>
               </Grid>
             </Grid>
           </ProductDetailAccordian>
@@ -595,43 +702,54 @@ const ProductDetailsPage = () => {
               Returns Policy
             </Typography>
             <Typography variant="body1" paragraph>
-              You may return most new, unopened items within 30 days of delivery for a full refund.
-              We'll also pay the return shipping costs if the return is a result of our error (you
-              received an incorrect or defective item, etc.).
+              You may return most new, unopened items within 30 days of delivery
+              for a full refund. We'll also pay the return shipping costs if the
+              return is a result of our error (you received an incorrect or
+              defective item, etc.).
             </Typography>
             <Typography variant="body1" paragraph>
-              You should expect to receive your refund within four weeks of giving your package to
-              the return shipper, however, in many cases you will receive a refund more quickly.
-              This time period includes the transit time for us to receive your return from the
-              shipper (5 to 10 business days), the time it takes us to process your return once we
-              receive it (3 to 5 business days), and the time it takes your bank to process our
-              refund request (5 to 10 business days).
+              You should expect to receive your refund within four weeks of
+              giving your package to the return shipper, however, in many cases
+              you will receive a refund more quickly. This time period includes
+              the transit time for us to receive your return from the shipper (5
+              to 10 business days), the time it takes us to process your return
+              once we receive it (3 to 5 business days), and the time it takes
+              your bank to process our refund request (5 to 10 business days).
             </Typography>
             <Typography variant="body1" paragraph>
-              If you need to return an item, simply login to your account, view the order using the
-              'Complete Orders' link under the My Account menu and click the Return Item(s) button.
-              We'll notify you via e-mail of your refund once we've received and processed the
+              If you need to return an item, simply login to your account, view
+              the order using the 'Complete Orders' link under the My Account
+              menu and click the Return Item(s) button. We'll notify you via
+              e-mail of your refund once we've received and processed the
               returned item.
             </Typography>
 
             {/* Shipping Section */}
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mt: 3 }}
+            >
               Shipping
             </Typography>
             <Typography variant="body1" paragraph>
-              We can ship to virtually any address in the world. Note that there are restrictions on
-              some products, and some products cannot be shipped to international destinations.
+              We can ship to virtually any address in the world. Note that there
+              are restrictions on some products, and some products cannot be
+              shipped to international destinations.
             </Typography>
             <Typography variant="body1" paragraph>
-              When you place an order, we will estimate shipping and delivery dates for you based on
-              the availability of your items and the shipping options you choose. Depending on the
-              shipping provider you choose, shipping date estimates may appear on the shipping
+              When you place an order, we will estimate shipping and delivery
+              dates for you based on the availability of your items and the
+              shipping options you choose. Depending on the shipping provider
+              you choose, shipping date estimates may appear on the shipping
               quotes page.
             </Typography>
             <Typography variant="body1" paragraph>
-              Please also note that the shipping rates for many items we sell are weight-based. The
-              weight of any such item can be found on its detail page. To reflect the policies of
-              the shipping companies we use, all weights will be rounded up to the next full pound.
+              Please also note that the shipping rates for many items we sell
+              are weight-based. The weight of any such item can be found on its
+              detail page. To reflect the policies of the shipping companies we
+              use, all weights will be rounded up to the next full pound.
             </Typography>
           </ProductDetailAccordian>
           <ProductDetailAccordian title={"Reviews"}>
