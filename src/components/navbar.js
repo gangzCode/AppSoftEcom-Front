@@ -304,20 +304,22 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             gap={"1em"}
           >
             {categories.map((category) => (
-              <MenuItem key={category.id} onClick={handleClose}>
-                <img
-                  src={category.image} // Use the category's image URL from the API
-                  alt={category.name.En} // Alt text using the category name
-                  style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
-                />
-                <Typography
-                  paddingLeft={"1em"}
-                  fontSize={"16px"}
-                  fontWeight={"500"}
-                >
-                  {category.name}
-                </Typography>
-              </MenuItem>
+              <RouterLink to={`/products/${category.id}`}>
+                <MenuItem key={category.id} onClick={handleClose}>
+                  <img
+                    src={category.image} // Use the category's image URL from the API
+                    alt={category.name.En} // Alt text using the category name
+                    style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
+                  />
+                  <Typography
+                    paddingLeft={"1em"}
+                    fontSize={"16px"}
+                    fontWeight={"500"}
+                  >
+                    {category.name}
+                  </Typography>
+                </MenuItem>
+              </RouterLink>
             ))}
           </Grid>
         </Menu>
