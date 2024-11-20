@@ -50,7 +50,9 @@ import NotFoundPage from "../../components/404";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(product.image_url);
+  const [selectedImage, setSelectedImage] = useState(
+    "https://ecom-test2.yalpos.com/img/default.png"
+  );
   const [quantity, setQuantity] = useState(1);
   const [selectedSpecification, setSelectedSpecification] = useState("");
   const { productId } = useParams();
