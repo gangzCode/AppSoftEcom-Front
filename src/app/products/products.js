@@ -22,6 +22,7 @@ import {
   Breadcrumbs,
   Link,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -133,6 +134,7 @@ const ProductsPage = () => {
   const [products, setproducts] = useState([]);
   const [displayMode, setDisplayMode] = useState("grid");
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const { categoryId } = useParams();
 
@@ -160,12 +162,15 @@ const ProductsPage = () => {
   useEffect(() => {
     console.log("CategoryId from Params:", categoryId);
     const fetchGetProducts = async () => {
+      setLoading(true);
       try {
         const response = await fetchProducts(categoryId);
         setproducts(response.data);
         console.log("Products by Category", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -216,6 +221,23 @@ const ProductsPage = () => {
   };
 
   const realPriceRange = getPriceRange(products);
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+      >
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading Products...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>

@@ -431,22 +431,24 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                       {menu.sub_category.map((item, idx) => (
                         <Grid item xs={2.4}>
                           <Box key={idx}>
-                            <Typography
-                              fontSize={"14px"}
-                              fontWeight={"600"}
-                              variant="p"
-                              mb={"30px"}
-                            >
-                              {menu.label}
-                            </Typography>
-                            <MenuItem
-                              sx={{ padding: "10px 0" }}
-                              onClick={handleClose}
-                            >
-                              <Typography fontSize={"14px"} variant="p">
-                                {item.name}
+                            <RouterLink to={`/product/${item.id}`}>
+                              <Typography
+                                fontSize={"14px"}
+                                fontWeight={"600"}
+                                variant="p"
+                                mb={"30px"}
+                              >
+                                {menu.label}
                               </Typography>
-                            </MenuItem>
+                              <MenuItem
+                                sx={{ padding: "10px 0" }}
+                                onClick={handleClose}
+                              >
+                                <Typography fontSize={"14px"} variant="p">
+                                  {item.name}
+                                </Typography>
+                              </MenuItem>
+                            </RouterLink>
                           </Box>
                         </Grid>
                       ))}
