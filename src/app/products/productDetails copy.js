@@ -50,7 +50,7 @@ import NotFoundPage from "../../components/404";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(product.image_url);
+  const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedSpecification, setSelectedSpecification] = useState("");
   const { productId } = useParams();
@@ -137,7 +137,7 @@ const ProductDetailsPage = () => {
                 sx={{ width: "100%", height: "auto", borderRadius: 2 }}
               />
               <Box display="flex" mt={2} gap={1}>
-                {/* {product.image_url.map((img, index) => (
+                {/* {product.images.map((img, index) => (
                   <CardMedia
                     key={index}
                     component="img"
@@ -156,23 +156,6 @@ const ProductDetailsPage = () => {
                     onClick={() => setSelectedImage(img)}
                   />
                 ))} */}
-                <CardMedia
-                  key={1}
-                  component="img"
-                  image={product.image_url}
-                  alt={`Thumbnail ${1 + 1}`}
-                  sx={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 1,
-                    cursor: "pointer",
-                    border:
-                      selectedImage === product.image_url
-                        ? "2px solid #1976d2"
-                        : "1px solid gray",
-                  }}
-                  onClick={() => setSelectedImage(product.image_url)}
-                />
               </Box>
             </Box>
           </Grid>
@@ -190,18 +173,18 @@ const ProductDetailsPage = () => {
             </Typography>
 
             {/* Product Price */}
-            <Typography
+            {/* <Typography
               variant="h5"
               color="primary"
               fontWeight={"bold"}
               gutterBottom
             >
-              ${product.price ? product.price : 0}
-            </Typography>
+              ${product.price.toFixed(2)}
+            </Typography> */}
 
             {/* DESKTOP + WIDESCREEN specifications  */}
             <Table sx={{ mb: 2, display: { xs: "none", md: "block" } }}>
-              {/* {product.specifications.map((spec) => (
+              {/* {product.product_variations.map((spec) => (
                 <TableRow>
                   <TableCell sx={{ pl: 0 }}>
                     <Typography variant="subtitle1">{spec}</Typography>

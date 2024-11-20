@@ -1,6 +1,7 @@
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 
-const baseUrl = "https://ecom-test2.yalpos.com/api";
+export const baseUrl = "https://ecom-test2.yalpos.com/api";
 
 export const getCategoriesForAllCategoriesDrop = async () => {
   try {
@@ -69,28 +70,48 @@ export const getPromotions = async () => {
   }
 };
 
-export const getProducts = async () => {
+export const fetchProducts = async (categoryId) => {
   try {
-    const res = await axios.get(baseUrl + "/products", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await axios.get(
+      baseUrl +
+        `/products/by-category?items=&category=${categoryId}&sub_category=`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(res.data + " API");
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
   }
 };
 
-export const getProductById = async (id) => {
+export const fetchProductById = async (id) => {
   try {
-    const res = await axios.get(baseUrl + `/products/${id}`, {
+    const res = await axios.get(baseUrl + `/product/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+    console.log(res + "res api");
+
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
   }
 };
+
+// export const fetchProducts = async () => {
+//   const response = await axiosInstance.get("/products");
+
+//   console.log(response.data + " API");
+
+//   return response.data;
+// };
+
+// export const fetchProductById = async (productId) => {
+//   const response = await axiosInstance.get(`/products/${productId}`);
+//   return response.data;
+// };

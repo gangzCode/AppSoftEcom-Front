@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -39,7 +39,10 @@ import {
 } from "@mui/icons-material";
 import CarouselSection from "../../components/carousel";
 import BestsellerSlider from "../../components/bestsellerSlider";
-import { getProducts } from "../../services/apiCalls";
+import useAppDispatch from "../../hooks/useAppDispatch";
+import useAppSelector from "../../hooks/useAppSelector";
+import { fetchProducts, getTopSellingProducts } from "../../services/apiCalls";
+// import { getProducts } from "../../features/products/productSlice";
 
 // const products = [
 //   {
@@ -127,25 +130,47 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [availability, setAvailability] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 100]);
+  const [products, setproducts] = useState([]);
   const [displayMode, setDisplayMode] = useState("grid");
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [products, setproducts] = useState([]);
+
+  const { categoryId } = useParams();
+
+  // const dispatch = useAppDispatch();
+  // const {
+  //   items: products,
+  //   status,
+  //   error,
+  // } = useAppSelector((state) => state.products);
+
+  // useEffect(() => {
+  //   if (status === "idle") {
+  //     console.log("useeffect");
+
+  //     dispatch(getProducts());
+  //   }
+  // }, [dispatch, status]);
+
+  // useEffect(() => {
+  //   console.log(products + " " + status + "BR PRODUCTS");
+
+  //   return () => {};
+  // }, [products]);
 
   useEffect(() => {
+    console.log("CategoryId from Params:", categoryId);
     const fetchGetProducts = async () => {
       try {
-        const response = await getProducts();
+        const response = await fetchProducts(categoryId);
         setproducts(response.data);
-        console.log("Featured ::::: ", response.data);
+        console.log("Products by Category", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
-    if (products.length === 0) {
-      fetchGetProducts();
-    }
-  }, []);
+    fetchGetProducts();
+  }, [categoryId]);
 
   const handleSortChange = (event) => {
     setSort(event.target.value);
@@ -553,7 +578,7 @@ const ProductsPage = () => {
             gap={"34px"}
             direction={displayMode === "grid" ? "row" : "column"}
           >
-            {filteredProducts.slice(0, productsPerPage).map((product) => (
+            {products.slice(0, productsPerPage).map((product) => (
               <Box
                 key={product.id}
                 sx={{

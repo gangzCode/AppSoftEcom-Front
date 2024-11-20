@@ -326,39 +326,40 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
         <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
           {menus.slice(0, 4).map((menu, index) => (
-            <Box
-              key={index}
-              onMouseEnter={(e) => handleHover(index)}
-              onMouseLeave={handleHoverClose}
-              sx={{
-                position: "relative",
-                // bgcolor: "primary.main",
-                py: 3,
-                "& .MuiMenu-paper": {
-                  opacity: 0,
-                  visibility: "hidden",
-                  transition: "opacity 0.3s ease, visibility 0.3s ease",
-                },
-              }}
-            >
-              <MuiLink
-                href="#"
-                fontSize={"16px"}
-                fontWeight={"500"}
-                variant="h5"
-                color="inherit"
-                underline="none"
+            <RouterLink to={`/products/${menu.id}`}>
+              <Box
+                key={index}
+                onMouseEnter={(e) => handleHover(index)}
+                onMouseLeave={handleHoverClose}
                 sx={{
-                  "&:hover": {
-                    color: "#2189ff",
+                  position: "relative",
+                  // bgcolor: "primary.main",
+                  py: 3,
+                  "& .MuiMenu-paper": {
+                    opacity: 0,
+                    visibility: "hidden",
+                    transition: "opacity 0.3s ease, visibility 0.3s ease",
                   },
-                  transition: "color 0.3s ease",
                 }}
               >
-                {menu.name}
-              </MuiLink>
+                <MuiLink
+                  href="#"
+                  fontSize={"16px"}
+                  fontWeight={"500"}
+                  variant="h5"
+                  color="inherit"
+                  underline="none"
+                  sx={{
+                    "&:hover": {
+                      color: "#2189ff",
+                    },
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  {menu.name}
+                </MuiLink>
 
-              {/* <Menu
+                {/* <Menu
                 id={`menu-${index}`}
                 anchorEl={anchorMenu}
                 open={Boolean(anchorMenu) && menuIndex === index}
@@ -399,7 +400,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   ))}
                 </Grid>
               </Menu> */}
-            </Box>
+              </Box>
+            </RouterLink>
           ))}
         </Box>
       </Grid>

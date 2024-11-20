@@ -17,6 +17,8 @@ import SignInSignUpPage from "./app/SignIn/page";
 import ScrollToTopButton from "./components/ScrollToTop";
 import FAQPage from "./app/Faq/page";
 import NotFoundPage from "./components/404";
+import { Provider } from "react-redux";
+import store from "./store";
 
 // Define theme
 /* const theme = createTheme({
@@ -41,10 +43,10 @@ function Layout() {
           <Route path="/" element={<HomePage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:categoryId" element={<ProductsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signin" element={<SignInSignUpPage />} />
-          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/product/:productId" element={<ProductDetailsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
@@ -58,9 +60,11 @@ function Layout() {
 }
 
 const App = () => (
-  <BrowserRouter>
-    <Layout />
-  </BrowserRouter>
+  <Provider store={store}>
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
+  </Provider>
 );
 
 export default App;
