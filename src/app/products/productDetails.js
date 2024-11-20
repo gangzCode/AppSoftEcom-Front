@@ -17,6 +17,7 @@ import {
   Breadcrumbs,
   Link,
   styled,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -55,27 +56,27 @@ const ProductDetailsPage = () => {
   );
   const [quantity, setQuantity] = useState(1);
   const [selectedSpecification, setSelectedSpecification] = useState("");
+  const [loading, setLoading] = useState(true);
   const { productId } = useParams();
 
   // const product = productDetails[id];
 
   useEffect(() => {
-    console.log(productId + "productId");
-
     const fetchGetProductDetails = async () => {
+      setLoading(true);
       try {
         const response = await fetchProductById(productId);
         setproduct(response.data);
         console.log("productbyid ::::: ", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (!product) {
-      fetchGetProductDetails();
-    }
-  }, [product, productId]);
+    fetchGetProductDetails();
+  }, [productId]);
 
   useEffect(() => {
     console.log("productbyid in state", product);
@@ -101,6 +102,23 @@ const ProductDetailsPage = () => {
     fontWeight: 400,
     fontSize: 18,
   }));
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+      >
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading Product Details...
+        </Typography>
+      </Box>
+    );
+  }
 
   return product ? (
     <Box>
@@ -818,7 +836,17 @@ const ProductDetailsPage = () => {
       </Box>
     </Box>
   ) : (
-    <NotFoundPage />
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+    >
+      <Typography variant="h6" color="error">
+        Error loading product details. Please try again.
+      </Typography>
+    </Box>
   );
 };
 
