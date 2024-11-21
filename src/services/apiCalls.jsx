@@ -44,6 +44,35 @@ export const getBestSellingProducts = async () => {
   }
 };
 
+export const getBestBrandedProducts = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/products/best-brand?items=2", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
+export const getBestCategoryProducts = async () => {
+  try {
+    const res = await axios.get(
+      baseUrl + "/products?items=&language=&currency=",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
 export const getSliders = async () => {
   try {
     const res = await axios.get(baseUrl + "/sliders", {
@@ -102,16 +131,3 @@ export const fetchProductById = async (id) => {
     throw error.response ? error.response.status : error;
   }
 };
-
-// export const fetchProducts = async () => {
-//   const response = await axiosInstance.get("/products");
-
-//   console.log(response.data + " API");
-
-//   return response.data;
-// };
-
-// export const fetchProductById = async (productId) => {
-//   const response = await axiosInstance.get(`/products/${productId}`);
-//   return response.data;
-// };

@@ -109,7 +109,7 @@ const BestSeller = () => {
   });
 
   return (
-    <Box sx={{ padding: "40px 0" }}>
+    <Box sx={{ padding: "40px 0", margin: "2em 0" }}>
       <Typography
         variant="p"
         fontSize={"12px"}
