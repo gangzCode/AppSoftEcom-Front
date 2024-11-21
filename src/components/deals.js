@@ -59,7 +59,7 @@ const Deals = () => {
   ];
 
   return (
-    <Box sx={{ padding: "40px 0" }}>
+    <Box sx={{ padding: "40px 0", margin: "4em 0 1em" }}>
       <Typography
         variant="p"
         fontSize={"12px"}

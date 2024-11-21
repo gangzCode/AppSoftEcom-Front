@@ -58,6 +58,7 @@ const ProductDetailsPage = () => {
   const [selectedSpecification, setSelectedSpecification] = useState("");
   const [loading, setLoading] = useState(true);
   const { productId } = useParams();
+  const [selectedVariations, setSelectedVariations] = useState({});
 
   // const product = productDetails[id];
 
@@ -84,15 +85,16 @@ const ProductDetailsPage = () => {
     return () => {};
   }, [product]);
 
-  const handleQuantityChange = (type) => {
+  const handleQuantityChange = (operation) => {
     setQuantity((prev) =>
-      type === "increment" ? prev + 1 : Math.max(1, prev - 1)
+      operation === "increment" ? prev + 1 : Math.max(prev - 1, 1)
     );
   };
 
   const handleSpecificationChange = (spec, value) => {
     setSelectedSpecification((prev) => ({ ...prev, [spec]: value }));
   };
+
   const SpecSelectChip = styled(Chip)(({ theme, variant }) => ({
     borderRadius: 8,
     borderWidth: 1,
@@ -119,6 +121,24 @@ const ProductDetailsPage = () => {
       </Box>
     );
   }
+
+  const calculateTotalPrice = () => {
+    const variationPrice = Object.values(selectedVariations).reduce(
+      (sum, variation) =>
+        variation?.variation_decimal
+          ? sum + parseFloat(variation.variation_decimal)
+          : sum,
+      0
+    );
+    return product.price ? product.price : 0 + variationPrice * quantity;
+  };
+
+  const handleSelection = (category, option) => {
+    setSelectedVariations((prev) => ({
+      ...prev,
+      [category]: option,
+    }));
+  };
 
   return product ? (
     <Box>
@@ -206,7 +226,7 @@ const ProductDetailsPage = () => {
               fontSize={"36px"}
               gutterBottom
             >
-              {product.title}
+              {product.name}
             </Typography>
 
             {/* Product Price */}
@@ -221,20 +241,76 @@ const ProductDetailsPage = () => {
 
             {/* DESKTOP + WIDESCREEN specifications  */}
             <Table sx={{ mb: 2, display: { xs: "none", md: "block" } }}>
-              {/* {product.specifications.map((spec) => (
+              <Box>
+                {Object.keys(
+                  product.product_variations.reduce((acc, curr) => {
+                    acc[curr.template_name] = acc[curr.template_name] || [];
+                    acc[curr.template_name].push(curr);
+                    return acc;
+                  }, {})
+                ).map((category) => (
+                  <Box key={category} sx={{ mb: 3 }}>
+                    <TableCell sx={{ pl: 0 }}>
+                      <Typography variant="subtitle1">{category}</Typography>
+                    </TableCell>
+                    <Typography variant="h6" gutterBottom></Typography>
+                    <Box display="flex" gap={1} flexWrap="wrap">
+                      {product.product_variations
+                        .filter(
+                          (variation) => variation.template_name === category
+                        )
+                        .map((variation) => (
+                          <Chip
+                            key={variation.variation_name}
+                            label={`${variation.variation_name}`}
+                            avatar={
+                              variation.variation_color && (
+                                <Box
+                                  sx={{
+                                    backgroundColor:
+                                      variation.variation_color.toLowerCase(),
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                              )
+                            }
+                            color={
+                              selectedVariations[category]?.variation_name ===
+                              variation.variation_name
+                                ? "primary"
+                                : "default"
+                            }
+                            variant={
+                              selectedVariations[category]?.variation_name ===
+                              variation.variation_name
+                                ? "filled"
+                                : "outlined"
+                            }
+                            onClick={() => handleSelection(category, variation)}
+                          />
+                        ))}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* {product.product_variations.map((item) => (
                 <TableRow>
                   <TableCell sx={{ pl: 0 }}>
-                    <Typography variant="subtitle1">{spec}</Typography>
+
+                    <Typography variant="subtitle1">{item}</Typography>
                   </TableCell>
                   <TableCell>
                     <Box display="flex" gap={1}>
-                      {spec === "Color"
-                        ? product.product_variations[spec].map((option) => (
+                      {item === "Color"
+                        ? product.product_variations[item].map((option) => (
                             <SpecSelectChip
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option
+                                selectedSpecification[item] === option
                                   ? "filled"
                                   : "outlined"
                               }
@@ -259,32 +335,32 @@ const ProductDetailsPage = () => {
                               }}
                               clickable
                               color={
-                                selectedSpecification[spec] === option
+                                selectedSpecification[item] === option
                                   ? "primary"
                                   : "default"
                               }
                               onClick={() =>
-                                handleSpecificationChange(spec, option)
+                                handleSpecificationChange(item, option)
                               }
                             />
                           ))
-                        : product.product_variations[spec].map((option) => (
+                        : product.product_variations[item].map((option) => (
                             <SpecSelectChip
                               key={option}
                               label={option}
                               variant={
-                                selectedSpecification[spec] === option
+                                selectedSpecification[item] === option
                                   ? "filled"
                                   : "outlined"
                               }
                               clickable
                               color={
-                                selectedSpecification[spec] === option
+                                selectedSpecification[item] === option
                                   ? "primary"
                                   : "default"
                               }
                               onClick={() =>
-                                handleSpecificationChange(spec, option)
+                                handleSpecificationChange(item, option)
                               }
                             />
                           ))}
@@ -297,9 +373,9 @@ const ProductDetailsPage = () => {
                   <Typography variant="subtitle1">Total Price</Typography>
                 </TableCell>
                 <TableCell>
-                  {/* <Typography variant="subtitle1">
-                    {`$${(product.sales_price * quantity).toFixed(2)}`}
-                  </Typography> */}
+                  <Typography variant="subtitle1">
+                    {calculateTotalPrice().toFixed(2)}
+                  </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -337,7 +413,7 @@ const ProductDetailsPage = () => {
                   >
                     <IconButton
                       size="small"
-                      // onClick={handleDecrease}
+                      onClick={() => handleQuantityChange("decrement")}
                       sx={{
                         color: "#000",
                         p: 1,
@@ -363,7 +439,7 @@ const ProductDetailsPage = () => {
                     </Typography>
                     <IconButton
                       size="small"
-                      // onClick={handleIncrease}
+                      onClick={() => handleQuantityChange("increment")}
                       sx={{
                         color: "#000",
                         p: 1,
@@ -492,7 +568,7 @@ const ProductDetailsPage = () => {
                   {product.availability}
                 </Typography>
               </Box>
-              <Box sx={{ mb: 2 }}>
+              {/* <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle1">Quantity</Typography>
                 <Box
                   sx={{
@@ -507,7 +583,7 @@ const ProductDetailsPage = () => {
                 >
                   <IconButton
                     size="small"
-                    // onClick={handleDecrease}
+                    onClick={() => handleQuantityChange("decrement")}
                     sx={{
                       color: "#000",
                       p: 1,
@@ -533,7 +609,7 @@ const ProductDetailsPage = () => {
                   </Typography>
                   <IconButton
                     size="small"
-                    // onClick={handleIncrease}
+                    onClick={() => handleQuantityChange("increment")}
                     sx={{
                       color: "#000",
                       p: 1,
@@ -547,7 +623,7 @@ const ProductDetailsPage = () => {
                     <AddIcon fontSize="small" />
                   </IconButton>
                 </Box>
-              </Box>
+              </Box> */}
             </Box>
 
             {/* Total Price with Chip Style */}
@@ -566,23 +642,59 @@ const ProductDetailsPage = () => {
 
             {/* Quantity Selector */}
             {/* <Box display="flex" alignItems="center" gap={2} mb={2}>
-            <Typography>Quantity:</Typography>
-            <ButtonGroup size="small">
-              <IconButton onClick={() => handleQuantityChange("decrement")}>
-                <RemoveIcon />
-              </IconButton>
-              <TextField
-                variant="outlined"
-                size="small"
-                value={quantity}
-                sx={{ width: 50, textAlign: "center" }}
-                inputProps={{ readOnly: true }}
-              />
-              <IconButton onClick={() => handleQuantityChange("increment")}>
-                <AddIcon />
-              </IconButton>
-            </ButtonGroup>
-          </Box> */}
+              <Typography>Quantity</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  borderRadius: "50px",
+                  border: "1px solid #e0e0e0",
+                  backgroundColor: "#f5f5f5",
+                  overflow: "hidden",
+                  width: "130px",
+                }}
+              >
+                <IconButton
+                  sx={{
+                    color: "#000",
+                    p: 1,
+                    width: "35%",
+                    borderRadius: 0,
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                    },
+                  }}
+                  onClick={() => handleQuantityChange("decrement")}
+                >
+                  <RemoveIcon />
+                </IconButton>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    mx: 0,
+                    textAlign: "center",
+                    flexGrow: 1,
+                    fontSize: "1.25em",
+                  }}
+                >
+                  {quantity}
+                </Typography>
+                <IconButton
+                  sx={{
+                    color: "#000",
+                    p: 1,
+                    width: "35%",
+                    borderRadius: 0,
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                    },
+                  }}
+                  onClick={() => handleQuantityChange("increment")}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Box>
+            </Box> */}
 
             {/* Buttons Row */}
             <Grid

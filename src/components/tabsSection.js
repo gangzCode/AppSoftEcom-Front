@@ -23,7 +23,7 @@ const products = {
       image: "https://via.placeholder.com/200",
       discount: null,
       soldOut: false,
-},
+    },
     {
       id: 2,
       category: "Products-Vibe",
@@ -119,7 +119,7 @@ const TabSection = () => {
   const tabKeys = Object.keys(products);
 
   return (
-    <Box sx={{ width: "100%", padding: 4 }}>
+    <Box sx={{ width: "100%", margin: "2em 0", padding: "4em 0" }}>
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}

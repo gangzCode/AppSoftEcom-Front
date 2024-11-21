@@ -75,7 +75,7 @@ const CategoryBetweenBanner = () => {
                     color="textSecondary"
                     gutterBottom
                   >
-                    {promo.price}
+                    ${promo.price ? promo.price : 0}
                   </Typography>
                   <Button
                     sx={{

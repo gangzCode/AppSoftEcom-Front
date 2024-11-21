@@ -41,7 +41,7 @@ const HomeBetweenBanner = () => {
   }, []);
 
   return (
-    <Grid container paddingY={"3em"} spacing={2}>
+    <Grid container paddingY={"2em"} marginY={"2em"} spacing={2}>
       {promotions
         .filter((promo) => promo.type === "Home")
         .map((promo, index) => (
