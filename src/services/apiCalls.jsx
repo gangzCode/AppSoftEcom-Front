@@ -31,9 +31,9 @@ export const getTopCategoriesForMenu = async () => {
   }
 };
 
-export const getTopSellingProducts = async () => {
+export const getBestSellingProducts = async () => {
   try {
-    const res = await axios.get(baseUrl + "/products?items=", {
+    const res = await axios.get(baseUrl + "/products/best-sale?items=2", {
       headers: {
         "Content-Type": "application/json",
       },
