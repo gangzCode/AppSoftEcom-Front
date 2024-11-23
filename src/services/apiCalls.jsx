@@ -131,3 +131,35 @@ export const fetchProductById = async (id) => {
     throw error.response ? error.response.status : error;
   }
 };
+
+
+export const quickSearch = async (term) => {
+    let controller = new AbortController();  // Local controller to avoid using a global variable
+    const signal = controller.signal;
+  
+    try {
+      const res = await fetch("https://ecom-test2.yalpos.com/api/product-search", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",  // Use POST since we're sending a request body
+        signal: signal,
+        body: JSON.stringify({ term }),  // Send the term in the request body
+      });
+  
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status} - ${res.statusText}`);
+      }
+  
+      return await res.json();
+    } catch (error) {
+      // Handle specific errors (e.g., aborted requests)
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted');
+      } else {
+        console.error('Request failed', error);
+      }
+      throw error;
+    }
+  };
+  

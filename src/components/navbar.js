@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import {
   AppBar,
   Box,
@@ -35,6 +35,7 @@ import CartSliderNotes from "./CartSlider/cartSliderNotes";
 import {
   getCategoriesForAllCategoriesDrop,
   getTopCategoriesForMenu,
+  quickSearch
 } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
@@ -42,10 +43,55 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [cartOpen, setCartOpen] = useState(false);
   const [menus, setmenus] = useState([]);
   const [anchorMenu, setAnchorMenu] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [menuIndex, setMenuIndex] = useState(null);
   const [categories, setCategories] = useState([]);
+  const searchBarRef = useRef(null);
+  const searchResultsRef = useRef(null);
 
   let closeMenuTimer;
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchKeyPress = async (e) => {
+    if (e.key === 'Enter' && searchTerm.trim()) {
+      try {
+        const response = await quickSearch(searchTerm);
+        const results = response.data;
+        console.log("Search Results:", results); 
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Search failed", error);
+      }
+    }
+  };  
+
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      console.log(searchResults);
+    }
+  }, [searchResults]);
+
+  const handleClickOutside = (event) => {
+    if (
+      searchBarRef.current &&
+      !searchBarRef.current.contains(event.target) &&
+      searchResultsRef.current &&
+      !searchResultsRef.current.contains(event.target)
+    ) {
+      setSearchResults([]); // Close the dropdown
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchMainCategories = async () => {
@@ -145,37 +191,73 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             <img src="https://placehold.co/200x40" alt="Logo" />
           </RouterLink>
         </Grid>
-        <Grid md={9}>
-          <TextField
-            variant="outlined"
-            placeholder="Search for Products..."
-            fullWidth
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "50px",
-                backgroundColor: "#f3f3f3",
-              },
-              input: {
-                paddingY: ".6em",
-                borderBlock: "none",
-                backgroundColor: "#f3f3f3",
-                borderRadius: "50px",
-              },
-              fieldset: {
-                border: "none",
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
+        <Grid md={9} sx={{ position: "relative" }}>
+  <TextField
+    variant="outlined"
+    placeholder="Search for Products..."
+    fullWidth
+    onChange={handleSearchChange}
+    onKeyDown={handleSearchKeyPress}
+    inputRef={searchBarRef}
+    sx={{
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "50px",
+        backgroundColor: "#f3f3f3",
+      },
+      input: {
+        paddingY: ".6em",
+        borderBlock: "none",
+        backgroundColor: "#f3f3f3",
+        borderRadius: "50px",
+      },
+      fieldset: {
+        border: "none",
+      },
+    }}
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton>
+            <SearchIcon />
+          </IconButton>
+        </InputAdornment>
+      ),
+    }}
+  />
+  {searchResults.length > 0 && (
+  <Box
+    ref={searchResultsRef}
+    sx={{
+      position: "absolute",
+      top: "100%",
+      left: 0,
+      right: 0,
+      bgcolor: "#fff",
+      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+      zIndex: 9999,
+      maxHeight: "300px",
+      overflowY: "auto",
+      marginTop: "8px",
+    }}
+  >
+    <Paper elevation={3}>
+      <Typography variant="h6" sx={{ padding: "10px" }}>
+        Search Results:
+      </Typography>
+      <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
+        {searchResults.map((item) => (
+          <RouterLink to={`/product/${item.id}`} key={item.id}>
+            <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
+              <Typography>{item.name}</Typography>
+            </MenuItem>
+          </RouterLink>
+        ))}
+      </Box>
+    </Paper>
+  </Box>
+)}
+</Grid>
+       
         <Grid md={1}>
           <Box display="flex" justifyContent="space-around" alignItems="center">
             <IconButton>
