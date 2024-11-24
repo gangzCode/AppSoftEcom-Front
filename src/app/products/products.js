@@ -635,7 +635,10 @@ const ProductsPage = () => {
                   >
                     <Box
                       component="img"
-                      src={product.image}
+                      src={
+                        product.image ||
+                        "https://placehold.co/360x340?text=Image+Not+Found"
+                      }
                       alt={product.description}
                       sx={{
                         width: "100%",
@@ -646,7 +649,10 @@ const ProductsPage = () => {
                     />
                     <Box
                       component="img"
-                      src={product.hoverImage}
+                      src={
+                        product.image ||
+                        "https://placehold.co/360x340?text=Image+Not+Found"
+                      }
                       alt={product.description}
                       sx={{
                         position: "absolute",
@@ -664,7 +670,7 @@ const ProductsPage = () => {
                     className="hover-icons"
                     sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: "45%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                       display: "flex",
@@ -677,9 +683,7 @@ const ProductsPage = () => {
                   >
                     {[
                       { icon: <ShoppingCart />, id: "cart" },
-                      { icon: <Layers />, id: "layers" },
                       { icon: <Favorite />, id: "favorite" },
-                      { icon: <Search />, id: "search" },
                     ].map((item) => (
                       <IconButton
                         key={item.id}
@@ -723,7 +727,7 @@ const ProductsPage = () => {
                     sx={{ marginTop: "auto" }}
                   >
                     <Typography variant="h6" fontWeight="600">
-                      ${product.price}
+                      ${product.price ? product.price : 0}
                     </Typography>
                     <ChevronRight
                       sx={{ color: "#2189ff", marginLeft: "8px" }}

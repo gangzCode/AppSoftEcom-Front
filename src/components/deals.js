@@ -230,9 +230,7 @@ const Deals = () => {
                     >
                       {[
                         { icon: <ShoppingCart />, id: "cart" },
-                        { icon: <Layers />, id: "layers" },
                         { icon: <Favorite />, id: "favorite" },
-                        { icon: <Search />, id: "search" },
                       ].map((item) => (
                         <IconButton
                           key={item.id}
@@ -369,9 +367,7 @@ const Deals = () => {
                       >
                         {[
                           { icon: <ShoppingCart />, id: "cart" },
-                          { icon: <Layers />, id: "layers" },
                           { icon: <Favorite />, id: "favorite" },
-                          { icon: <Search />, id: "search" },
                         ].map((item) => (
                           <IconButton
                             key={item.id}

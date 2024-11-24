@@ -49,7 +49,10 @@ const HomeBetweenBanner = () => {
             <Box
               sx={{
                 position: "relative",
-                backgroundImage: `url(${promo.image})`,
+                backgroundImage: `url(${
+                  promo.image ||
+                  "https://placehold.co/360x340?text=Image+Not+Found"
+                })`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 height: "300px",

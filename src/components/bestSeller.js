@@ -158,7 +158,7 @@ const BestSeller = () => {
       >
         {products &&
           products.map((product) => (
-            <Link to={""}>
+            <Link to={`/product/${product.id}`}>
               <Box
                 key={product.id}
                 sx={{
@@ -195,7 +195,8 @@ const BestSeller = () => {
                     alt={product.description}
                     sx={{
                       width: "100%",
-                      height: "auto",
+                      height: "200px",
+                      objectFit: "contain",
                       transition: "opacity 0.5s ease",
                       opacity: hoveredProductId === product.id ? 0 : 1,
                     }}
@@ -209,7 +210,8 @@ const BestSeller = () => {
                       top: 0,
                       left: 0,
                       width: "100%",
-                      height: "auto",
+                      height: "200px",
+                      objectFit: "contain",
                       transition: "opacity 0.5s ease",
                       opacity: hoveredProductId === product.id ? 1 : 0,
                     }}
@@ -233,9 +235,7 @@ const BestSeller = () => {
                 >
                   {[
                     { icon: <ShoppingCart />, id: "cart" },
-                    { icon: <Layers />, id: "layers" },
                     { icon: <Favorite />, id: "favorite" },
-                    { icon: <Search />, id: "search" },
                   ].map((item) => (
                     <IconButton
                       key={item.id}

@@ -54,13 +54,46 @@ const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(
     "https://ecom-test2.yalpos.com/img/default.png"
   );
-  const [quantity, setQuantity] = useState(1);
   const [selectedSpecification, setSelectedSpecification] = useState("");
   const [loading, setLoading] = useState(true);
   const { productId } = useParams();
   const [selectedVariations, setSelectedVariations] = useState({});
 
+  const [quantity, setQuantity] = useState(1);
+
+  const handleSelectVariation = (variationName, option) => {
+    setSelectedVariations((prev) => ({
+      ...prev,
+      [variationName]: option,
+    }));
+  };
+
+  // const handleQuantityChange = (event) => {
+  //   const value = Math.max(1, parseInt(event.target.value, 10) || 1); // Prevent negative or invalid values
+  //   setQuantity(value);
+  // };
+
+  const calculateTotalPrice = () => {
+    const basePrice = Object.values(selectedVariations).reduce(
+      (sum, option) => sum + parseFloat(option.value || 0),
+      0
+    );
+    return (basePrice * quantity).toFixed(2);
+  };
+
+  // const handleSelectVariation = (variationName, optionName) => {
+  //   setSelectedVariations((prev) => ({
+  //     ...prev,
+  //     [variationName]: optionName,
+  //   }));
+  // };
+
   // const product = productDetails[id];
+
+  useEffect(() => {
+    console.log(JSON.stringify(selectedVariations) + "selectedVariations");
+    return () => {};
+  }, [selectedVariations]);
 
   useEffect(() => {
     const fetchGetProductDetails = async () => {
@@ -122,16 +155,16 @@ const ProductDetailsPage = () => {
     );
   }
 
-  const calculateTotalPrice = () => {
-    const variationPrice = Object.values(selectedVariations).reduce(
-      (sum, variation) =>
-        variation?.variation_decimal
-          ? sum + parseFloat(variation.variation_decimal)
-          : sum,
-      0
-    );
-    return product.price ? product.price : 0 + variationPrice * quantity;
-  };
+  // const calculateTotalPrice = () => {
+  //   const variationPrice = Object.values(selectedVariations).reduce(
+  //     (sum, variation) =>
+  //       variation?.variation_decimal
+  //         ? sum + parseFloat(variation.variation_decimal)
+  //         : sum,
+  //     0
+  //   );
+  //   return product.price ? product.price : 0 + variationPrice * quantity;
+  // };
 
   const handleSelection = (category, option) => {
     setSelectedVariations((prev) => ({
@@ -232,7 +265,7 @@ const ProductDetailsPage = () => {
             {/* Product Price */}
             <Typography
               variant="h5"
-              color="primary"
+              // color="primary"
               fontWeight={"bold"}
               gutterBottom
             >
@@ -240,7 +273,150 @@ const ProductDetailsPage = () => {
             </Typography>
 
             {/* DESKTOP + WIDESCREEN specifications  */}
-            <Table sx={{ mb: 2, display: { xs: "none", md: "block" } }}>
+
+            {product.product_variation_tempalte?.length > 0 && (
+              <Box sx={{ marginTop: "16px" }}>
+                {product.product_variation_tempalte.map((variation) => (
+                  <Box key={variation.name} sx={{ marginBottom: "32px" }}>
+                    <Grid
+                      container
+                      // spacing={1}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="500"
+                        gutterBottom
+                        pr={2}
+                      >
+                        {variation.name}:
+                      </Typography>
+                      {variation.option.map((option) => (
+                        <Grid item key={option.name}>
+                          <Chip
+                            label={`${option.name}`}
+                            sx={{
+                              backgroundColor:
+                                selectedVariations[variation.name]?.name ===
+                                option.name
+                                  ? "#2189ff"
+                                  : "#e0e0e0",
+                              color:
+                                selectedVariations[variation.name]?.name ===
+                                option.name
+                                  ? "#fff"
+                                  : "#000",
+                              "&:hover": {
+                                backgroundColor: "#2189ff",
+                                color: "#fff",
+                              },
+                            }}
+                            onClick={() =>
+                              handleSelectVariation(variation.name, option)
+                            }
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            <Box
+              sx={{
+                mb: "32px",
+                flexDirection: "row",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Box sx={{}}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="500"
+                  // gutterBottom
+                  pr={2}
+                >
+                  Quantity:
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  borderRadius: "50px",
+                  border: "1px solid #e0e0e0",
+                  backgroundColor: "#f5f5f5",
+                  overflow: "hidden",
+                  width: "130px",
+                }}
+              >
+                <IconButton
+                  size="small"
+                  onClick={() => handleQuantityChange("decrement")}
+                  sx={{
+                    color: "#000",
+                    p: 1,
+                    width: "35%",
+                    borderRadius: 0,
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                    },
+                  }}
+                >
+                  <RemoveIcon fontSize="small" sx={{ fontWeight: 200 }} />
+                </IconButton>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    mx: 0,
+                    textAlign: "center",
+                    flexGrow: 1,
+                    fontSize: "1.25em",
+                  }}
+                >
+                  {quantity}
+                </Typography>
+                <IconButton
+                  size="small"
+                  onClick={() => handleQuantityChange("increment")}
+                  sx={{
+                    color: "#000",
+                    p: 1,
+                    width: "35%",
+                    borderRadius: 0,
+                    "&:hover": {
+                      backgroundColor: "#e0e0e0",
+                    },
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
+
+            <Typography
+              mb={"32px"}
+              variant="body1"
+              color="subtitle1"
+              sx={{ marginTop: "16px", fontWeight: "500" }}
+            >
+              Total Price: {product.currency} {calculateTotalPrice()}
+            </Typography>
+
+            <Box sx={{ mb: 2, display: "flex" }}>
+              <Typography pr={1} variant="body1">
+                Availability:
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                color={product.total_stock > 0 ? "success.dark" : "error"}
+              >
+                {product.total_stock}
+              </Typography>
+            </Box>
+
+            {/* <Table sx={{ mb: 2, display: { xs: "none", md: "block" } }}>
               <Box>
                 {Object.keys(
                   product.product_variations.reduce((acc, curr) => {
@@ -296,78 +472,6 @@ const ProductDetailsPage = () => {
                 ))}
               </Box>
 
-              {/* {product.product_variations.map((item) => (
-                <TableRow>
-                  <TableCell sx={{ pl: 0 }}>
-
-                    <Typography variant="subtitle1">{item}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" gap={1}>
-                      {item === "Color"
-                        ? product.product_variations[item].map((option) => (
-                            <SpecSelectChip
-                              key={option}
-                              label={option}
-                              variant={
-                                selectedSpecification[item] === option
-                                  ? "filled"
-                                  : "outlined"
-                              }
-                              avatar={
-                                <Box
-                                  sx={{
-                                    backgroundColor:
-                                      option.toLowerCase() + " !important",
-                                    borderRadius: 999,
-                                    filter: "greyscale(80%)",
-                                    // zIndex: 100,
-                                  }}
-                                />
-                              }
-                              sx={{
-                                borderRadius: 0.5,
-                                fontSize: 12,
-                                "& .MuiChip-avatar": {
-                                  width: 12,
-                                  height: 12,
-                                },
-                              }}
-                              clickable
-                              color={
-                                selectedSpecification[item] === option
-                                  ? "primary"
-                                  : "default"
-                              }
-                              onClick={() =>
-                                handleSpecificationChange(item, option)
-                              }
-                            />
-                          ))
-                        : product.product_variations[item].map((option) => (
-                            <SpecSelectChip
-                              key={option}
-                              label={option}
-                              variant={
-                                selectedSpecification[item] === option
-                                  ? "filled"
-                                  : "outlined"
-                              }
-                              clickable
-                              color={
-                                selectedSpecification[item] === option
-                                  ? "primary"
-                                  : "default"
-                              }
-                              onClick={() =>
-                                handleSpecificationChange(item, option)
-                              }
-                            />
-                          ))}
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))} */}
               <TableRow>
                 <TableCell sx={{ pl: 0 }}>
                   <Typography variant="subtitle1">Total Price</Typography>
@@ -455,7 +559,7 @@ const ProductDetailsPage = () => {
                   </Box>
                 </TableCell>
               </TableRow>
-            </Table>
+            </Table> */}
 
             {/* MOBILE Specifications with Selectable Chips */}
             <Box
