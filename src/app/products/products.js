@@ -166,19 +166,13 @@ const ProductsPage = () => {
       );
     }
 
-    if (selectedCategory) {
+    if (selectedSubCategory) {
       filtered = filtered.filter((product) => {
         try {
-          const categoryName = JSON.parse(product.category?.name)?.En;
-          if (categoryName !== selectedCategory) return false;
-
-          if (selectedSubCategory) {
-            const subCategoryName = product.sub_category
-              ? JSON.parse(product.sub_category?.name)?.En
-              : null;
-            return subCategoryName === selectedSubCategory;
-          }
-          return true;
+          const subCategoryName = product.sub_category
+            ? JSON.parse(product.sub_category?.name)?.En
+            : null;
+          return subCategoryName === selectedSubCategory;
         } catch (e) {
           return false;
         }
@@ -284,54 +278,25 @@ const ProductsPage = () => {
 
             <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
-                <Typography>Category</Typography>
+                <Typography>Subcategories</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  {/* <FormControl fullWidth>
-                    <InputLabel>Category</InputLabel>
+                  <FormControl fullWidth>
+                    <InputLabel>Subcategory</InputLabel>
                     <Select
-                      value={selectedCategory}
-                      onChange={(e) => {
-                        setSelectedCategory(e.target.value);
-                        setSelectedSubCategory("");
-                      }}
-                      label="Category"
+                      value={selectedSubCategory}
+                      onChange={(e) => setSelectedSubCategory(e.target.value)}
+                      label="Subcategory"
                     >
-                      <MenuItem value="">All Categories</MenuItem>
-                      {Object.keys(getCategoriesAndSubcategories()).map(
-                        (category) => (
-                          <MenuItem key={category} value={category}>
-                            {category}
-                          </MenuItem>
-                        )
-                      )}
+                      <MenuItem value="">All Subcategories</MenuItem>
+                      {products[0]?.category && getCategoriesAndSubcategories()[JSON.parse(products[0]?.category?.name)?.En]?.map((subCategory) => (
+                        <MenuItem key={subCategory} value={subCategory}>
+                          {subCategory}
+                        </MenuItem>
+                      ))}
                     </Select>
-                  </FormControl> */}
-
-                  {selectedCategory &&
-                    getCategoriesAndSubcategories()[selectedCategory]?.length >
-                      0 && (
-                      <FormControl fullWidth>
-                        <InputLabel>Subcategory</InputLabel>
-                        <Select
-                          value={selectedSubCategory}
-                          onChange={(e) =>
-                            setSelectedSubCategory(e.target.value)
-                          }
-                          label="Subcategory"
-                        >
-                          <MenuItem value="">All Subcategories</MenuItem>
-                          {getCategoriesAndSubcategories()[
-                            selectedCategory
-                          ].map((subCategory) => (
-                            <MenuItem key={subCategory} value={subCategory}>
-                              {subCategory}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
+                  </FormControl>
                 </Box>
               </AccordionDetails>
             </Accordion>
