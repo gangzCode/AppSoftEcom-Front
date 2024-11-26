@@ -43,86 +43,6 @@ import BestsellerSlider from "../../components/bestsellerSlider";
 import useAppDispatch from "../../hooks/useAppDispatch";
 import useAppSelector from "../../hooks/useAppSelector";
 import { fetchProducts, getTopSellingProducts } from "../../services/apiCalls";
-// import { getProducts } from "../../features/products/productSlice";
-
-// const products = [
-//   {
-//     id: 1,
-//     title: "Product 1",
-//     price: 29.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//     hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
-//     description: "Product 1",
-//   },
-//   {
-//     id: 2,
-//     title: "Product 2",
-//     price: 59.99,
-//     image: "https://placehold.co/380x360",
-//     available: false,
-//     category: "Category B",
-//     hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
-//     description: "Product 2",
-//   },
-//   {
-//     id: 3,
-//     title: "Product 3",
-//     price: 19.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//   },
-//   {
-//     id: 4,
-//     title: "Product 4",
-//     price: 29.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//   },
-//   {
-//     id: 5,
-//     title: "Product 5",
-//     price: 59.99,
-//     image: "https://placehold.co/380x360",
-//     available: false,
-//     category: "Category B",
-//   },
-//   {
-//     id: 6,
-//     title: "Product 6",
-//     price: 19.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//   },
-//   {
-//     id: 7,
-//     title: "Product 7",
-//     price: 29.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//   },
-//   {
-//     id: 8,
-//     title: "Product 8",
-//     price: 59.99,
-//     image: "https://placehold.co/380x360",
-//     available: false,
-//     category: "Category B",
-//   },
-//   {
-//     id: 9,
-//     title: "Product 9",
-//     price: 19.99,
-//     image: "https://placehold.co/380x360",
-//     available: true,
-//     category: "Category A",
-//   },
-// ];
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -130,34 +50,14 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [availability, setAvailability] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 0]);
   const [products, setproducts] = useState([]);
   const [displayMode, setDisplayMode] = useState("grid");
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
   const { categoryId } = useParams();
-
-  // const dispatch = useAppDispatch();
-  // const {
-  //   items: products,
-  //   status,
-  //   error,
-  // } = useAppSelector((state) => state.products);
-
-  // useEffect(() => {
-  //   if (status === "idle") {
-  //     console.log("useeffect");
-
-  //     dispatch(getProducts());
-  //   }
-  // }, [dispatch, status]);
-
-  // useEffect(() => {
-  //   console.log(products + " " + status + "BR PRODUCTS");
-
-  //   return () => {};
-  // }, [products]);
 
   useEffect(() => {
     console.log("CategoryId from Params:", categoryId);
@@ -177,6 +77,23 @@ const ProductsPage = () => {
     fetchGetProducts();
   }, [categoryId]);
 
+  useEffect(() => {
+    if (products.length > 0) {
+      const allPrices = products.flatMap((product) => {
+        const basePrice = product.price || 0;
+        const variationPrices =
+          product.product_variations?.map((v) =>
+            parseFloat(v.variation_decimal)
+          ) || [];
+        return [basePrice, ...variationPrices];
+      });
+
+      const minPrice = Math.min(...allPrices);
+      const maxPrice = Math.max(...allPrices);
+      setPriceRange([minPrice, maxPrice]);
+    }
+  }, [products]);
+
   const handleSortChange = (event) => {
     setSort(event.target.value);
   };
@@ -189,18 +106,103 @@ const ProductsPage = () => {
     setPriceRange(newValue);
   };
 
-  const filteredProducts = products
-    .filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter((product) =>
-      selectedCategory ? product.category_name === selectedCategory : true
-    )
-    .filter((product) => (availability ? product.is_single_product : true))
-    .filter(
-      (product) =>
-        product.price >= priceRange[0] && product.price <= priceRange[1]
+  const handlePriceInputChange = (type) => (event) => {
+    const value = Number(event.target.value);
+    if (type === "min") {
+      setPriceRange([value, priceRange[1]]);
+    } else {
+      setPriceRange([priceRange[0], value]);
+    }
+  };
+
+  const getSortedProducts = (products, sortType) => {
+    const sortedProducts = [...products];
+    switch (sortType) {
+      case "priceAsc":
+        return sortedProducts.sort((a, b) => a.price - b.price);
+      case "priceDesc":
+        return sortedProducts.sort((a, b) => b.price - a.price);
+      default:
+        return sortedProducts;
+    }
+  };
+
+  const getCategoriesAndSubcategories = () => {
+    const categoriesMap = new Map();
+
+    products.forEach((product) => {
+      try {
+        const categoryName = JSON.parse(product.category?.name)?.En;
+        const subCategoryName = product.sub_category
+          ? JSON.parse(product.sub_category?.name)?.En
+          : null;
+
+        if (!categoriesMap.has(categoryName)) {
+          categoriesMap.set(categoryName, new Set());
+        }
+
+        if (subCategoryName) {
+          categoriesMap.get(categoryName).add(subCategoryName);
+        }
+      } catch (e) {
+        console.error("Error parsing category/subcategory:", e);
+      }
+    });
+
+    return Object.fromEntries(
+      Array.from(categoriesMap.entries()).map(([category, subcategories]) => [
+        category,
+        Array.from(subcategories),
+      ])
     );
+  };
+
+  const getFilteredProducts = () => {
+    let filtered = [...products];
+
+    if (searchTerm) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter((product) => {
+        try {
+          const categoryName = JSON.parse(product.category?.name)?.En;
+          if (categoryName !== selectedCategory) return false;
+
+          if (selectedSubCategory) {
+            const subCategoryName = product.sub_category
+              ? JSON.parse(product.sub_category?.name)?.En
+              : null;
+            return subCategoryName === selectedSubCategory;
+          }
+          return true;
+        } catch (e) {
+          return false;
+        }
+      });
+    }
+
+    if (availability) {
+      filtered = filtered.filter((product) => product.available_stock > 0);
+    }
+
+    filtered = filtered.filter((product) => {
+      const basePrice = product.price || 0;
+      const variationPrices =
+        product.product_variations?.map((v) =>
+          parseFloat(v.variation_decimal)
+        ) || [];
+      const allPrices = [basePrice, ...variationPrices];
+      const lowestPrice = Math.min(...allPrices);
+
+      return lowestPrice >= priceRange[0] && lowestPrice <= priceRange[1];
+    });
+
+    return getSortedProducts(filtered, sort);
+  };
 
   const handleDisplayModeChange = (event, newDisplayMode) => {
     if (newDisplayMode) setDisplayMode(newDisplayMode);
@@ -285,18 +287,52 @@ const ProductsPage = () => {
                 <Typography>Category</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <FormControl fullWidth>
-                  <InputLabel>Category</InputLabel>
-                  <Select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    label="Category"
-                  >
-                    <MenuItem value="">All</MenuItem>
-                    <MenuItem value="Category A">Category A</MenuItem>
-                    <MenuItem value="Category B">Category B</MenuItem>
-                  </Select>
-                </FormControl>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Category</InputLabel>
+                    <Select
+                      value={selectedCategory}
+                      onChange={(e) => {
+                        setSelectedCategory(e.target.value);
+                        setSelectedSubCategory("");
+                      }}
+                      label="Category"
+                    >
+                      <MenuItem value="">All Categories</MenuItem>
+                      {Object.keys(getCategoriesAndSubcategories()).map(
+                        (category) => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        )
+                      )}
+                    </Select>
+                  </FormControl>
+
+                  {selectedCategory &&
+                    getCategoriesAndSubcategories()[selectedCategory]?.length >
+                      0 && (
+                      <FormControl fullWidth>
+                        <InputLabel>Subcategory</InputLabel>
+                        <Select
+                          value={selectedSubCategory}
+                          onChange={(e) =>
+                            setSelectedSubCategory(e.target.value)
+                          }
+                          label="Subcategory"
+                        >
+                          <MenuItem value="">All Subcategories</MenuItem>
+                          {getCategoriesAndSubcategories()[
+                            selectedCategory
+                          ].map((subCategory) => (
+                            <MenuItem key={subCategory} value={subCategory}>
+                              {subCategory}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                </Box>
               </AccordionDetails>
             </Accordion>
 
@@ -329,14 +365,14 @@ const ProductsPage = () => {
                   textAlign="left"
                   sx={{ marginBottom: "4px" }}
                 >
-                  The highest price is ${realPriceRange.highest}
+                  Price Range: ${priceRange[0]} - ${priceRange[1]}
                 </Typography>
                 <Slider
                   value={priceRange}
                   onChange={handlePriceRangeChange}
                   valueLabelDisplay="auto"
-                  min={realPriceRange.lowest}
-                  max={realPriceRange.highest}
+                  min={Math.min(...products.map((p) => p.price || 0))}
+                  max={Math.max(...products.map((p) => p.price || 0))}
                 />
                 <Box display={"flex"} gap={3} flexDirection={"row"}>
                   <Box>
@@ -351,8 +387,9 @@ const ProductsPage = () => {
                     </Typography>
                     <TextField
                       variant="outlined"
-                      placeholder=""
-                      value={realPriceRange.lowest}
+                      type="number"
+                      value={priceRange[0]}
+                      onChange={handlePriceInputChange("min")}
                       fullWidth
                       sx={{
                         border: "none",
@@ -379,8 +416,9 @@ const ProductsPage = () => {
                     </Typography>
                     <TextField
                       variant="outlined"
-                      placeholder=""
-                      value={realPriceRange.highest}
+                      type="number"
+                      value={priceRange[1]}
+                      onChange={handlePriceInputChange("max")}
                       fullWidth
                       sx={{
                         border: "none",
@@ -596,146 +634,162 @@ const ProductsPage = () => {
 
           <Grid
             container
-            // spacing={3}
             gap={"34px"}
             direction={displayMode === "grid" ? "row" : "column"}
           >
-            {products.slice(0, productsPerPage).map((product) => (
-              <Box
-                key={product.id}
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                  // alignItems: "center",
-                  minWidth: "280px",
-                  width: "31%",
-                  padding: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: "#f5f5f5",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  ":hover": {
-                    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-                onMouseEnter={() => setHoveredProductId(product.id)}
-                onMouseLeave={() => setHoveredProductId(null)}
-              >
-                <RouterLink to={`/product/${product.id}`}>
-                  <Box
-                    sx={{
-                      position: "relative",
-                      width: "100%",
-                      maxWidth: "360px",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                    }}
-                  >
+            {getFilteredProducts()
+              .slice(0, productsPerPage)
+              .map((product) => (
+                <Box
+                  key={product.id}
+                  sx={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    minWidth: "280px",
+                    width: "31%",
+                    padding: "20px",
+                    borderRadius: "20px",
+                    backgroundColor: "#f5f5f5",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
+                    ":hover": {
+                      boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                  onMouseEnter={() => setHoveredProductId(product.id)}
+                  onMouseLeave={() => setHoveredProductId(null)}
+                >
+                  <RouterLink to={`/product/${product.id}`}>
                     <Box
-                      component="img"
-                      src={
-                        product.image ||
-                        "https://placehold.co/360x340?text=Image+Not+Found"
-                      }
-                      alt={product.description}
                       sx={{
+                        position: "relative",
                         width: "100%",
-                        height: "auto",
-                        transition: "opacity 0.5s ease",
-                        opacity: hoveredProductId === product.id ? 0 : 1,
+                        maxWidth: "360px",
+                        borderRadius: "10px",
+                        overflow: "hidden",
                       }}
-                    />
+                    >
+                      <Box
+                        component="img"
+                        src={
+                          product.image ||
+                          "https://placehold.co/360x340?text=Image+Not+Found"
+                        }
+                        alt={product.description}
+                        sx={{
+                          width: "100%",
+                          height: "auto",
+                          transition: "opacity 0.5s ease",
+                          opacity: hoveredProductId === product.id ? 0 : 1,
+                        }}
+                      />
+                      <Box
+                        component="img"
+                        src={
+                          product.image ||
+                          "https://placehold.co/360x340?text=Image+Not+Found"
+                        }
+                        alt={product.description}
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "auto",
+                          transition: "opacity 0.5s ease",
+                          opacity: hoveredProductId === product.id ? 1 : 0,
+                        }}
+                      />
+                    </Box>
+
                     <Box
-                      component="img"
-                      src={
-                        product.image ||
-                        "https://placehold.co/360x340?text=Image+Not+Found"
-                      }
-                      alt={product.description}
+                      className="hover-icons"
                       sx={{
                         position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "auto",
-                        transition: "opacity 0.5s ease",
+                        top: "45%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        display: "flex",
+                        gap: "8px",
                         opacity: hoveredProductId === product.id ? 1 : 0,
+                        visibility:
+                          hoveredProductId === product.id
+                            ? "visible"
+                            : "hidden",
+                        transition: "opacity 0.3s ease, visibility 0.3s ease",
                       }}
-                    />
-                  </Box>
-
-                  <Box
-                    className="hover-icons"
-                    sx={{
-                      position: "absolute",
-                      top: "45%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      display: "flex",
-                      gap: "8px",
-                      opacity: hoveredProductId === product.id ? 1 : 0,
-                      visibility:
-                        hoveredProductId === product.id ? "visible" : "hidden",
-                      transition: "opacity 0.3s ease, visibility 0.3s ease",
-                    }}
-                  >
-                    {[
-                      { icon: <ShoppingCart />, id: "cart" },
-                      { icon: <Favorite />, id: "favorite" },
-                    ].map((item) => (
-                      <IconButton
-                        key={item.id}
-                        sx={{
-                          backgroundColor: "#2189ff",
-                          color: "#fff",
-                          borderRadius: "10px",
-                          width: "40px",
-                          height: "40px",
-                          "&:hover": {
-                            backgroundColor: "#000",
-                          },
-                        }}
-                      >
-                        {item.icon}
-                      </IconButton>
-                    ))}
-                  </Box>
-                  <Typography
-                    variant="caption"
-                    fontSize={"12px"}
-                    color={"#bebebe"}
-                    textAlign="left"
-                    sx={{ letterSpacing: "1px", marginBottom: "4px" }}
-                  >
-                    {product.category_name}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    fontWeight="500"
-                    textAlign="left"
-                    sx={{ marginBottom: "8px" }}
-                  >
-                    {product.name}
-                  </Typography>
-                  <Box
-                    display={"flex"}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    textAlign="left"
-                    sx={{ marginTop: "auto" }}
-                  >
-                    <Typography variant="h6" fontWeight="600">
-                      ${product.price ? product.price : 0}
+                    >
+                      {[
+                        { icon: <ShoppingCart />, id: "cart" },
+                        { icon: <Favorite />, id: "favorite" },
+                      ].map((item) => (
+                        <IconButton
+                          key={item.id}
+                          sx={{
+                            backgroundColor: "#2189ff",
+                            color: "#fff",
+                            borderRadius: "10px",
+                            width: "40px",
+                            height: "40px",
+                            "&:hover": {
+                              backgroundColor: "#000",
+                            },
+                          }}
+                        >
+                          {item.icon}
+                        </IconButton>
+                      ))}
+                    </Box>
+                    <Typography
+                      variant="caption"
+                      fontSize={"12px"}
+                      color={"#bebebe"}
+                      textAlign="left"
+                      sx={{ letterSpacing: "1px", marginBottom: "4px" }}
+                    >
+                      {(() => {
+                        try {
+                          const category = JSON.parse(
+                            product.category?.name
+                          )?.En;
+                          const subCategory = product.sub_category
+                            ? JSON.parse(product.sub_category?.name)?.En
+                            : null;
+                          return subCategory
+                            ? `${category} > ${subCategory}`
+                            : category;
+                        } catch (e) {
+                          return "";
+                        }
+                      })()}
                     </Typography>
-                    <ChevronRight
-                      sx={{ color: "#2189ff", marginLeft: "8px" }}
-                    />
-                  </Box>
-                </RouterLink>
-              </Box>
-            ))}
+                    <Typography
+                      variant="body1"
+                      fontWeight="500"
+                      textAlign="left"
+                      sx={{ marginBottom: "8px" }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Box
+                      display={"flex"}
+                      alignItems="center"
+                      justifyContent="space-between"
+                      textAlign="left"
+                      sx={{ marginTop: "auto" }}
+                    >
+                      <Typography variant="h6" fontWeight="600">
+                        ${product.price ? product.price : 0}
+                      </Typography>
+                      <ChevronRight
+                        sx={{ color: "#2189ff", marginLeft: "8px" }}
+                      />
+                    </Box>
+                  </RouterLink>
+                </Box>
+              ))}
           </Grid>
         </Box>
       </Box>
