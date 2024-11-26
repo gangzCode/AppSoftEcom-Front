@@ -288,7 +288,7 @@ const ProductsPage = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <FormControl fullWidth>
+                  {/* <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
                     <Select
                       value={selectedCategory}
@@ -307,7 +307,7 @@ const ProductsPage = () => {
                         )
                       )}
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
 
                   {selectedCategory &&
                     getCategoriesAndSubcategories()[selectedCategory]?.length >
