@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect, useState } from "react";
 import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
@@ -9,15 +9,44 @@ import {
   PinDrop,
   Twitter,
 } from "@mui/icons-material";
+import { fetchSystemData } from "../services/apiCalls";
 
 const Footer = () => {
+
+  const [systemData, setSystemData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    // Fetch system data when the component mounts
+    const fetchData = async () => {
+      try {
+        const data = await fetchSystemData();
+        setSystemData({
+          name: data?.name || "Company Name", // Default if not available
+          address: data.address,
+          phone: data?.phone || "+1 (234) 567-890",
+          email: data?.email || "info@example.com",
+          logo: data?.logo,
+        });
+      } catch (error) {
+        console.error("Failed to fetch system data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
   return (
     <Box sx={{ backgroundColor: "#fff", color: "#233", padding: "40px 0" }}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={2.4}>
           <Box mb={"3em"}>
             <img
-              src="https://placehold.co/295x56"
+              src={systemData.phone}
               alt="Logo"
               style={{ width: "100%", maxWidth: "250px" }}
             />
@@ -26,17 +55,17 @@ const Footer = () => {
             sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
           >
             <PinDrop sx={{ marginRight: "8px" }} />
-            <Typography variant="body1">123 Main St, City, Country</Typography>
+            <Typography variant="body1">{systemData.address}</Typography>
           </Box>
           <Box
             sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
           >
             <PhoneIcon sx={{ marginRight: "8px" }} />
-            <Typography variant="body1">+1 (234) 567-890</Typography>
+            <Typography variant="body1">{systemData.phone}</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <EmailIcon sx={{ marginRight: "8px" }} />
-            <Typography variant="body1">info@example.com</Typography>
+            <Typography variant="body1">{systemData.email}</Typography>
           </Box>
         </Grid>
 

@@ -136,30 +136,63 @@ export const fetchProductById = async (id) => {
 export const quickSearch = async (term) => {
     let controller = new AbortController();  // Local controller to avoid using a global variable
     const signal = controller.signal;
-  
+
     try {
-      const res = await fetch("https://ecom-test2.yalpos.com/api/product-search", {
+        const response = await axios.post(
+            "https://ecom-test2.yalpos.com/api/product-search",
+            { term },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                signal: signal,
+            }
+        );
+
+        return response.data;  // Return the response data directly
+
+    } catch (error) {
+        // Handle specific errors (e.g., aborted requests)
+        if (axios.isCancel(error)) {
+            console.log('Request was aborted');
+        } else {
+            console.error('Request failed', error);
+        }
+        throw error;
+    }
+};
+
+export const subscribeToNewsApi = async (username) => {
+    try {
+      const response = await axios.post(
+        "https://ecom-test2.yalpos.com/api/newsletter",
+        { email: username },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      return response.data; // Return the response data directly
+    } catch (error) {
+      if (error.response) {
+        throw error.response.status;
+      } else {
+        throw error;
+      }
+    }
+};
+
+export const fetchSystemData = async (id) => {
+    try {
+      const res = await axios.get(baseUrl + `/settings`, {
         headers: {
           "Content-Type": "application/json",
         },
-        method: "POST",  // Use POST since we're sending a request body
-        signal: signal,
-        body: JSON.stringify({ term }),  // Send the term in the request body
       });
+      console.log(res + "res api");
   
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status} - ${res.statusText}`);
-      }
-  
-      return await res.json();
+      return res.data.data;
     } catch (error) {
-      // Handle specific errors (e.g., aborted requests)
-      if (error.name === 'AbortError') {
-        console.log('Request was aborted');
-      } else {
-        console.error('Request failed', error);
-      }
-      throw error;
+      throw error.response ? error.response.status : error;
     }
   };
   

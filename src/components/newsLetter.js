@@ -1,7 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Grid } from "@mui/material";
+import swal from "sweetalert2"; // Import SweetAlert2
+import { subscribeToNewsApi } from "../services/apiCalls"; // Assuming your API function is in services/apiCalls
 
 const Newsletter = () => {
+  const [email, setEmail] = useState(""); // State for email input
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value); // Update email state
+  };
+
+  const handleSubscribe = async () => {
+    if (!email) {
+      swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        text: 'Please enter a valid email address!',
+      });
+      return;
+    }
+
+    try {
+      // Call the subscribe API with the email entered
+      const response = await subscribeToNewsApi(email);
+      swal.fire({
+        icon: 'success',
+        title: 'Subscribed!',
+        text: 'You have successfully subscribed to our newsletter.',
+      });
+      setEmail(""); // Clear email input after successful submission
+    } catch (error) {
+      swal.fire({
+        icon: 'error',
+        title: 'Subscription Failed!',
+        text: 'There was an issue with the subscription. Please try again.',
+      });
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -21,7 +57,6 @@ const Newsletter = () => {
             color={"#1e1e1e"}
             sx={{
               position: "relative",
-              // paddingRight: "20px",
               "&::after": {
                 content: '""',
                 position: "absolute",
@@ -44,21 +79,23 @@ const Newsletter = () => {
             marginBottom={"0"}
             gutterBottom
           >
-            Sign Up Our News Letter
+            Sign Up For Our Newsletter
           </Typography>
           <Typography variant="body1">
-            join our mail list and get 25% offers
+            Join our mailing list and get 25% off on your next purchase!
           </Typography>
         </Grid>
 
+        {/* Right Side: Email Input and Subscribe Button */}
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <TextField
               variant="outlined"
               placeholder="Your Email here"
               fullWidth
+              value={email} // Bind email state to the input field
+              onChange={handleEmailChange} // Update email on input change
               sx={{
-                // height: "1em",
                 backgroundColor: "#fff",
                 border: "none",
                 borderRadius: "30px",
@@ -73,6 +110,7 @@ const Newsletter = () => {
             <Button
               variant="contained"
               color="primary"
+              onClick={handleSubscribe} // Call handleSubscribe on button click
               sx={{
                 backgroundColor: "#2189ff",
                 textTransform: "unset",

@@ -35,7 +35,8 @@ import CartSliderNotes from "./CartSlider/cartSliderNotes";
 import {
   getCategoriesForAllCategoriesDrop,
   getTopCategoriesForMenu,
-  quickSearch
+  quickSearch,
+  fetchSystemData
 } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
@@ -49,8 +50,26 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [categories, setCategories] = useState([]);
   const searchBarRef = useRef(null);
   const searchResultsRef = useRef(null);
+  const [systemData, setSystemData] = useState({
+    logo: "",
+  });
 
   let closeMenuTimer;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchSystemData();
+        setSystemData({
+          logo: data?.logo,
+        });
+      } catch (error) {
+        console.error("Failed to fetch system data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -62,7 +81,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         const response = await quickSearch(searchTerm);
         const results = response.data;
         console.log("Search Results:", results); 
-        setSearchResults(results);
+        if (results.length === 0) {
+          setSearchResults([{ message: 'No products found for the search term' }]);
+        } else {
+          setSearchResults(results);
+        }
       } catch (error) {
         console.error("Search failed", error);
       }
@@ -188,7 +211,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       <Grid pt={"2em"} container alignItems={"center"}>
         <Grid md={2}>
           <RouterLink to={"/"}>
-            <img src="https://placehold.co/200x40" alt="Logo" />
+            <img src={systemData.logo} alt="Logo" />
           </RouterLink>
         </Grid>
         <Grid md={9} sx={{ position: "relative" }}>
@@ -242,16 +265,22 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   >
     <Paper elevation={3}>
       <Typography variant="h6" sx={{ padding: "10px" }}>
-        Search Results:
+        {searchResults[0].message || 'Search Results:'}
       </Typography>
       <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
-        {searchResults.map((item) => (
-          <RouterLink to={`/product/${item.id}`} key={item.id}>
-            <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
-              <Typography>{item.name}</Typography>
-            </MenuItem>
-          </RouterLink>
-        ))}
+        {searchResults[0].message ? (
+          <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
+            <Typography>{searchResults[0].message}</Typography>
+          </MenuItem>
+        ) : (
+          searchResults.map((item) => (
+            <RouterLink to={`/product/${item.id}`} key={item.id}>
+              <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
+                <Typography>{item.name}</Typography>
+              </MenuItem>
+            </RouterLink>
+          ))
+        )}
       </Box>
     </Paper>
   </Box>

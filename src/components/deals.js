@@ -292,143 +292,139 @@ const Deals = () => {
                 </Grid>
               ))}
 
-              {cards.slice(4, 6).map((card) => (
-                <Grid item xs={12} sm={6} key={card.id}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "100%",
-                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                      borderRadius: "20px",
-                      overflow: "hidden",
-                      backgroundColor: "#fff",
-                      transition: "all 0.3s ease",
-                      cursor: "pointer",
-                      ":hover": {
-                        boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
-                      },
-                    }}
-                    onMouseEnter={() => setHoveredProductId(card.id)}
-                    onMouseLeave={() => setHoveredProductId(null)}
-                  >
-                    <Box display={"flex"} flexDirection={"row"}>
-                      <Box
-                        sx={{
-                          position: "relative",
-                          width: "50%",
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={card.image}
-                          alt={card.description}
-                          sx={{
-                            width: "100%",
-                            height: "180px",
-                            objectFit: "cover",
-                            transition: "opacity 0.5s ease",
-                            opacity: hoveredProductId === card.id ? 0 : 1,
-                          }}
-                        />
-                        <Box
-                          component="img"
-                          src={card.hoverImage}
-                          alt={card.description}
-                          sx={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "180px",
-                            objectFit: "cover",
-                            transition: "opacity 0.5s ease",
-                            opacity: hoveredProductId === card.id ? 1 : 0,
-                          }}
-                        />
-                      </Box>
+{cards.slice(4, 6).map((card) => (
+  <Grid item xs={12} sm={6} key={card.id}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        position: "relative", // Ensure parent box is relative
+        height: "100%",
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        borderRadius: "20px",
+        overflow: "hidden",
+        backgroundColor: "#fff",
+        transition: "all 0.3s ease",
+        cursor: "pointer",
+        ":hover": {
+          boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+        },
+      }}
+      onMouseEnter={() => setHoveredProductId(card.id)}
+      onMouseLeave={() => setHoveredProductId(null)}
+    >
+      <Box
+        sx={{
+          position: "relative", // Relative positioning for hover-icons to align with the image
+          width: "50%",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        <Box
+          component="img"
+          src={card.image}
+          alt={card.description}
+          sx={{
+            width: "100%",
+            height: "180px",
+            objectFit: "cover",
+            transition: "opacity 0.5s ease",
+            opacity: hoveredProductId === card.id ? 0 : 1,
+          }}
+        />
+        <Box
+          component="img"
+          src={card.hoverImage}
+          alt={card.description}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "180px",
+            objectFit: "cover",
+            transition: "opacity 0.5s ease",
+            opacity: hoveredProductId === card.id ? 1 : 0,
+          }}
+        />
 
-                      <Box
-                        className="hover-icons"
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          display: "flex",
-                          gap: "8px",
-                          opacity: hoveredProductId === card.id ? 1 : 0,
-                          visibility:
-                            hoveredProductId === card.id ? "visible" : "hidden",
-                          transition: "opacity 0.3s ease, visibility 0.3s ease",
-                        }}
-                      >
-                        {[
-                          { icon: <ShoppingCart />, id: "cart" },
-                          { icon: <Favorite />, id: "favorite" },
-                        ].map((item) => (
-                          <IconButton
-                            key={item.id}
-                            sx={{
-                              backgroundColor: "#2189ff",
-                              color: "#fff",
-                              borderRadius: "10px",
-                              width: "40px",
-                              height: "40px",
-                              "&:hover": {
-                                backgroundColor: "#000",
-                              },
-                            }}
-                          >
-                            {item.icon}
-                          </IconButton>
-                        ))}
-                      </Box>
+        {/* Hover Icons */}
+        <Box
+          className="hover-icons"
+          sx={{
+            position: "absolute", // Positioned absolutely over the image
+            top: "50%", // Vertically center over the image
+            left: "50%", // Horizontally center over the image
+            transform: "translate(-50%, -50%)", // Offset to center the icons
+            display: "flex",
+            gap: "8px",
+            zIndex: 2, // Ensure icons appear above the image
+            opacity: hoveredProductId === card.id ? 1 : 0,
+            visibility: hoveredProductId === card.id ? "visible" : "hidden",
+            transition: "opacity 0.3s ease, visibility 0.3s ease",
+          }}
+        >
+          {[
+            { icon: <ShoppingCart />, id: "cart" },
+            { icon: <Favorite />, id: "favorite" },
+          ].map((item) => (
+            <IconButton
+              key={item.id}
+              sx={{
+                backgroundColor: "#2189ff",
+                color: "#fff",
+                borderRadius: "10px",
+                width: "40px",
+                height: "40px",
+                "&:hover": {
+                  backgroundColor: "#000",
+                },
+              }}
+            >
+              {item.icon}
+            </IconButton>
+          ))}
+        </Box>
+      </Box>
 
-                      <Box sx={{ padding: "30px" }}>
-                        <Typography
-                          variant="caption"
-                          fontSize={"12px"}
-                          color={"#bebebe"}
-                          sx={{ letterSpacing: "1px", marginBottom: "3x" }}
-                        >
-                          PRODUCTS-VIBE
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          // textAlign="center"
-                          fontWeight={"500"}
-                          sx={{ marginBottom: "8px" }}
-                        >
-                          {card.description}
-                        </Typography>
-                        <Box
-                          display={"flex"}
-                          // alignItems="center"
+      <Box sx={{ padding: "30px" }}>
+        <Typography
+          variant="caption"
+          fontSize={"12px"}
+          color={"#bebebe"}
+          sx={{ letterSpacing: "1px", marginBottom: "3x" }}
+        >
+          PRODUCTS-VIBE
+        </Typography>
+        <Typography
+          variant="body1"
+          fontWeight={"500"}
+          sx={{ marginBottom: "8px" }}
+        >
+          {card.description}
+        </Typography>
+        <Box
+          display={"flex"}
+          justifyContent="space-between"
+          sx={{ marginTop: "auto" }}
+        >
+          <Typography
+            variant="body1"
+            fontSize={"22px"}
+            fontWeight={"600"}
+            sx={{ marginBottom: "8px" }}
+          >
+            {card.price}
+          </Typography>
+          <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
+        </Box>
+      </Box>
+    </Box>
+  </Grid>
+))}
 
-                          justifyContent="space-between"
-                          sx={{ marginTop: "auto" }}
-                        >
-                          <Typography
-                            variant="body1"
-                            fontSize={"22px"}
-                            // textAlign="center"
-                            fontWeight={"600"}
-                            sx={{ marginBottom: "8px" }}
-                          >
-                            {card.price}
-                          </Typography>
-                          <ChevronRight
-                            sx={{ color: "#2189ff", marginLeft: "8px" }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Grid>
-              ))}
+
             </Grid>
           </Grid>
         </Grid>
