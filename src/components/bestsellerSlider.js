@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import Slider from "react-slick";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -10,88 +10,26 @@ import {
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
+import { getBestSellingProducts } from "../services/apiCalls";
+import { Link } from "react-router-dom";
 
 const BestsellerSlider = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [products, setproducts] = useState([]);
 
-  const products = [
-    {
-      id: 1,
-      title: "Product 1",
-      price: 29.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-      hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
-      description: "Product 1",
-    },
-    {
-      id: 2,
-      title: "Product 2",
-      price: 59.99,
-      image: "https://placehold.co/380x360",
-      available: false,
-      category: "Category B",
-      hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
-      description: "Product 2",
-    },
-    {
-      id: 3,
-      title: "Product 3",
-      price: 19.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-    },
-    {
-      id: 4,
-      title: "Product 4",
-      price: 29.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-    },
-    {
-      id: 5,
-      title: "Product 5",
-      price: 59.99,
-      image: "https://placehold.co/380x360",
-      available: false,
-      category: "Category B",
-    },
-    {
-      id: 6,
-      title: "Product 6",
-      price: 19.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-    },
-    {
-      id: 7,
-      title: "Product 7",
-      price: 29.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-    },
-    {
-      id: 8,
-      title: "Product 8",
-      price: 59.99,
-      image: "https://placehold.co/380x360",
-      available: false,
-      category: "Category B",
-    },
-    {
-      id: 9,
-      title: "Product 9",
-      price: 19.99,
-      image: "https://placehold.co/380x360",
-      available: true,
-      category: "Category A",
-    },
-  ];
+  useEffect(() => {
+    const fetchGetProducts = async () => {
+      try {
+        const response = await getBestSellingProducts();
+        setproducts(response.data);
+        console.log("Products Best selling", response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchGetProducts();
+  }, []);
 
   function SampleNextArrow(props) {
     const { onClick } = props;
@@ -201,130 +139,143 @@ const BestsellerSlider = () => {
 
           <Slider {...settings}>
             {products.map((product, index) => (
-              <Box
-                key={product.id}
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                  // alignItems: "center",
-                  minWidth: "280px",
-                  width: "31%",
-                  padding: "60px",
-                  borderRadius: "20px",
-                  backgroundColor: "#f5f5f5",
-                  // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  ":hover": {
-                    // boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-                onMouseEnter={() => setHoveredProductId(product.id)}
-                onMouseLeave={() => setHoveredProductId(null)}
-              >
+              <Link href={`/product/${product.id}`} key={product.id}>
                 <Box
+                  key={product.id}
                   sx={{
                     position: "relative",
-                    width: "100%",
-                    maxWidth: "360px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    // alignItems: "center",
+                    minWidth: "280px",
+                    width: "31%",
+                    padding: "60px",
+                    borderRadius: "20px",
+                    backgroundColor: "#f5f5f5",
+                    // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
+                    ":hover": {
+                      // boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+                    },
                   }}
+                  onMouseEnter={() => setHoveredProductId(product.id)}
+                  onMouseLeave={() => setHoveredProductId(null)}
                 >
                   <Box
-                    component="img"
-                    src={product.image}
-                    alt={product.description}
                     sx={{
+                      position: "relative",
                       width: "100%",
-                      height: "auto",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 0 : 1,
+                      maxWidth: "360px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
                     }}
-                  />
+                  >
+                    <Box
+                      component="img"
+                      src={product.image}
+                      alt={product.description}
+                      sx={{
+                        width: "100%",
+                        height: "auto",
+                        transition: "opacity 0.5s ease",
+                        opacity: hoveredProductId === product.id ? 0 : 1,
+                      }}
+                    />
+                    <Box
+                      component="img"
+                      src={product.hoverImage}
+                      alt={product.description}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "auto",
+                        transition: "opacity 0.5s ease",
+                        opacity: hoveredProductId === product.id ? 1 : 0,
+                      }}
+                    />
+                  </Box>
+
                   <Box
-                    component="img"
-                    src={product.hoverImage}
-                    alt={product.description}
+                    className="hover-icons"
                     sx={{
                       position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "auto",
-                      transition: "opacity 0.5s ease",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      display: "flex",
+                      gap: "8px",
                       opacity: hoveredProductId === product.id ? 1 : 0,
+                      visibility:
+                        hoveredProductId === product.id ? "visible" : "hidden",
+                      transition: "opacity 0.3s ease, visibility 0.3s ease",
                     }}
-                  />
-                </Box>
-
-                <Box
-                  className="hover-icons"
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    display: "flex",
-                    gap: "8px",
-                    opacity: hoveredProductId === product.id ? 1 : 0,
-                    visibility:
-                      hoveredProductId === product.id ? "visible" : "hidden",
-                    transition: "opacity 0.3s ease, visibility 0.3s ease",
-                  }}
-                >
-                  {[
-                    { icon: <ShoppingCart />, id: "cart" },
-                    { icon: <Favorite />, id: "favorite" },
-                  ].map((item) => (
-                    <IconButton
-                      key={item.id}
-                      sx={{
-                        backgroundColor: "#2189ff",
-                        color: "#fff",
-                        borderRadius: "10px",
-                        width: "40px",
-                        height: "40px",
-                        "&:hover": {
-                          backgroundColor: "#000",
-                        },
-                      }}
-                    >
-                      {item.icon}
-                    </IconButton>
-                  ))}
-                </Box>
-                <Typography
-                  variant="caption"
-                  fontSize={"12px"}
-                  color={"#bebebe"}
-                  textAlign="left"
-                  sx={{ letterSpacing: "1px", marginBottom: "8px" }}
-                >
-                  {product.category}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  textAlign="left"
-                  sx={{ marginBottom: "8px" }}
-                >
-                  {product.description}
-                </Typography>
-                <Box
-                  display={"flex"}
-                  alignItems="center"
-                  justifyContent="space-between"
-                  textAlign="left"
-                  sx={{ marginTop: "auto" }}
-                >
-                  <Typography variant="h6" fontWeight="600">
-                    ${product.price}
+                  >
+                    {[
+                      { icon: <ShoppingCart />, id: "cart" },
+                      { icon: <Favorite />, id: "favorite" },
+                    ].map((item) => (
+                      <IconButton
+                        key={item.id}
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          color: "#fff",
+                          borderRadius: "10px",
+                          width: "40px",
+                          height: "40px",
+                          "&:hover": {
+                            backgroundColor: "#000",
+                          },
+                        }}
+                      >
+                        {item.icon}
+                      </IconButton>
+                    ))}
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    fontSize={"12px"}
+                    color={"#bebebe"}
+                    textAlign="left"
+                    sx={{ letterSpacing: "1px", marginBottom: "8px" }}
+                  >
+                    {product.category_name}
                   </Typography>
-                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
+                  <Typography
+                    variant="body1"
+                    fontWeight="bold"
+                    textAlign="left"
+                    sx={{
+                      marginBottom: "8px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      lineHeight: "1.2em",
+                      maxHeight: "2.4em",
+                    }}
+                  >
+                    {product.name}
+                  </Typography>
+                  <Box
+                    display={"flex"}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    textAlign="left"
+                    sx={{ marginTop: "auto" }}
+                  >
+                    <Typography variant="h6" fontWeight="600">
+                      ${product.price}
+                    </Typography>
+                    <ChevronRight
+                      sx={{ color: "#2189ff", marginLeft: "8px" }}
+                    />
+                  </Box>
                 </Box>
-              </Box>
+              </Link>
             ))}
           </Slider>
         </Box>
