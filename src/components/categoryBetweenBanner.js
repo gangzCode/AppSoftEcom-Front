@@ -19,15 +19,15 @@ const CategoryBetweenBanner = () => {
     if (promotions.length === 0) {
       fetchGetPromotions();
     }
-  }, []);
+  }, [promotions.length]);
 
   return (
     <Box sx={{}}>
       <Grid container spacing={4}>
         {promotions
-          .filter((promo) => promo.type === "Home")
+          .filter((promo) => promo.type === "Category")
           .map((promo) => (
-            <Grid key={promo.id} item xs={12} md={6}>
+            <Grid key={promo.id} item xs={12} md={12}>
               <Box
                 sx={{
                   display: "flex",

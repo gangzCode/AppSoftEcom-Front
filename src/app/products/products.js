@@ -44,7 +44,11 @@ import CarouselSection from "../../components/carousel";
 import BestsellerSlider from "../../components/bestsellerSlider";
 import useAppDispatch from "../../hooks/useAppDispatch";
 import useAppSelector from "../../hooks/useAppSelector";
-import { fetchProducts, getTopSellingProducts } from "../../services/apiCalls";
+import {
+  fetchProducts,
+  getTopSellingProducts,
+  getTrendingProduct,
+} from "../../services/apiCalls";
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -60,7 +64,7 @@ const ProductsPage = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
   const [totalProductCount, setTotalProductCount] = useState(0);
-
+  const [trendingProducts, setTrendingProducts] = useState([]);
   const { categoryId } = useParams();
 
   useEffect(() => {
@@ -98,6 +102,16 @@ const ProductsPage = () => {
       setPriceRange([minPrice, maxPrice]);
     }
   }, [products]);
+
+  useEffect(() => {
+    const fetchTrendingProducts = async () => {
+      const response = await getTrendingProduct();
+      setTrendingProducts(response.data);
+      console.log("Trending Products", response.data);
+    };
+
+    fetchTrendingProducts();
+  }, []);
 
   const handleSortChange = (event) => {
     setSort(event.target.value);
@@ -496,7 +510,7 @@ const ProductsPage = () => {
 
             <Box
               component="img"
-              src={"https://placehold.co/380x360"}
+              src={trendingProducts.thumbnail}
               sx={{
                 width: { xs: "100%", md: "300px" },
                 height: "auto",
@@ -504,19 +518,39 @@ const ProductsPage = () => {
               }}
             />
 
-            <Button
+            <Typography
+              fontSize={"12px"}
+              fontWeight={"600"}
+              color={"#1e1e1e"}
+              textAlign="left"
               sx={{
-                backgroundColor: "#2189ff",
-                padding: ".4em 1.8em",
-                borderRadius: "8px",
-                textTransform: "unset",
-                fontSize: "16px",
-                fontWeight: "500",
+                marginBottom: "8px",
+                padding: "0 1em 1.5em",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical",
+                height: "20px",
               }}
-              variant="contained"
             >
-              Shop Now
-            </Button>
+              {trendingProducts.name}
+            </Typography>
+            <RouterLink to={`/product/${trendingProducts.id}`}>
+              <Button
+                sx={{
+                  backgroundColor: "#2189ff",
+                  padding: ".4em 1.8em",
+                  borderRadius: "8px",
+                  textTransform: "unset",
+                  fontSize: "16px",
+                  fontWeight: "500",
+                }}
+                variant="contained"
+              >
+                Shop Now
+              </Button>
+            </RouterLink>
           </Box>
         </Box>
 
@@ -717,6 +751,29 @@ const ProductsPage = () => {
                       }}
                     >
                       -{product.discount}%
+                    </Box>
+                  )}
+                  {product.available_stock <= 0 && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgba(255, 70, 70, 0.9)",
+                        color: "white",
+                        width: "120px",
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        fontWeight: "bold",
+                        fontSize: "16px",
+                        zIndex: 999,
+                      }}
+                    >
+                      Out of Stock
                     </Box>
                   )}
                   <RouterLink to={`/product/${product.id}`}>

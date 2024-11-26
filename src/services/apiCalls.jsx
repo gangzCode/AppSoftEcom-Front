@@ -99,6 +99,19 @@ export const getPromotions = async () => {
   }
 };
 
+export const getTrendingProduct = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/trent-product", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
 export const fetchProducts = async (categoryId) => {
   try {
     const res = await axios.get(
@@ -131,7 +144,6 @@ export const fetchProductById = async (id) => {
     throw error.response ? error.response.status : error;
   }
 };
-
 
 export const quickSearch = async (term) => {
     let controller = new AbortController();  // Local controller to avoid using a global variable
