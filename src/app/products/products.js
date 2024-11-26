@@ -23,6 +23,8 @@ import {
   Link,
   Button,
   CircularProgress,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -49,13 +51,15 @@ const ProductsPage = () => {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [availability, setAvailability] = useState(false);
+  const [availability, setAvailability] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [products, setproducts] = useState([]);
   const [displayMode, setDisplayMode] = useState("grid");
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [totalProductCount, setTotalProductCount] = useState(0);
 
   const { categoryId } = useParams();
 
@@ -66,6 +70,7 @@ const ProductsPage = () => {
       try {
         const response = await fetchProducts(categoryId);
         setproducts(response.data);
+        setTotalProductCount(response.product_count);
         console.log("Products by Category", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -157,6 +162,21 @@ const ProductsPage = () => {
     );
   };
 
+  const getBrands = () => {
+    const brandsSet = new Set();
+    products.forEach((product) => {
+      if (product.brand?.name) {
+        try {
+          const brandName = JSON.parse(product.brand.name)?.En;
+          if (brandName) brandsSet.add(brandName);
+        } catch (e) {
+          console.error("Error parsing brand name:", e);
+        }
+      }
+    });
+    return Array.from(brandsSet);
+  };
+
   const getFilteredProducts = () => {
     let filtered = [...products];
 
@@ -179,8 +199,14 @@ const ProductsPage = () => {
       });
     }
 
-    if (availability) {
-      filtered = filtered.filter((product) => product.available_stock > 0);
+    if (availability !== "all") {
+      filtered = filtered.filter((product) => {
+        if (availability === "in_stock") {
+          return product.available_stock > 0;
+        } else {
+          return product.available_stock <= 0;
+        }
+      });
     }
 
     filtered = filtered.filter((product) => {
@@ -194,6 +220,19 @@ const ProductsPage = () => {
 
       return lowestPrice >= priceRange[0] && lowestPrice <= priceRange[1];
     });
+
+    if (selectedBrand) {
+      filtered = filtered.filter((product) => {
+        try {
+          const brandName = product.brand
+            ? JSON.parse(product.brand.name)?.En
+            : null;
+          return brandName === selectedBrand;
+        } catch (e) {
+          return false;
+        }
+      });
+    }
 
     return getSortedProducts(filtered, sort);
   };
@@ -217,6 +256,20 @@ const ProductsPage = () => {
   };
 
   const realPriceRange = getPriceRange(products);
+
+  const getProductsPerPageOptions = (totalCount) => {
+    const options = [];
+    if (totalCount >= 10) options.push(10);
+    if (totalCount >= 20) options.push(20);
+    if (totalCount >= 50) options.push(50);
+    if (totalCount >= 100) options.push(100);
+
+    if (options.length === 0) {
+      options.push(totalCount);
+    }
+
+    return options;
+  };
 
   if (loading) {
     return (
@@ -253,29 +306,6 @@ const ProductsPage = () => {
       <Box sx={{ display: "flex", padding: "20px 0" }}>
         <Box sx={{ width: "20%", paddingRight: "2.5em" }}>
           <Box>
-            <TextField
-              label="Search for Product"
-              variant="outlined"
-              fullWidth
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              sx={{
-                mb: 2,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "25px",
-                },
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton>
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
             <Accordion sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Subcategories</Typography>
@@ -290,9 +320,37 @@ const ProductsPage = () => {
                       label="Subcategory"
                     >
                       <MenuItem value="">All Subcategories</MenuItem>
-                      {products[0]?.category && getCategoriesAndSubcategories()[JSON.parse(products[0]?.category?.name)?.En]?.map((subCategory) => (
-                        <MenuItem key={subCategory} value={subCategory}>
-                          {subCategory}
+                      {products[0]?.category &&
+                        getCategoriesAndSubcategories()[
+                          JSON.parse(products[0]?.category?.name)?.En
+                        ]?.map((subCategory) => (
+                          <MenuItem key={subCategory} value={subCategory}>
+                            {subCategory}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+
+            <Accordion sx={{ boxShadow: "none" }}>
+              <AccordionSummary expandIcon={<Add />}>
+                <Typography>Brands</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Brand</InputLabel>
+                    <Select
+                      value={selectedBrand}
+                      onChange={(e) => setSelectedBrand(e.target.value)}
+                      label="Brand"
+                    >
+                      <MenuItem value="">All Brands</MenuItem>
+                      {getBrands().map((brand) => (
+                        <MenuItem key={brand} value={brand}>
+                          {brand}
                         </MenuItem>
                       ))}
                     </Select>
@@ -306,15 +364,30 @@ const ProductsPage = () => {
                 <Typography>Availability</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={availability}
-                      onChange={(e) => setAvailability(e.target.checked)}
-                    />
-                  }
-                  label="In Stock"
-                />
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <FormControl component="fieldset">
+                    <RadioGroup
+                      value={availability}
+                      onChange={(e) => setAvailability(e.target.value)}
+                    >
+                      <FormControlLabel
+                        value="all"
+                        control={<Radio />}
+                        label="All Products"
+                      />
+                      <FormControlLabel
+                        value="in_stock"
+                        control={<Radio />}
+                        label="In Stock"
+                      />
+                      <FormControlLabel
+                        value="out_of_stock"
+                        control={<Radio />}
+                        label="Out of Stock"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Box>
               </AccordionDetails>
             </Accordion>
 
@@ -455,8 +528,19 @@ const ProductsPage = () => {
               border: "1px solid #e9e9e9",
             }}
           >
-            <Typography variant="h3" fontWeight="500" sx={{}}>
-              Computer Peripherals
+            <Typography variant="h3" fontWeight="500">
+              {products[0]?.category
+                ? JSON.parse(products[0]?.category?.name)?.En
+                : "Products"}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#666",
+                marginTop: 1,
+              }}
+            >
+              {totalProductCount} Products available
             </Typography>
           </Box>
           <Box
@@ -516,17 +600,7 @@ const ProductsPage = () => {
               </ToggleButton>
             </ToggleButtonGroup>
 
-            <FormControl
-              sx={{ minWidth: 120, flexDirection: "row", alignItems: "center" }}
-            >
-              <Typography
-                variant="body1"
-                // fontWeight="500"
-                textAlign="left"
-                sx={{ marginRight: "8px" }}
-              >
-                Products Per Page
-              </Typography>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
               <Select
                 value={productsPerPage}
                 variant="filled"
@@ -550,9 +624,11 @@ const ProductsPage = () => {
                   },
                 }}
               >
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
+                {getProductsPerPageOptions(totalProductCount).map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option} per page
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
 
@@ -561,7 +637,6 @@ const ProductsPage = () => {
             >
               <Typography
                 variant="body1"
-                // fontWeight="500"
                 textAlign="left"
                 sx={{ marginRight: "8px" }}
               >
@@ -626,6 +701,24 @@ const ProductsPage = () => {
                   onMouseEnter={() => setHoveredProductId(product.id)}
                   onMouseLeave={() => setHoveredProductId(null)}
                 >
+                  {product.discount && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        backgroundColor: "#ff4646",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontWeight: "bold",
+                        zIndex: 1,
+                        fontSize: "14px",
+                      }}
+                    >
+                      -{product.discount}%
+                    </Box>
+                  )}
                   <RouterLink to={`/product/${product.id}`}>
                     <Box
                       sx={{
@@ -639,13 +732,14 @@ const ProductsPage = () => {
                       <Box
                         component="img"
                         src={
-                          product.image ||
+                          product.thumbnail ||
                           "https://placehold.co/360x340?text=Image+Not+Found"
                         }
                         alt={product.description}
                         sx={{
                           width: "100%",
-                          height: "auto",
+                          height: "300px",
+                          objectFit: "contain",
                           transition: "opacity 0.5s ease",
                           opacity: hoveredProductId === product.id ? 0 : 1,
                         }}
@@ -662,7 +756,8 @@ const ProductsPage = () => {
                           top: 0,
                           left: 0,
                           width: "100%",
-                          height: "auto",
+                          height: "300px",
+                          objectFit: "contain",
                           transition: "opacity 0.5s ease",
                           opacity: hoveredProductId === product.id ? 1 : 0,
                         }}
@@ -734,7 +829,15 @@ const ProductsPage = () => {
                       variant="body1"
                       fontWeight="500"
                       textAlign="left"
-                      sx={{ marginBottom: "8px" }}
+                      sx={{
+                        marginBottom: "8px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: "2",
+                        WebkitBoxOrient: "vertical",
+                        height: "48px",
+                      }}
                     >
                       {product.name}
                     </Typography>
@@ -745,9 +848,28 @@ const ProductsPage = () => {
                       textAlign="left"
                       sx={{ marginTop: "auto" }}
                     >
-                      <Typography variant="h6" fontWeight="600">
-                        ${product.price ? product.price : 0}
-                      </Typography>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Typography variant="h6" fontWeight="600">
+                          {product.currency}{" "}
+                          {product.discount
+                            ? (
+                                product.price -
+                                (product.price * product.discount) / 100
+                              ).toFixed(2)
+                            : product.price}
+                        </Typography>
+                        {product.discount && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              textDecoration: "line-through",
+                              color: "#bebebe",
+                            }}
+                          >
+                            {product.currency} {product.price}
+                          </Typography>
+                        )}
+                      </Box>
                       <ChevronRight
                         sx={{ color: "#2189ff", marginLeft: "8px" }}
                       />

@@ -33,9 +33,7 @@ import NotFoundPage from "../../components/404";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(
-    "https://ecom-test2.yalpos.com/img/default.png"
-  );
+  const [selectedImage, setSelectedImage] = useState("");
   const [selectedSpecification, setSelectedSpecification] = useState("");
   const [loading, setLoading] = useState(true);
   const { productId } = useParams();
@@ -133,7 +131,6 @@ const ProductDetailsPage = () => {
       [variationName]: option.name,
     };
 
-    // Keep only valid selections
     const validVariations = Object.fromEntries(
       Object.entries(updatedVariations).filter(([key, value]) =>
         product.product_variation_combination.some((combination) =>
@@ -172,15 +169,6 @@ const ProductDetailsPage = () => {
     );
   }
 
-  const {
-    name,
-    description,
-    product_variation_tempalte = [],
-    currency,
-    thumbnailz,
-    images,
-  } = product;
-
   return product ? (
     <Box>
       <Box>
@@ -212,28 +200,37 @@ const ProductDetailsPage = () => {
             <Box display="flex" flexDirection="column" alignItems="center">
               <CardMedia
                 component="img"
-                image={selectedImage}
+                image={selectedImage || product.images[0]}
                 alt="Selected Product"
                 sx={{ width: "100%", height: "auto", borderRadius: 2 }}
+                onError={(e) => {
+                  console.log(
+                    "Current image:",
+                    selectedImage || product.images[0]
+                  );
+                  console.log("All images:", product.images);
+                }}
               />
-              <Box display="flex" mt={2} gap={1}>
-                <CardMedia
-                  key={1}
-                  component="img"
-                  image={product.image_url}
-                  alt={`Thumbnail ${1 + 1}`}
-                  sx={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 1,
-                    cursor: "pointer",
-                    border:
-                      selectedImage === product.image_url
-                        ? "2px solid #1976d2"
-                        : "1px solid gray",
-                  }}
-                  onClick={() => setSelectedImage(product.image_url)}
-                />
+              <Box display="flex" mt={2} gap={1} flexWrap="wrap">
+                {product.images.map((image, index) => (
+                  <CardMedia
+                    key={index}
+                    component="img"
+                    image={image}
+                    alt={`Thumbnail ${index + 1}`}
+                    sx={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 1,
+                      cursor: "pointer",
+                      border:
+                        selectedImage === image
+                          ? "2px solid #1976d2"
+                          : "1px solid gray",
+                    }}
+                    onClick={() => setSelectedImage(image)}
+                  />
+                ))}
               </Box>
             </Box>
           </Grid>
@@ -248,9 +245,57 @@ const ProductDetailsPage = () => {
               {product.name}
             </Typography>
 
-            <Typography variant="h5" fontWeight={"bold"} gutterBottom>
-              ${product.price ? product.price : 0}
-            </Typography>
+            <Box display="flex" alignItems="center" gap={2}>
+              {product.discount ? (
+                <>
+                  <Typography
+                    variant="h5"
+                    fontWeight="bold"
+                    sx={{ color: "#2189ff" }}
+                    gutterBottom
+                  >
+                    {product.currency}{" "}
+                    {(
+                      product.sales_price *
+                      (1 - product.discount / 100)
+                    ).toFixed(2)}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "#757575",
+                      textDecoration: "line-through",
+                    }}
+                    gutterBottom
+                  >
+                    {product.currency} {product.sales_price}
+                  </Typography>
+                  <Chip
+                    label={`${product.discount}% OFF`}
+                    sx={{
+                      backgroundColor: "#2189ff",
+                      color: "#ffffff",
+                      fontWeight: 500,
+                      fontSize: "1rem",
+                      height: "32px",
+                      padding: "0 12px",
+                      "& .MuiChip-label": {
+                        padding: "0 8px",
+                      },
+                    }}
+                  />
+                </>
+              ) : (
+                <Typography
+                  variant="h5"
+                  sx={{ color: "#2189ff" }}
+                  fontWeight="bold"
+                  gutterBottom
+                >
+                  {product.currency} {product.sales_price || 0}
+                </Typography>
+              )}
+            </Box>
 
             {product.product_variation_tempalte?.length > 0 && (
               <Box sx={{ marginTop: "16px" }}>
@@ -391,6 +436,25 @@ const ProductDetailsPage = () => {
               Total Price: {product.currency} {totalPrice}
             </Typography>
 
+            {product.product_brand && (
+              <Typography
+                mb={"32px"}
+                variant="body1"
+                sx={{ marginTop: "16px", fontWeight: "500" }}
+              >
+                Brand: {JSON.parse(product.product_brand.name)?.En}
+              </Typography>
+            )}
+            {product.warranty && (
+              <Typography
+                mb={"32px"}
+                variant="body1"
+                sx={{ marginTop: "16px", fontWeight: "500" }}
+              >
+                Warranty: {JSON.parse(product.warranty.name)?.En}
+              </Typography>
+            )}
+
             <Box sx={{ mb: 2, display: "flex" }}>
               <Typography
                 variant="body1"
@@ -467,156 +531,105 @@ const ProductDetailsPage = () => {
 
         <Box mt={2} display={"flex"} flexDirection={"column"} gap={2}>
           <ProductDetailAccordian title={"Specification"}>
-            <Typography variant="h6" fontWeight="medium" gutterBottom>
-              PRODUCT CATEGORY
-            </Typography>
-            <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Device Type
-                </Typography>
-                <Typography variant="body1">Electronic Smart Device</Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Processor
-                </Typography>
-                <Typography variant="body1">Advanced 9nm processor</Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Connectivity
-                </Typography>
-                <Typography variant="body1">Bluetooth 5.0</Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Voice Assistant
-                </Typography>
-                <Typography variant="body1">Google | Siri</Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Fast Charging
-                </Typography>
-                <Typography variant="body1">Yes</Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Water Resistant
-                </Typography>
-                <Typography variant="body1">IPX5 water resistant</Typography>
-              </Grid>
-            </Grid>
-
-            <Typography variant="h6" fontWeight="medium" gutterBottom>
-              OTHER INFORMATION
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Warranty
-                </Typography>
-                <Typography variant="body1">
-                  2-years manufacturing Warranty
-                </Typography>
-              </Grid>
-              <Grid item xs={6} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Manufacturer
-                </Typography>
-                <Typography variant="body1">Shopify Theme Developer</Typography>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Manufacturer Address
-                </Typography>
-                <Typography variant="body1">
-                  California, United States
-                </Typography>
-              </Grid>
-            </Grid>
+            {product.online_description && (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body1"
+                  dangerouslySetInnerHTML={{
+                    __html: product.online_description,
+                  }}
+                />
+              </Box>
+            )}
           </ProductDetailAccordian>
-          <ProductDetailAccordian title={"Shipping Information"}>
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-              Returns Policy
-            </Typography>
-            <Typography variant="body1" paragraph>
-              You may return most new, unopened items within 30 days of delivery
-              for a full refund. We'll also pay the return shipping costs if the
-              return is a result of our error (you received an incorrect or
-              defective item, etc.).
-            </Typography>
-            <Typography variant="body1" paragraph>
-              You should expect to receive your refund within four weeks of
-              giving your package to the return shipper, however, in many cases
-              you will receive a refund more quickly. This time period includes
-              the transit time for us to receive your return from the shipper (5
-              to 10 business days), the time it takes us to process your return
-              once we receive it (3 to 5 business days), and the time it takes
-              your bank to process our refund request (5 to 10 business days).
-            </Typography>
-            <Typography variant="body1" paragraph>
-              If you need to return an item, simply login to your account, view
-              the order using the 'Complete Orders' link under the My Account
-              menu and click the Return Item(s) button. We'll notify you via
-              e-mail of your refund once we've received and processed the
-              returned item.
-            </Typography>
 
-            <Typography
-              variant="subtitle1"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mt: 3 }}
-            >
-              Shipping
-            </Typography>
-            <Typography variant="body1" paragraph>
-              We can ship to virtually any address in the world. Note that there
-              are restrictions on some products, and some products cannot be
-              shipped to international destinations.
-            </Typography>
-            <Typography variant="body1" paragraph>
-              When you place an order, we will estimate shipping and delivery
-              dates for you based on the availability of your items and the
-              shipping options you choose. Depending on the shipping provider
-              you choose, shipping date estimates may appear on the shipping
-              quotes page.
-            </Typography>
-            <Typography variant="body1" paragraph>
-              Please also note that the shipping rates for many items we sell
-              are weight-based. The weight of any such item can be found on its
-              detail page. To reflect the policies of the shipping companies we
-              use, all weights will be rounded up to the next full pound.
-            </Typography>
-          </ProductDetailAccordian>
-          <ProductDetailAccordian title={"Reviews"}>
-            <Typography variant="h3" fontWeight={500} gutterBottom mt={6}>
-              Customer Reviews
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="body1" color="text.secondary">
-                Based on 1 review
+          {product.shipping_info && (
+            <ProductDetailAccordian title={"Shipping Information"}>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                Returns Policy
               </Typography>
-              <Link
-                href="#"
-                underline="none"
-                color="primary"
-                sx={{
-                  fontWeight: 400,
-                  color: "text.primary",
-                  borderBottom: "2px dotted",
-                  transition: "color 0.4s ease-in-out ",
-                  "&:hover": {
-                    color: "primary.main",
-                  },
-                }}
+              <Typography variant="body1" paragraph>
+                You may return most new, unopened items within 30 days of
+                delivery for a full refund. We'll also pay the return shipping
+                costs if the return is a result of our error (you received an
+                incorrect or defective item, etc.).
+              </Typography>
+              <Typography variant="body1" paragraph>
+                You should expect to receive your refund within four weeks of
+                giving your package to the return shipper, however, in many
+                cases you will receive a refund more quickly. This time period
+                includes the transit time for us to receive your return from the
+                shipper (5 to 10 business days), the time it takes us to process
+                your return once we receive it (3 to 5 business days), and the
+                time it takes your bank to process our refund request (5 to 10
+                business days).
+              </Typography>
+              <Typography variant="body1" paragraph>
+                If you need to return an item, simply login to your account,
+                view the order using the 'Complete Orders' link under the My
+                Account menu and click the Return Item(s) button. We'll notify
+                you via e-mail of your refund once we've received and processed
+                the returned item.
+              </Typography>
+
+              <Typography
+                variant="subtitle1"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mt: 3 }}
               >
-                Write a review
-              </Link>
-            </Box>
-          </ProductDetailAccordian>
+                Shipping
+              </Typography>
+              <Typography variant="body1" paragraph>
+                We can ship to virtually any address in the world. Note that
+                there are restrictions on some products, and some products
+                cannot be shipped to international destinations.
+              </Typography>
+              <Typography variant="body1" paragraph>
+                When you place an order, we will estimate shipping and delivery
+                dates for you based on the availability of your items and the
+                shipping options you choose. Depending on the shipping provider
+                you choose, shipping date estimates may appear on the shipping
+                quotes page.
+              </Typography>
+              <Typography variant="body1" paragraph>
+                Please also note that the shipping rates for many items we sell
+                are weight-based. The weight of any such item can be found on
+                its detail page. To reflect the policies of the shipping
+                companies we use, all weights will be rounded up to the next
+                full pound.
+              </Typography>
+            </ProductDetailAccordian>
+          )}
+
+          {product.customer_reviews && (
+            <ProductDetailAccordian title={"Reviews"}>
+              <Typography variant="h3" fontWeight={500} gutterBottom mt={6}>
+                Customer Reviews
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="body1" color="text.secondary">
+                  Based on 1 review
+                </Typography>
+                <Link
+                  href="#"
+                  underline="none"
+                  color="primary"
+                  sx={{
+                    fontWeight: 400,
+                    color: "text.primary",
+                    borderBottom: "2px dotted",
+                    transition: "color 0.4s ease-in-out ",
+                    "&:hover": {
+                      color: "primary.main",
+                    },
+                  }}
+                >
+                  Write a review
+                </Link>
+              </Box>
+            </ProductDetailAccordian>
+          )}
         </Box>
       </Box>
     </Box>
