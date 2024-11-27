@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import { getPromotions } from "../services/apiCalls";
+import { Link } from "react-router-dom";
 
 const DealsBetweenBanner = () => {
   const [promotions, setpromotions] = useState([]);
@@ -27,8 +28,8 @@ const DealsBetweenBanner = () => {
         {promotions
           .filter((promo) => promo.type === "Deal")
           .slice(0, 5)
-          .map((card) => (
-            <Grid key={card.id} item xs={12} md={6}>
+          .map((product) => (
+            <Grid key={product.id} item xs={12} md={6}>
               <Box
                 sx={{
                   display: "flex",
@@ -65,9 +66,10 @@ const DealsBetweenBanner = () => {
                     variant="h5"
                     fontWeight={"700"}
                     component="h2"
+                    height={"60px"}
                     gutterBottom
                   >
-                    {card.title}
+                    {product.title}
                   </Typography>
                   <Typography
                     variant="body1"
@@ -76,27 +78,49 @@ const DealsBetweenBanner = () => {
                     color="textSecondary"
                     gutterBottom
                   >
-                    {card.price}
+                    ${product.price || 0}
                   </Typography>
-                  <Button
-                    sx={{
-                      backgroundColor: "#2189ff",
-                      padding: ".4em 1.8em",
-                      borderRadius: "8px",
-                      textTransform: "unset",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
-                    variant="contained"
-                  >
-                    Shop Now
-                  </Button>
+
+                  {product.category && product.category_status === 1 && (
+                    <Link to={`/products/${product.category.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
+                  {product.brand && product.brand_status === 1 && (
+                    <Link to={`/products/${product.brand.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
                 </Box>
 
                 <Box
                   component="img"
-                  src={card.image}
-                  alt={card.title}
+                  src={product.image}
+                  alt={product.title}
                   sx={{
                     width: { xs: "100%", md: "300px" },
                     height: "auto",

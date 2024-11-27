@@ -1,44 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Typography, Link } from "@mui/material";
-import { ArrowRightAlt, ChevronRight, ExpandMore } from "@mui/icons-material";
+import { Box, Grid, Typography, Link, Button } from "@mui/material";
+import { ChevronRight } from "@mui/icons-material";
 import { getPromotions } from "../services/apiCalls";
 
 const HomeBetweenBanner = () => {
-  // const sections = [
-  //   {
-  //     image: "https://placehold.co/600x400",
-  //     text: "Get Special Offers on Key Boards",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "https://placehold.co/600x400",
-  //     text: "25% Flat Offers on Smart Phones",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "https://placehold.co/600x400",
-  //     text: "Third Section",
-  //     link: "#",
-  //   },
-  // ];
-
-  const [promotions, setpromotions] = useState([]);
+  const [promotions, setPromotions] = useState([]);
 
   useEffect(() => {
     const fetchGetPromotions = async () => {
       try {
         const response = await getPromotions();
-        setpromotions(response.data);
+        setPromotions(response.data);
         console.log("Featured ::::: ", response.data);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching promotions:", error);
       }
     };
 
     if (promotions.length === 0) {
       fetchGetPromotions();
     }
-  }, []);
+  }, [promotions.length]);
 
   return (
     <Grid container paddingY={"2em"} marginY={"2em"} spacing={2}>
@@ -81,14 +63,40 @@ const HomeBetweenBanner = () => {
                 >
                   {promo.title}
                 </Typography>
-                <Link
-                  href={promo.link}
-                  fontWeight={"600"}
-                  underline="none"
-                  color="#2189ff"
-                >
-                  Shop Now <ChevronRight />
-                </Link>
+                {promo.category && promo.category_status === 1 && (
+                  <Link to={`/products/${promo.category.id}`}>
+                    <Button
+                      sx={{
+                        backgroundColor: "#2189ff",
+                        padding: ".4em 1.8em",
+                        borderRadius: "8px",
+                        textTransform: "unset",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                      }}
+                      variant="contained"
+                    >
+                      Shop Now <ChevronRight />
+                    </Button>
+                  </Link>
+                )}
+                {promo.brand && promo.brand_status === 1 && (
+                  <Link to={`/products/${promo.brand.id}`}>
+                    <Button
+                      sx={{
+                        backgroundColor: "#2189ff",
+                        padding: ".4em 1.8em",
+                        borderRadius: "8px",
+                        textTransform: "unset",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                      }}
+                      variant="contained"
+                    >
+                      Shop Now <ChevronRight />
+                    </Button>
+                  </Link>
+                )}
               </Box>
             </Box>
           </Grid>

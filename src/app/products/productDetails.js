@@ -57,6 +57,12 @@ const ProductDetailsPage = () => {
     fetchGetProductDetails();
   }, [productId]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    return () => {};
+  }, []);
+
   const calculateTotalPrice = useCallback(() => {
     if (!product || !selectedVariations) return 0;
 
@@ -509,10 +515,10 @@ const ProductDetailsPage = () => {
               </Grid>
             </Grid>
 
-            <Typography color="text.secondary" sx={{ mb: 2 }}>
+            {/* <Typography color="text.secondary" sx={{ mb: 2 }}>
               <LocalShippingIcon /> Estimated Delivery:{" "}
               {product.estimatedDelivery}
-            </Typography>
+            </Typography> */}
 
             <Box display="flex" gap={1} alignItems={"center"}>
               <Typography color="text.secondary">Share with us:</Typography>

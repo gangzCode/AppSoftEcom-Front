@@ -216,7 +216,7 @@ const BestCategory = () => {
                   sx={{ marginTop: "auto" }}
                 >
                   <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    {product.price || "$0"}
+                    ${product.price || "0"}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>

@@ -104,6 +104,8 @@ const ProductsPage = () => {
   }, [products]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const fetchTrendingProducts = async () => {
       const response = await getTrendingProduct();
       setTrendingProducts(response.data);

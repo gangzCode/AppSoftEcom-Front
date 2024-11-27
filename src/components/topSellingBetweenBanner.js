@@ -9,6 +9,7 @@ import {
   Grid,
 } from "@mui/material";
 import { getPromotions } from "../services/apiCalls";
+import { Link } from "react-router-dom";
 
 const TopSellingBetweenBanner = () => {
   const [promotions, setpromotions] = useState([]);
@@ -87,19 +88,41 @@ const TopSellingBetweenBanner = () => {
                 >
                   {/* ${promotions[0].originalPrice.toLocaleString()} */}
                 </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "#2189ff",
-                    padding: ".4em 1.8em",
-                    borderRadius: "8px",
-                    textTransform: "unset",
-                    fontSize: "16px",
-                    fontWeight: "500",
-                  }}
-                  variant="contained"
-                >
-                  Shop Now
-                </Button>
+                {promotions[0].category &&
+                  promotions[0].category_status === 1 && (
+                    <Link to={`/products/${promotions[0].category.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
+                {promotions[0].brand && promotions[0].brand_status === 1 && (
+                  <Link to={`/products/${promotions[0].brand.id}`}>
+                    <Button
+                      sx={{
+                        backgroundColor: "#2189ff",
+                        padding: ".4em 1.8em",
+                        borderRadius: "8px",
+                        textTransform: "unset",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                      }}
+                      variant="contained"
+                    >
+                      Shop Now
+                    </Button>
+                  </Link>
+                )}
               </CardContent>
               <CardMedia
                 component="img"
@@ -141,7 +164,7 @@ const TopSellingBetweenBanner = () => {
                       position: "absolute",
                       top: "50%",
                       marginLeft: "1em",
-                      transform: "translateX(-185%)",
+                      transform: "translateX(-135%)",
                       width: "150px",
                       height: "2px",
                       backgroundColor: "#2189ff",
@@ -168,19 +191,41 @@ const TopSellingBetweenBanner = () => {
                 >
                   {/* ${promotions[1].originalPrice.toLocaleString()} */}
                 </Typography>
-                <Button
-                  sx={{
-                    backgroundColor: "#2189ff",
-                    padding: ".4em 1.8em",
-                    borderRadius: "8px",
-                    textTransform: "unset",
-                    fontSize: "16px",
-                    fontWeight: "500",
-                  }}
-                  variant="contained"
-                >
-                  Shop Now
-                </Button>
+                {promotions[1].category &&
+                  promotions[1].category_status === 1 && (
+                    <Link to={`/products/${promotions[1].category.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
+                {promotions[1].brand && promotions[1].brand_status === 1 && (
+                  <Link to={`/products/${promotions[1].brand.id}`}>
+                    <Button
+                      sx={{
+                        backgroundColor: "#2189ff",
+                        padding: ".4em 1.8em",
+                        borderRadius: "8px",
+                        textTransform: "unset",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                      }}
+                      variant="contained"
+                    >
+                      Shop Now
+                    </Button>
+                  </Link>
+                )}
               </CardContent>
               <CardMedia
                 component="img"

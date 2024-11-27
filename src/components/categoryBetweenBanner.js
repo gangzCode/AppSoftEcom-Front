@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import { getPromotions } from "../services/apiCalls";
+import { Link } from "react-router-dom";
 
 const CategoryBetweenBanner = () => {
-  const [promotions, setpromotions] = useState([]);
+  const [promotions, setPromotions] = useState([]);
 
   useEffect(() => {
     const fetchGetPromotions = async () => {
       try {
         const response = await getPromotions();
-        setpromotions(response.data);
+        setPromotions(response.data);
         console.log("Featured ::::: ", response.data);
       } catch (error) {
-        console.error("Error fetching promostions:", error);
+        console.error("Error fetching promotions:", error);
       }
     };
 
@@ -21,13 +22,20 @@ const CategoryBetweenBanner = () => {
     }
   }, [promotions.length]);
 
+  const getGridColumns = () => {
+    const count = promotions.filter(
+      (promo) => promo.type === "Category"
+    ).length;
+    return count > 0 ? Math.min(count, 5) : 1;
+  };
+
   return (
     <Box sx={{}}>
       <Grid container spacing={4}>
         {promotions
           .filter((promo) => promo.type === "Category")
           .map((promo) => (
-            <Grid key={promo.id} item xs={12} md={12}>
+            <Grid key={promo.id} item md={12 / getGridColumns()}>
               <Box
                 sx={{
                   display: "flex",
@@ -77,19 +85,40 @@ const CategoryBetweenBanner = () => {
                   >
                     ${promo.price ? promo.price : 0}
                   </Typography>
-                  <Button
-                    sx={{
-                      backgroundColor: "#2189ff",
-                      padding: ".4em 1.8em",
-                      borderRadius: "8px",
-                      textTransform: "unset",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                    }}
-                    variant="contained"
-                  >
-                    Shop Now
-                  </Button>
+                  {promo.category && promo.category_status === 1 && (
+                    <Link to={`/products/${promo.category.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
+                  {promo.brand && promo.brand_status === 1 && (
+                    <Link to={`/products/${promo.brand.id}`}>
+                      <Button
+                        sx={{
+                          backgroundColor: "#2189ff",
+                          padding: ".4em 1.8em",
+                          borderRadius: "8px",
+                          textTransform: "unset",
+                          fontSize: "16px",
+                          fontWeight: "500",
+                        }}
+                        variant="contained"
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  )}
                 </Box>
 
                 <Box
