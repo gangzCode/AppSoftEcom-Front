@@ -42,14 +42,14 @@ const TopSellingBetweenBanner = () => {
                 display: "flex",
                 flexDirection: { xs: "column", sm: "row" },
                 alignItems: "center",
-                borderRadius: 2,
+                borderRadius: "30px",
                 overflow: "hidden",
                 backgroundColor: "#f8f9fa",
                 boxShadow: 2,
                 height: "100%",
               }}
             >
-              <CardContent sx={{ flex: 1, padding: 3 }}>
+              <CardContent sx={{ flex: 1, padding: 3, height: "160px" }}>
                 <Typography
                   variant="p"
                   fontSize={"12px"}
@@ -86,7 +86,7 @@ const TopSellingBetweenBanner = () => {
                   color="textSecondary"
                   sx={{ textDecoration: "line-through", mb: 2 }}
                 >
-                  {/* ${promotions[0].originalPrice.toLocaleString()} */}
+                  {promotions[0].price}
                 </Typography>
                 {promotions[0].category &&
                   promotions[0].category_status === 1 && (
@@ -145,14 +145,14 @@ const TopSellingBetweenBanner = () => {
                 alignItems: "center",
                 textAlign: "right",
                 flexDirection: "row-reverse",
-                borderRadius: 2,
+                borderRadius: "30px",
                 overflow: "hidden",
                 backgroundColor: "#f8f9fa",
                 boxShadow: 2,
                 height: "100%",
               }}
             >
-              <CardContent sx={{ flex: 1, padding: 3 }}>
+              <CardContent sx={{ flex: 1, padding: 3, height: "160px" }}>
                 <Typography
                   variant="p"
                   fontSize={"12px"}

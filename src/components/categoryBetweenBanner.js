@@ -38,6 +38,7 @@ const CategoryBetweenBanner = () => {
             <Grid key={promo.id} item md={12 / getGridColumns()}>
               <Box
                 sx={{
+                  height: "200px",
                   display: "flex",
                   flexDirection: { xs: "column", md: "row" },
                   alignItems: "center",

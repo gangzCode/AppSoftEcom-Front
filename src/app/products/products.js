@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import {
+  Link as RouterLink,
+  useParams,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   Box,
   Grid,
@@ -66,6 +71,11 @@ const ProductsPage = () => {
   const [totalProductCount, setTotalProductCount] = useState(0);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const { categoryId } = useParams();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const previousUrl = location.state?.from || "/";
 
   useEffect(() => {
     console.log("CategoryId from Params:", categoryId);
@@ -311,10 +321,13 @@ const ProductsPage = () => {
           aria-label="breadcrumb"
           sx={{ display: "inline-flex", opacity: 0.8 }}
         >
-          <Link underline="hover" color="inherit" href="/">
+          <Link component={RouterLink} to={previousUrl} underline="hover" color="inherit">
+            Back
+          </Link>
+          <Link component={RouterLink} to="/" underline="hover" color="inherit">
             Home
           </Link>
-          <Link underline="hover" color="inherit" href="/products">
+          <Link component={RouterLink} to="/products" underline="hover" color="inherit">
             Products
           </Link>
         </Breadcrumbs>

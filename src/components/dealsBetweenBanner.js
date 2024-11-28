@@ -38,6 +38,7 @@ const DealsBetweenBanner = () => {
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                   borderRadius: "30px",
                   overflow: "hidden",
+                  height: "220px",
                   backgroundColor: "#f3f3f3",
                 }}
               >

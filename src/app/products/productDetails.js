@@ -30,6 +30,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ProductDetailAccordian from "./ProductDetailAccordian";
 import { fetchProductById } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
+import { Link as RouterLink } from "react-router-dom";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
@@ -47,6 +48,25 @@ const ProductDetailsPage = () => {
         const response = await fetchProductById(productId);
         setproduct(response.data);
         console.log("productbyid ::::: ", response.data);
+
+        if (response.data.product_variation_tempalte.length > 0) {
+          const initialVariations = {};
+          response.data.product_variation_tempalte.forEach((variation) => {
+            if (variation.option.length > 0) {
+              const firstOption = variation.option[0];
+              const matchingCombination =
+                response.data.product_variation_combination.find(
+                  (combination) =>
+                    combination.attributes[variation.name] === firstOption.name
+                );
+
+              if (matchingCombination && matchingCombination.stock > 0) {
+                initialVariations[variation.name] = firstOption.name;
+              }
+            }
+          });
+          setSelectedVariations(initialVariations);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -185,14 +205,15 @@ const ProductDetailsPage = () => {
           <Link underline="hover" color="inherit" href="/">
             Home
           </Link>
-          <Link underline="hover" color="inherit" href="/products">
-            Products
-          </Link>
           <Link
             underline="hover"
             color="inherit"
-            href="/products/productsDetail"
+            to={`/products/${product.product_category.id}`}
+            component={RouterLink}
           >
+            Products
+          </Link>
+          <Link underline="none" color="inherit">
             {product.name}
           </Link>
         </Breadcrumbs>
@@ -261,10 +282,7 @@ const ProductDetailsPage = () => {
                     gutterBottom
                   >
                     {product.currency}{" "}
-                    {(
-                      product.sales_price *
-                      (1 - product.discount / 100)
-                    ).toFixed(2)}
+                    {(totalPrice * (1 - product.discount / 100)).toFixed(2)}
                   </Typography>
                   <Typography
                     variant="h6"
@@ -298,7 +316,7 @@ const ProductDetailsPage = () => {
                   fontWeight="bold"
                   gutterBottom
                 >
-                  {product.currency} {product.sales_price || 0}
+                  {product.currency} {totalPrice || 0}
                 </Typography>
               )}
             </Box>
