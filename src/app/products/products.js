@@ -775,7 +775,7 @@ const ProductsPage = () => {
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        backgroundColor: "rgba(255, 70, 70, 0.9)",
+                        backgroundColor: "#7C8FAC",
                         color: "white",
                         width: "120px",
                         height: "120px",
