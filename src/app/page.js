@@ -48,7 +48,7 @@ const HomePage = () => {
       {settings.is_show_best_category === 1 && <BestCategory />}
       <InfoSection />
       {settings.is_show_best_brand_product === 1 && <Brands />}
-      {/* <Newsletter /> */}
+      <Newsletter />
     </>
   );
 };
