@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import Slider from "react-slick";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { getSliders } from "../services/apiCalls";
 
 const CarouselSection = () => {
-  const [slides, setslides] = useState("");
+  const [slides, setSlides] = useState([]);
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await getSliders();
-        setslides(response.data);
-        console.log("Slides ::::: ", response.data);
+        // Sort slides by the 'order' field
+        const sortedSlides = response.data.sort((a, b) => a.order - b.order);
+        setSlides(sortedSlides);
+        console.log("Slides ::::: ", sortedSlides);
       } catch (error) {
         console.error("Error fetching sliders:", error);
       }
@@ -22,30 +24,9 @@ const CarouselSection = () => {
     if (slides.length === 0) {
       fetchFeaturedProducts();
     }
-  }, []);
+  }, [slides]);
 
-  // const slides = [
-  //   {
-  //     title: "Welcome to Our Shop",
-  //     description: "Discover the best products at unbeatable prices.",
-  //     image: "https://placehold.co/1200x600?text=Slide+1",
-  //     buttonLink: "#",
-  //   },
-  //   {
-  //     title: "New Arrivals",
-  //     description: "Check out our latest collection now.",
-  //     image: "https://placehold.co/1200x600?text=Slide+2",
-  //     buttonLink: "#",
-  //   },
-  //   {
-  //     title: "Special Offers",
-  //     description: "Save big on our exclusive deals.",
-  //     image: "https://placehold.co/1200x600?text=Slide+3",
-  //     buttonLink: "#",
-  //   },
-  // ];
-
-  function SampleNextArrow(props) {
+  const SampleNextArrow = (props) => {
     const { onClick } = props;
     return (
       <Box
@@ -75,9 +56,9 @@ const CarouselSection = () => {
         <ArrowForwardIosIcon sx={{ color: "#fff", fontSize: "20px" }} />
       </Box>
     );
-  }
+  };
 
-  function SamplePrevArrow(props) {
+  const SamplePrevArrow = (props) => {
     const { onClick } = props;
     return (
       <Box
@@ -107,7 +88,7 @@ const CarouselSection = () => {
         <ArrowBackIosNewIcon sx={{ color: "#fff", fontSize: "20px" }} />
       </Box>
     );
-  }
+  };
 
   const settings = {
     infinite: true,
@@ -120,6 +101,7 @@ const CarouselSection = () => {
     prevArrow: <SamplePrevArrow />,
   };
 
+  
   return (
     <Box
       sx={{
@@ -142,24 +124,29 @@ const CarouselSection = () => {
       >
         <Slider {...settings}>
           {slides.length > 0 &&
-            slides.map((slide, index) => (
+            slides.map((slide) => (
               <Box
-                key={index}
+                key={slide.id}
+                component={slide.link ? "a" : "div"}
+                href={slide.link || undefined}
+                target={slide.link ? "_blank" : undefined}
+                rel={slide.link ? "noopener noreferrer" : undefined}
                 sx={{
                   height: "500px",
-                  backgroundImage: `url(${
-                    slide.image || "https://placehold.co/1200x600?text=Slide+1"
-                  })`,
+                  backgroundImage: `url(${slide.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   position: "relative",
-                  display: "flex !important",
+                  display: "flex",
                   alignItems: "center",
                   justifyContent: "flex-start",
                   color: "#fff",
+                  textDecoration: "none",
                   padding: "2em",
                 }}
-              ></Box>
+              >
+               
+              </Box>
             ))}
         </Slider>
       </Box>

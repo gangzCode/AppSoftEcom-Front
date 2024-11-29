@@ -23,6 +23,7 @@ import SignUpPage from "./app/auth/SignUpPage";
 import OTPPage from "./app/auth/OTPPage";
 import ForgotPasswordPage from "./app/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./app/auth/ResetPasswordPage";
+import DynamicFavicon from "./components/dynamicFavicon";
 
 // Define theme
 /* const theme = createTheme({
@@ -38,6 +39,7 @@ function Layout() {
 
   return (
     <>
+      <DynamicFavicon />
       <Box>
         <TopBar />
       </Box>

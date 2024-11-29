@@ -33,7 +33,7 @@ export const getTopCategoriesForMenu = async () => {
 
 export const getBestSellingProducts = async () => {
   try {
-    const res = await axios.get(baseUrl + "/products/best-sale?items=2", {
+    const res = await axios.get(baseUrl + "/products/best-sale?items=", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,6 +42,71 @@ export const getBestSellingProducts = async () => {
   } catch (error) {
     throw error.response ? error.response.status : error;
   }
+};
+
+export const getDayFlashSaleProducts = async () => {
+    try {
+      const res = await axios.get(baseUrl + "/day-flash-sale", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response ? error.response.status : error;
+    }
+};
+
+export const getSpecialDayOfferSaleProducts = async () => {
+    try {
+      const res = await axios.get(baseUrl + "/special-offer", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response ? error.response.status : error;
+    }
+};
+
+export const getDealsofDayProducts = async () => {
+    try {
+      const res = await axios.get(baseUrl + "/deal-of-day", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response ? error.response.status : error;
+    }
+};
+
+export const getMonthlyFlashSaleProducts = async () => {
+    try {
+      const res = await axios.get(baseUrl + "/month-flash-sale", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response ? error.response.status : error;
+    }
+};
+
+export const getDealsofMonthProducts = async () => {
+    try {
+      const res = await axios.get(baseUrl + "/deal-of-month", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response ? error.response.status : error;
+    }
 };
 
 export const getBestBrandedProducts = async () => {
@@ -60,7 +125,7 @@ export const getBestBrandedProducts = async () => {
 export const getBestCategoryProducts = async () => {
   try {
     const res = await axios.get(
-      baseUrl + "/products?items=&language=&currency=",
+      baseUrl + "/best-category",
       {
         headers: {
           "Content-Type": "application/json",

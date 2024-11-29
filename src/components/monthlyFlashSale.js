@@ -3,9 +3,9 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { getBestCategoryProducts } from "../services/apiCalls";
+import { getMonthlyFlashSaleProducts } from "../services/apiCalls";
 
-const BestCategory = () => {
+const MonthlyFlashSale = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [products, setProducts] = useState([]); // Ensure products is an array
@@ -15,7 +15,7 @@ const BestCategory = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await getBestCategoryProducts();
+        const response = await getMonthlyFlashSaleProducts();
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response?.data || []); // Fallback to empty array
@@ -223,4 +223,4 @@ const BestCategory = () => {
   );
 };
 
-export default BestCategory;
+export default MonthlyFlashSale;

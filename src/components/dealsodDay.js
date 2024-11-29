@@ -8,7 +8,7 @@ import {
 import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
 import React, { useState } from "react";
 
-const Deals = () => {
+const DealsofDay = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
 
   const cards = [
@@ -81,7 +81,7 @@ const Deals = () => {
         TRENDING DEALS
       </Typography>
       <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
-        Deals on this Month
+        Deals on this Day
       </Typography>
       <Box sx={{ padding: "40px 0" }}>
         <Grid container spacing={4}>
@@ -434,4 +434,4 @@ const Deals = () => {
   );
 };
 
-export default Deals;
+export default DealsofDay;

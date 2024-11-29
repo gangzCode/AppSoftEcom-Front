@@ -3,7 +3,7 @@ import CarouselComp from "../components/carousel";
 import HomeBetweenBanner from "../components/homeBetweenBanner";
 import BestSeller from "../components/bestSeller";
 import DealsBetweenBanner from "../components/dealsBetweenBanner";
-import Deals from "../components/deals";
+import DealsofDay from "../components/dealsodDay";
 import TabSection from "../components/tabsSection";
 import Brands from "../components/brands";
 import Newsletter from "../components/newsLetter";
@@ -13,6 +13,10 @@ import TopSellingBetweenBanner from "../components/topSellingBetweenBanner";
 import CategoryBetweenBanner from "../components/categoryBetweenBanner";
 import BestCategory from "../components/bestCategory";
 import { fetchSystemData } from "../services/apiCalls";
+import DayFlashSale from "../components/dayFlashSale";
+import SpecialDayOfferSale from "../components/specialDayOfferSale";
+import MonthlyFlashSale from "../components/monthlyFlashSale";
+import DealsofMonth from "../components/dealsofMonth";
 
 const HomePage = () => {
   const [settings, setSettings] = useState(null);
@@ -39,15 +43,19 @@ const HomePage = () => {
       {settings.is_show_home_slider === 1 && <CarouselComp />}
       {settings.is_show_home_promotion === 1 && <HomeBetweenBanner />}
       {settings.is_show_top_selling === 1 && <BestSeller />}
+      <DayFlashSale/>
       {settings.is_show_deal_promotion === 1 && <DealsBetweenBanner />}
-      {settings.is_show_day_flash_sale === 1 && <Deals />}
+      <SpecialDayOfferSale/>
+      {<DealsofDay />}
       {settings.is_show_top_promotion === 1 && <TopSellingBetweenBanner />}
+      <MonthlyFlashSale/>
       {settings.is_show_best_sales === 1 && <TabSection />}
+      <DealsofMonth/>
       {settings.is_show_best_brand_product === 1 && <BestBrand />}
       {settings.is_show_category_promotion === 1 && <CategoryBetweenBanner />}
-      {settings.is_show_best_category === 1 && <BestCategory />}
+      { <BestCategory />}
       <InfoSection />
-      {settings.is_show_best_brand_product === 1 && <Brands />}
+      {<Brands />}
       <Newsletter />
     </>
   );

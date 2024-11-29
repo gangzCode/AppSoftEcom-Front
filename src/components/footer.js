@@ -1,36 +1,34 @@
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import {
-  Facebook,
-  Instagram,
-  LinkedIn,
-  PinDrop,
-  Twitter,
-} from "@mui/icons-material";
-import { fetchSystemData } from "../services/apiCalls";
+import { Facebook, Instagram, PinDrop } from "@mui/icons-material";
+import { fetchSystemData,getTopCategoriesForMenu } from "../services/apiCalls";
 
 const Footer = () => {
-
   const [systemData, setSystemData] = useState({
     name: "",
     address: "",
     phone: "",
     email: "",
+    logo: "",
+    fbLink: "",
+    instaLink: "",
   });
+  const [menus, setmenus] = useState([]);
 
   useEffect(() => {
-    // Fetch system data when the component mounts
     const fetchData = async () => {
       try {
         const data = await fetchSystemData();
         setSystemData({
-          name: data?.name || "Company Name", // Default if not available
+          name: data?.name || "Company Name",
           address: data.address,
           phone: data?.phone || "+1 (234) 567-890",
           email: data?.email || "info@example.com",
           logo: data?.logo,
+          fbLink: data?.fb_link,
+          instaLink: data?.inst_link,
         });
       } catch (error) {
         console.error("Failed to fetch system data:", error);
@@ -39,14 +37,32 @@ const Footer = () => {
 
     fetchData();
   }, []);
-  
+
+  useEffect(() => {
+    const fetchCategoriesMenu = async () => {
+      try {
+        const response = await getTopCategoriesForMenu();
+        setmenus(response.data);
+      } catch (error) {
+        console.error("Error fetching top categories:", error);
+      }
+    };
+
+    if (menus.length === 0) {
+      fetchCategoriesMenu();
+    }
+
+    return () => {};
+  }, []);
+
   return (
     <Box sx={{ backgroundColor: "#fff", color: "#233", padding: "40px 0" }}>
       <Grid container spacing={4}>
-        <Grid item xs={12} md={2.4}>
+        {/* Combined Company Details Grid */}
+        <Grid item xs={12} md={4.8}>
           <Box mb={"3em"}>
             <img
-              src={systemData.phone}
+              src={systemData.logo}
               alt="Logo"
               style={{ width: "100%", maxWidth: "250px" }}
             />
@@ -63,47 +79,13 @@ const Footer = () => {
             <PhoneIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.phone}</Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}>
             <EmailIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.email}</Typography>
           </Box>
         </Grid>
 
-        <Grid
-          item
-          xs={12}
-          md={2.4}
-          sx={{
-            position: "relative",
-            "&::before": {
-              content: "''",
-              width: "1px",
-              height: "calc(100% - 40px)",
-              backgroundColor: "#e6e6e6",
-              position: "absolute",
-              top: "20px",
-              right: "-10px",
-            },
-          }}
-        >
-          <Typography mb={"1.4em"} fontWeight={"600"} fontSize={"20px"}>
-            Know Us
-          </Typography>
-          <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-            {[
-              "Home Appliance",
-              "Kitchen Appliance",
-              "Digital Camera",
-              "Laptops",
-              "Phones",
-            ].map((item, index) => (
-              <Link key={index} href={"#"} color={"inherit"} underline="none">
-                <Typography fontSize={"16px"}>{item}</Typography>
-              </Link>
-            ))}
-          </Grid>
-        </Grid>
-
+        {/* Policy Information */}
         <Grid
           item
           xs={12}
@@ -139,6 +121,7 @@ const Footer = () => {
           </Grid>
         </Grid>
 
+        {/* About Us */}
         <Grid
           item
           xs={12}
@@ -160,16 +143,15 @@ const Footer = () => {
             Know Us
           </Typography>
           <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-            {["About Us", "Our Team", "Careers", "Blog", "News"].map(
-              (item, index) => (
-                <Link key={index} href={"#"} color={"inherit"} underline="none">
-                  <Typography fontSize={"16px"}>{item}</Typography>
-                </Link>
-              )
-            )}
+            {menus.map((item, index) => (
+              <Link key={index} href={item.link || "#"} color={"inherit"} underline="none">
+                <Typography fontSize={"16px"}>{item.name}</Typography>
+              </Link>
+            ))}
           </Grid>
         </Grid>
 
+        {/* Useful Links */}
         <Grid
           item
           xs={12}
@@ -207,38 +189,26 @@ const Footer = () => {
       </Grid>
 
       <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-start" }}>
-        <IconButton
-          sx={{ color: "#1e1e1e" }}
-          aria-label="Facebook"
-          href="https://www.facebook.com"
-          target="_blank"
-        >
-          <Facebook />
-        </IconButton>
-        <IconButton
-          sx={{ color: "#1e1e1e" }}
-          aria-label="Twitter"
-          href="https://www.twitter.com"
-          target="_blank"
-        >
-          <Twitter />
-        </IconButton>
-        <IconButton
-          sx={{ color: "#1e1e1e" }}
-          aria-label="Instagram"
-          href="https://www.instagram.com"
-          target="_blank"
-        >
-          <Instagram />
-        </IconButton>
-        <IconButton
-          sx={{ color: "#1e1e1e" }}
-          aria-label="LinkedIn"
-          href="https://www.linkedin.com"
-          target="_blank"
-        >
-          <LinkedIn />
-        </IconButton>
+        {systemData.fbLink && (
+          <IconButton
+            sx={{ color: "#1e1e1e" }}
+            aria-label="Facebook"
+            href={systemData.fbLink}
+            target="_blank"
+          >
+            <Facebook />
+          </IconButton>
+        )}
+        {systemData.instaLink && (
+          <IconButton
+            sx={{ color: "#1e1e1e" }}
+            aria-label="Instagram"
+            href={systemData.instaLink}
+            target="_blank"
+          >
+            <Instagram />
+          </IconButton>
+        )}
       </Box>
     </Box>
   );
