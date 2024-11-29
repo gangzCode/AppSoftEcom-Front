@@ -13,12 +13,16 @@ import ProductDetailsPage from "./app/products/productDetails";
 import TopBar from "./components/topBar";
 import Copyright from "./components/copyright";
 import ProfilePage from "./app/Profile/page";
-import SignInSignUpPage from "./app/SignIn/page";
 import ScrollToTopButton from "./components/ScrollToTop";
 import FAQPage from "./app/Faq/page";
 import NotFoundPage from "./components/404";
 import { Provider } from "react-redux";
 import store from "./store";
+import SignInPage from "./app/auth/SignInpage";
+import SignUpPage from "./app/auth/SignUpPage";
+import OTPPage from "./app/auth/OTPPage";
+import ForgotPasswordPage from "./app/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./app/auth/ResetPasswordPage";
 
 // Define theme
 /* const theme = createTheme({
@@ -30,7 +34,7 @@ import store from "./store";
 function Layout() {
   const location = useLocation();
 
-  const isAuthPage = location.pathname === "/signin";
+  const isAuthPage = location.pathname === "/signup";
 
   return (
     <>
@@ -45,7 +49,12 @@ function Layout() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/products/:categoryId" element={<ProductsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/signin" element={<SignInSignUpPage />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/otp" element={<OTPPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          {/* <Route path="/forgotpassword" element={< />} /> */}
           <Route path="/product/:productId" element={<ProductDetailsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           {/* <Route path="*" element={<NotFoundPage />} /> */}

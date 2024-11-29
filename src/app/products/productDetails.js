@@ -451,14 +451,26 @@ const ProductDetailsPage = () => {
               </Box>
             </Box>
 
-            <Typography
-              mb={"32px"}
-              variant="body1"
-              color="subtitle1"
-              sx={{ marginTop: "16px", fontWeight: "500" }}
-            >
-              Total Price: {product.currency} {totalPrice}
-            </Typography>
+            {product.discount ? (
+              <Typography
+                mb={"32px"}
+                variant="body1"
+                color="subtitle1"
+                sx={{ marginTop: "16px", fontWeight: "500" }}
+              >
+                Total Price: {product.currency}{" "}
+                {(totalPrice * (1 - product.discount / 100)).toFixed(2)}
+              </Typography>
+            ) : (
+              <Typography
+                mb={"32px"}
+                variant="body1"
+                color="subtitle1"
+                sx={{ marginTop: "16px", fontWeight: "500" }}
+              >
+                Total Price: {product.currency} {totalPrice}
+              </Typography>
+            )}
 
             {product.product_brand && (
               <Typography

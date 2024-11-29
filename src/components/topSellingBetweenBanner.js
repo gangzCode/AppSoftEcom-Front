@@ -152,7 +152,7 @@ const TopSellingBetweenBanner = () => {
                 height: "100%",
               }}
             >
-              <CardContent sx={{ flex: 1, padding: 3, height: "160px" }}>
+              <CardContent sx={{ flex: 1, padding: 3, height: "240px" }}>
                 <Typography
                   variant="p"
                   fontSize={"12px"}

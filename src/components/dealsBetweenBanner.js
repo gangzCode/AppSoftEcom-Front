@@ -38,7 +38,7 @@ const DealsBetweenBanner = () => {
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                   borderRadius: "30px",
                   overflow: "hidden",
-                  height: "220px",
+                  height: "240px",
                   backgroundColor: "#f3f3f3",
                 }}
               >
@@ -74,6 +74,14 @@ const DealsBetweenBanner = () => {
                   </Typography>
                   <Typography
                     variant="body1"
+                    fontSize={"20px"}
+                    fontWeight={"500"}
+                    color="textSecondary"
+                  >
+                    {JSON.parse(product.brand.name).En || 0}
+                  </Typography>
+                  <Typography
+                    variant="body1"
                     fontSize={"24px"}
                     fontWeight={"500"}
                     color="textSecondary"
@@ -82,7 +90,7 @@ const DealsBetweenBanner = () => {
                     ${product.price || 0}
                   </Typography>
 
-                  {product.category && product.category_status === 1 && (
+                  {/* {product.category && product.category_status === 1 && (
                     <Link to={`/products/${product.category.id}`}>
                       <Button
                         sx={{
@@ -98,24 +106,24 @@ const DealsBetweenBanner = () => {
                         Shop Now
                       </Button>
                     </Link>
-                  )}
-                  {product.brand && product.brand_status === 1 && (
-                    <Link to={`/products/${product.brand.id}`}>
-                      <Button
-                        sx={{
-                          backgroundColor: "#2189ff",
-                          padding: ".4em 1.8em",
-                          borderRadius: "8px",
-                          textTransform: "unset",
-                          fontSize: "16px",
-                          fontWeight: "500",
-                        }}
-                        variant="contained"
-                      >
-                        Shop Now
-                      </Button>
-                    </Link>
-                  )}
+                  )} */}
+                  {/* {product.brand && product.brand_status === 1 && ( */}
+                  <Link to={`${product.url}`}>
+                    <Button
+                      sx={{
+                        backgroundColor: "#2189ff",
+                        padding: ".4em 1.8em",
+                        borderRadius: "8px",
+                        textTransform: "unset",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                      }}
+                      variant="contained"
+                    >
+                      Shop Now
+                    </Button>
+                  </Link>
+                  {/* )} */}
                 </Box>
 
                 <Box

@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Fab, Zoom } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useLocation } from "react-router-dom";
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => {

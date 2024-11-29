@@ -159,54 +159,7 @@ const CarouselSection = () => {
                   color: "#fff",
                   padding: "2em",
                 }}
-              >
-                <Box
-                  sx={{
-                    justifyItems: "flex-start",
-                    padding: "20px",
-                    marginLeft: "20px",
-                  }}
-                >
-                  <Typography
-                    variant="p"
-                    fontSize={"12px"}
-                    color={"#1e1e1e"}
-                    sx={{
-                      position: "relative",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        top: "50%",
-                        marginLeft: "1em",
-                        transform: "translateY(-50%)",
-                        width: "150px",
-                        height: "2px",
-                        backgroundColor: "#2189ff",
-                      },
-                    }}
-                  >
-                    {slide.title}
-                  </Typography>
-                  <Typography
-                    color={"#1e1e1e"}
-                    fontWeight={"600"}
-                    variant="h4"
-                    gutterBottom
-                  >
-                    {slide.title}
-                  </Typography>
-                  <Typography color={"#1e1e1e"} fontSize={"12px"}>
-                    {slide.description}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    href={slide.buttonLink}
-                    sx={{ marginTop: "20px" }}
-                  >
-                    Shop Now
-                  </Button>
-                </Box>
-              </Box>
+              ></Box>
             ))}
         </Slider>
       </Box>

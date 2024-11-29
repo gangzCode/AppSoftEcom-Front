@@ -146,65 +146,192 @@ export const fetchProductById = async (id) => {
 };
 
 export const quickSearch = async (term) => {
-    let controller = new AbortController();  // Local controller to avoid using a global variable
-    const signal = controller.signal;
+  let controller = new AbortController(); // Local controller to avoid using a global variable
+  const signal = controller.signal;
 
-    try {
-        const response = await axios.post(
-            "https://ecom-test2.yalpos.com/api/product-search",
-            { term },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                signal: signal,
-            }
-        );
-
-        return response.data;  // Return the response data directly
-
-    } catch (error) {
-        // Handle specific errors (e.g., aborted requests)
-        if (axios.isCancel(error)) {
-            console.log('Request was aborted');
-        } else {
-            console.error('Request failed', error);
-        }
-        throw error;
-    }
-};
-
-export const subscribeToNewsApi = async (username) => {
-    try {
-      const response = await axios.post(
-        "https://ecom-test2.yalpos.com/api/newsletter",
-        { email: username },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      return response.data; // Return the response data directly
-    } catch (error) {
-      if (error.response) {
-        throw error.response.status;
-      } else {
-        throw error;
-      }
-    }
-};
-
-export const fetchSystemData = async (id) => {
-    try {
-      const res = await axios.get(baseUrl + `/settings`, {
+  try {
+    const response = await axios.post(
+      "https://ecom-test2.yalpos.com/api/product-search",
+      { term },
+      {
         headers: {
           "Content-Type": "application/json",
         },
-      });
-      console.log(res + "res api");
-  
-      return res.data.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
+        signal: signal,
+      }
+    );
+
+    return response.data; // Return the response data directly
+  } catch (error) {
+    // Handle specific errors (e.g., aborted requests)
+    if (axios.isCancel(error)) {
+      console.log("Request was aborted");
+    } else {
+      console.error("Request failed", error);
     }
-  };
-  
+    throw error;
+  }
+};
+
+export const subscribeToNewsApi = async (username) => {
+  try {
+    const response = await axios.post(
+      "https://ecom-test2.yalpos.com/api/newsletter",
+      { email: username },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data; // Return the response data directly
+  } catch (error) {
+    if (error.response) {
+      throw error.response.status;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const fetchSystemData = async (id) => {
+  try {
+    const res = await axios.get(baseUrl + `/settings`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(res + "res api");
+
+    return res.data.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
+export const registerUser = async (
+  firstName,
+  lastName,
+  email,
+  phone,
+  password
+) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/register`,
+      {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone: phone,
+        password: password,
+        password_confirmation: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const verifyOtp = async (email, activationCode) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/otp-verification`,
+      {
+        email: email,
+        activation_code: activationCode,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/login`,
+      {
+        email: email,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const sendResetLink = async (email) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/forgot-password`,
+      { email },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const updatePassword = async (code, email, password) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/reset-password`,
+      {
+        code: code,
+        email: email,
+        password: password,
+        password_confirmation: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
