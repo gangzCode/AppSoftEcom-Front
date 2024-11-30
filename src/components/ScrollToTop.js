@@ -35,7 +35,7 @@ const ScrollToTopButton = () => {
         onClick={scrollToTop}
         sx={{
           position: "fixed",
-          bottom: 24,
+          bottom: { xs: 80, md: 24 },
           right: 24,
         }}
         aria-label="Scroll back to top"

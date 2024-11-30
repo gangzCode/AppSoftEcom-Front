@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   AppBar,
   Box,
@@ -15,6 +15,15 @@ import {
   Divider,
   Paper,
   Grow,
+  BottomNavigation,
+  BottomNavigationAction,
+  Badge,
+  useTheme,
+  useMediaQuery,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -28,6 +37,10 @@ import {
   Close,
   Gamepad,
   Keyboard,
+  Home,
+  Person,
+  ShoppingCart,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import CartSliderItem from "./CartSlider/cartSliderItem";
@@ -36,13 +49,14 @@ import {
   getCategoriesForAllCategoriesDrop,
   getTopCategoriesForMenu,
   quickSearch,
-  fetchSystemData
+  fetchSystemData,
 } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [menus, setmenus] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [anchorMenu, setAnchorMenu] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -53,6 +67,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [systemData, setSystemData] = useState({
     logo: "",
   });
+  const [bottomValue, setBottomValue] = useState(0);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   let closeMenuTimer;
 
@@ -76,13 +94,15 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   };
 
   const handleSearchKeyPress = async (e) => {
-    if (e.key === 'Enter' && searchTerm.trim()) {
+    if (e.key === "Enter" && searchTerm.trim()) {
       try {
         const response = await quickSearch(searchTerm);
         const results = response.data;
-        console.log("Search Results:", results); 
+        console.log("Search Results:", results);
         if (results.length === 0) {
-          setSearchResults([{ message: 'No products found for the search term' }]);
+          setSearchResults([
+            { message: "No products found for the search term" },
+          ]);
         } else {
           setSearchResults(results);
         }
@@ -90,7 +110,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         console.error("Search failed", error);
       }
     }
-  };  
+  };
 
   useEffect(() => {
     if (searchResults.length > 0) {
@@ -177,6 +197,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     setCartOpen(!cartOpen);
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   // console.log([...Array(5 - 3)]);
 
   // const menus = [
@@ -206,106 +230,158 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   //   },
   // ];
 
+  const bottomNav = (
+    <Paper
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        display: { xs: "block", md: "none" }, // Hide on desktop
+      }}
+      elevation={3}
+    >
+      <BottomNavigation
+        // value={bottomValue}
+        // onChange={(event, newValue) => {
+        //   setBottomValue(newValue);
+        // }}
+        showLabels
+      >
+        <BottomNavigationAction onClick={toggleMenu} icon={<MenuIcon />} />
+        <RouterLink to={"/signin"}>
+          <BottomNavigationAction label="Profile" icon={<Person />} />
+        </RouterLink>
+        <BottomNavigationAction icon={<FavoriteBorderRounded />} />
+        <BottomNavigationAction
+          onTouchStart={toggleCart}
+          icon={
+            <Badge badgeContent={4} color="primary">
+              <ShoppingCart />
+            </Badge>
+          }
+        />
+      </BottomNavigation>
+    </Paper>
+  );
+
   return (
     <AppBar position="sticky" elevation={0} color="">
       <Grid pt={"2em"} container alignItems={"center"}>
-        <Grid md={2}>
+        <Grid md={2} xs={3}>
           <RouterLink to={"/"}>
             <img src={systemData.logo} alt="Logo" />
           </RouterLink>
         </Grid>
-        <Grid md={9} sx={{ position: "relative" }}>
-  <TextField
-    variant="outlined"
-    placeholder="Search for Products..."
-    fullWidth
-    onChange={handleSearchChange}
-    onKeyDown={handleSearchKeyPress}
-    inputRef={searchBarRef}
-    sx={{
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "50px",
-        backgroundColor: "#f3f3f3",
-      },
-      input: {
-        paddingY: ".6em",
-        borderBlock: "none",
-        backgroundColor: "#f3f3f3",
-        borderRadius: "50px",
-      },
-      fieldset: {
-        border: "none",
-      },
-    }}
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <IconButton>
-            <SearchIcon />
-          </IconButton>
-        </InputAdornment>
-      ),
-    }}
-  />
-  {searchResults.length > 0 && (
-  <Box
-    ref={searchResultsRef}
-    sx={{
-      position: "absolute",
-      top: "100%",
-      left: 0,
-      right: 0,
-      bgcolor: "#fff",
-      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      zIndex: 9999,
-      maxHeight: "300px",
-      overflowY: "auto",
-      marginTop: "8px",
-    }}
-  >
-    <Paper elevation={3}>
-      <Typography variant="h6" sx={{ padding: "10px" }}>
-        {searchResults[0].message || 'Search Results:'}
-      </Typography>
-      <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
-        {searchResults[0].message ? (
-          <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
-            <Typography>{searchResults[0].message}</Typography>
-          </MenuItem>
-        ) : (
-          searchResults.map((item) => (
-            <RouterLink to={`/product/${item.id}`} key={item.id}>
-              <MenuItem sx={{ padding: "10px 20px", borderBottom: "1px solid #f0f0f0" }}>
-                <Typography>{item.name}</Typography>
-              </MenuItem>
-            </RouterLink>
-          ))
-        )}
-      </Box>
-    </Paper>
-  </Box>
-)}
-</Grid>
-       
-        <Grid md={1}>
-          <Box display="flex" justifyContent="space-around" alignItems="center">
-            <IconButton>
-              <RouterLink to={"/signin"}>
-                <AccountCircleOutlined />
-              </RouterLink>
-            </IconButton>
-            <IconButton>
-              <RouterLink>
-                <FavoriteBorderRounded />
-              </RouterLink>
-            </IconButton>
-            <IconButton onClick={toggleCart}>
-              <RouterLink>
-                <ShoppingCartOutlined />
-              </RouterLink>
-            </IconButton>
-          </Box>
+        <Grid md={9} xs={9} sx={{ position: "relative" }}>
+          <TextField
+            variant="outlined"
+            placeholder="Search for Products..."
+            fullWidth
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyPress}
+            inputRef={searchBarRef}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "50px",
+                backgroundColor: "#f3f3f3",
+              },
+              input: {
+                paddingY: ".6em",
+                borderBlock: "none",
+                backgroundColor: "#f3f3f3",
+                borderRadius: "50px",
+              },
+              fieldset: {
+                border: "none",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {searchResults.length > 0 && (
+            <Box
+              ref={searchResultsRef}
+              sx={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                bgcolor: "#fff",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                zIndex: 9999,
+                maxHeight: "300px",
+                overflowY: "auto",
+                marginTop: "8px",
+              }}
+            >
+              <Paper elevation={3}>
+                <Typography variant="h6" sx={{ padding: "10px" }}>
+                  {searchResults[0].message || "Search Results:"}
+                </Typography>
+                <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
+                  {searchResults[0].message ? (
+                    <MenuItem
+                      sx={{
+                        padding: "10px 20px",
+                        borderBottom: "1px solid #f0f0f0",
+                      }}
+                    >
+                      <Typography>{searchResults[0].message}</Typography>
+                    </MenuItem>
+                  ) : (
+                    searchResults.map((item) => (
+                      <RouterLink to={`/product/${item.id}`} key={item.id}>
+                        <MenuItem
+                          sx={{
+                            padding: "10px 20px",
+                            borderBottom: "1px solid #f0f0f0",
+                          }}
+                        >
+                          <Typography>{item.name}</Typography>
+                        </MenuItem>
+                      </RouterLink>
+                    ))
+                  )}
+                </Box>
+              </Paper>
+            </Box>
+          )}
         </Grid>
+
+        {!isMobile && (
+          <Grid md={1}>
+            <Box
+              display="flex"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              <IconButton>
+                <RouterLink to={"/signin"}>
+                  <AccountCircleOutlined />
+                </RouterLink>
+              </IconButton>
+              <IconButton>
+                <RouterLink>
+                  <FavoriteBorderRounded />
+                </RouterLink>
+              </IconButton>
+              <IconButton onClick={toggleCart}>
+                <RouterLink>
+                  <ShoppingCartOutlined />
+                </RouterLink>
+              </IconButton>
+            </Box>
+          </Grid>
+        )}
       </Grid>
 
       <Drawer
@@ -349,7 +425,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <Typography variant="body1" mt={2} fontSize={14}>
           Shipping, taxes, and discounts will be calculated at checkout.
         </Typography>
-        {/* <Typography variant="body2">Cart is currently empty.</Typography> */}
+
         <Box display="flex" justifyContent="space-between" marginTop={2}>
           <Button
             variant="contained"
@@ -370,31 +446,89 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Box>
       </Drawer>
 
-      <Grid display={"flex"} alignItems={"center"} py={2}>
-        <Button
-          color="inherit"
-          sx={{
-            backgroundColor: "#2189ff",
-            boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
-            color: "white",
-            borderRadius: "20px",
-            height: "fit-content",
-            "&:hover": {
-              backgroundColor: "#1a76d2",
-            },
-            padding: ".7em 4em",
-          }}
-          endIcon={<ExpandMore />}
-          id="basic-button"
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleCatClick}
+      <Drawer
+        anchor="left"
+        open={menuOpen}
+        onClose={toggleMenu}
+        PaperProps={{
+          sx: { width: { xs: "100%", md: 400 }, p: 4, bgcolor: "#f7f7f7" },
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          flexDirection={"row"}
+          alignItems="flex-end"
         >
-          <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
+          <Box sx={{ flexGrow: 1 }}></Box>
+          <IconButton onClick={toggleMenu} color="blackbutton">
+            <Close />
+          </IconButton>
+        </Box>
+        <List sx={{ width: "100%", mt: 15 }}>
+          <Typography variant="h4" fontWeight={"light"} gutterBottom>
             All Categories
           </Typography>
-        </Button>
+          {categories.map((category) => (
+            <div key={category.id}>
+              <ListItem
+                button
+                component={RouterLink}
+                to={`/products/${category.id}`}
+                onClick={toggleMenu}
+                sx={{
+                  py: 1.5,
+                  "&:hover": {
+                    bgcolor: "rgba(33, 137, 255, 0.08)",
+                  },
+                }}
+              >
+                <img
+                  src={category.image}
+                  alt={category.name.En}
+                  style={{ width: 24, height: 24, marginRight: 12 }}
+                />
+                <ListItemText
+                  primary={category.name}
+                  primaryTypographyProps={{
+                    fontSize: "15px",
+                    fontWeight: 500,
+                  }}
+                />
+              </ListItem>
+              <Divider variant="middle" />
+            </div>
+          ))}
+        </List>
+      </Drawer>
+
+      <Grid display={"flex"} alignItems={"center"} py={2}>
+        {!isMobile && (
+          <Button
+            color="inherit"
+            sx={{
+              backgroundColor: "#2189ff",
+              boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
+              color: "white",
+              borderRadius: "20px",
+              height: "fit-content",
+              "&:hover": {
+                backgroundColor: "#1a76d2",
+              },
+              padding: ".7em 4em",
+            }}
+            endIcon={<ExpandMore />}
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleCatClick}
+          >
+            <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
+              All Categories
+            </Typography>
+          </Button>
+        )}
         <Menu
           sx={{
             width: "100%",
@@ -437,42 +571,43 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {menus.slice(0, 4).map((menu, index) => (
-            <RouterLink to={`/products/${menu.id}`}>
-              <Box
-                key={index}
-                onMouseEnter={(e) => handleHover(index)}
-                onMouseLeave={handleHoverClose}
-                sx={{
-                  position: "relative",
-                  // bgcolor: "primary.main",
-                  py: 3,
-                  "& .MuiMenu-paper": {
-                    opacity: 0,
-                    visibility: "hidden",
-                    transition: "opacity 0.3s ease, visibility 0.3s ease",
-                  },
-                }}
-              >
-                <MuiLink
-                  href="#"
-                  fontSize={"16px"}
-                  fontWeight={"500"}
-                  variant="h5"
-                  color="inherit"
-                  underline="none"
+        {!isMobile && (
+          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+            {menus.slice(0, 4).map((menu, index) => (
+              <RouterLink to={`/products/${menu.id}`}>
+                <Box
+                  key={index}
+                  onMouseEnter={(e) => handleHover(index)}
+                  onMouseLeave={handleHoverClose}
                   sx={{
-                    "&:hover": {
-                      color: "#2189ff",
+                    position: "relative",
+                    // bgcolor: "primary.main",
+                    py: 3,
+                    "& .MuiMenu-paper": {
+                      opacity: 0,
+                      visibility: "hidden",
+                      transition: "opacity 0.3s ease, visibility 0.3s ease",
                     },
-                    transition: "color 0.3s ease",
                   }}
                 >
-                  {menu.name}
-                </MuiLink>
+                  <MuiLink
+                    href="#"
+                    fontSize={"16px"}
+                    fontWeight={"500"}
+                    variant="h5"
+                    color="inherit"
+                    underline="none"
+                    sx={{
+                      "&:hover": {
+                        color: "#2189ff",
+                      },
+                      transition: "color 0.3s ease",
+                    }}
+                  >
+                    {menu.name}
+                  </MuiLink>
 
-                {/* <Menu
+                  {/* <Menu
                 id={`menu-${index}`}
                 anchorEl={anchorMenu}
                 open={Boolean(anchorMenu) && menuIndex === index}
@@ -513,10 +648,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   ))}
                 </Grid>
               </Menu> */}
-              </Box>
-            </RouterLink>
-          ))}
-        </Box>
+                </Box>
+              </RouterLink>
+            ))}
+          </Box>
+        )}
       </Grid>
       <Box position={"relative"} width={"100%"}>
         {menus.map(
@@ -586,6 +722,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             )
         )}
       </Box>
+      {isMobile && bottomNav}
     </AppBar>
   );
 };

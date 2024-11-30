@@ -12,7 +12,6 @@ const CarouselSection = () => {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await getSliders();
-        // Sort slides by the 'order' field
         const sortedSlides = response.data.sort((a, b) => a.order - b.order);
         setSlides(sortedSlides);
         console.log("Slides ::::: ", sortedSlides);
@@ -99,9 +98,24 @@ const CarouselSection = () => {
     autoplaySpeed: 3000,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
-  
   return (
     <Box
       sx={{
@@ -109,7 +123,7 @@ const CarouselSection = () => {
         overflow: "hidden",
         paddingBottom: "5em",
         position: "relative",
-        height: "500px",
+        height: { xs: "200px", md: "500px" },
         "&:hover .slick-arrow": {
           opacity: 1,
         },
@@ -132,9 +146,10 @@ const CarouselSection = () => {
                 target={slide.link ? "_blank" : undefined}
                 rel={slide.link ? "noopener noreferrer" : undefined}
                 sx={{
-                  height: "500px",
+                  height: { xs: "200px", md: "500px" },
                   backgroundImage: `url(${slide.image})`,
                   backgroundSize: "cover",
+
                   backgroundPosition: "center",
                   position: "relative",
                   display: "flex",
@@ -144,9 +159,7 @@ const CarouselSection = () => {
                   textDecoration: "none",
                   padding: "2em",
                 }}
-              >
-               
-              </Box>
+              ></Box>
             ))}
         </Slider>
       </Box>

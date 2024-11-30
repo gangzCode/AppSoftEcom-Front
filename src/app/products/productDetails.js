@@ -49,6 +49,15 @@ const ProductDetailsPage = () => {
         setproduct(response.data);
         console.log("productbyid ::::: ", response.data);
 
+        const variationImages = response.data.product_variation_combination
+          .map((combination) => combination.image)
+          .flat();
+
+        setproduct((prevProduct) => ({
+          ...prevProduct,
+          images: [...prevProduct.images, ...variationImages],
+        }));
+
         if (response.data.product_variation_tempalte.length > 0) {
           const initialVariations = {};
           response.data.product_variation_tempalte.forEach((variation) => {
@@ -66,6 +75,10 @@ const ProductDetailsPage = () => {
             }
           });
           setSelectedVariations(initialVariations);
+        }
+
+        if (response.data.images.length > 0) {
+          setSelectedImage(response.data.images[0]);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -157,17 +170,18 @@ const ProductDetailsPage = () => {
       [variationName]: option.name,
     };
 
-    const validVariations = Object.fromEntries(
-      Object.entries(updatedVariations).filter(([key, value]) =>
-        product.product_variation_combination.some((combination) =>
-          Object.entries({ ...updatedVariations, [key]: value }).every(
-            ([k, v]) => combination.attributes[k] === v
-          )
+    const matchingCombination = product.product_variation_combination.find(
+      (combination) =>
+        Object.entries(updatedVariations).every(
+          ([key, value]) => combination.attributes[key] === value
         )
-      )
     );
 
-    setSelectedVariations(validVariations);
+    if (matchingCombination) {
+      setSelectedImage(matchingCombination.image);
+    }
+
+    setSelectedVariations(updatedVariations);
   };
 
   const handleIncrement = () => {
@@ -292,7 +306,7 @@ const ProductDetailsPage = () => {
                     }}
                     gutterBottom
                   >
-                    {product.currency} {product.sales_price}
+                    {product.currency} {totalPrice}
                   </Typography>
                   <Chip
                     label={`${product.discount}% OFF`}

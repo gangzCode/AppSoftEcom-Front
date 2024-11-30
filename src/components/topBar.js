@@ -22,7 +22,7 @@ const TopBar = () => {
         }}
         display="flex"
         alignItems="center"
-        justifyContent={"flex-end"}
+        justifyContent={{ xs: "center", lg: "flex-end" }}
         gap={2}
       >
         <Box display="flex" alignItems="center">

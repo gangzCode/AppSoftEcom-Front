@@ -93,7 +93,7 @@ const BestCategory = () => {
       >
         {products.length > 0 ? (
           products.map((product) => (
-            <Link to={`/product/${product.id}`} key={product.id}>
+            <Link to={`/products/${product.id}`} key={product.id}>
               <Box
                 sx={{
                   position: "relative",
@@ -195,21 +195,19 @@ const BestCategory = () => {
                 >
                   {product.category_name}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight="400"
-                  sx={{ marginBottom: "8px" }}
-                >
-                  {product.name.substr(0, 20)}
-                </Typography>
                 <Box
                   display={"flex"}
                   justifyContent="space-between"
                   sx={{ marginTop: "auto" }}
                 >
-                  <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    ${product.price}
+                  <Typography
+                    variant="body1"
+                    fontWeight="400"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    {product.name.substr(0, 20)}
                   </Typography>
+
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
               </Box>
