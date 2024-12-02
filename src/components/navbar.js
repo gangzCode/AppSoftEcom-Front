@@ -677,10 +677,16 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 >
                   {
                     <Grid container>
-                      {menu.sub_category.map((item, idx) => (
+                      {menu.sub_category.slice(0, 5).map((item, idx) => (
                         <Grid item xs={2.4}>
                           <Box key={idx}>
-                            <RouterLink to={`/product/${item.id}`}>
+                            <RouterLink
+                              to={`/products/${menu.id}`}
+                              state={{
+                                subcategoryId: item.id,
+                                subcategoryName: item.name,
+                              }}
+                            >
                               <Typography
                                 fontSize={"14px"}
                                 fontWeight={"600"}

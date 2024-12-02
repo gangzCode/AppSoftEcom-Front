@@ -76,6 +76,15 @@ const ProductsPage = () => {
   const navigate = useNavigate();
 
   const previousUrl = location.state?.from || "/";
+  const { subcategoryId, subcategoryName } = location.state || {};
+
+  useEffect(() => {
+    if (subcategoryName) {
+      setSelectedSubCategory(subcategoryName);
+    }
+
+    fetchProducts(categoryId, subcategoryId);
+  }, [categoryId, subcategoryId, subcategoryName]);
 
   useEffect(() => {
     console.log("CategoryId from Params:", categoryId);
@@ -321,13 +330,23 @@ const ProductsPage = () => {
           aria-label="breadcrumb"
           sx={{ display: "inline-flex", opacity: 0.8 }}
         >
-          <Link component={RouterLink} to={previousUrl} underline="hover" color="inherit">
+          <Link
+            component={RouterLink}
+            to={previousUrl}
+            underline="hover"
+            color="inherit"
+          >
             Back
           </Link>
           <Link component={RouterLink} to="/" underline="hover" color="inherit">
             Home
           </Link>
-          <Link component={RouterLink} to="/products" underline="hover" color="inherit">
+          <Link
+            component={RouterLink}
+            to="/products"
+            underline="hover"
+            color="inherit"
+          >
             Products
           </Link>
         </Breadcrumbs>
@@ -335,7 +354,10 @@ const ProductsPage = () => {
       <Box sx={{ display: "flex", padding: "20px 0" }}>
         <Box sx={{ width: "20%", paddingRight: "2.5em" }}>
           <Box>
-            <Accordion sx={{ boxShadow: "none" }}>
+            <Accordion
+              expanded={subcategoryName?.length}
+              sx={{ boxShadow: "none" }}
+            >
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Subcategories</Typography>
               </AccordionSummary>
