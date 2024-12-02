@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, Divider, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Divider,
+  Stack,
+  TextField,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VoucherInput from "./VoucherInput";
 import ShippingEstimate from "./ShippingEstimate";
@@ -45,15 +52,21 @@ function CartSummary() {
           Add A Note To Your Order
         </Button>
       ) : (
-        <Box sx={{ width: "100%" }} display={"flex"} flexDirection={"column"} gap={1}>
-          <Typography variant="body1">Special instructions for seller</Typography>
+        <Box
+          sx={{ width: "100%" }}
+          display={"flex"}
+          flexDirection={"column"}
+          gap={1}
+        >
+          <Typography variant="body1">
+            Special instructions for seller
+          </Typography>
           <TextField
             fullWidth
             multiline
             minRows={4}
             maxRows={7}
             variant="outlined"
-            // placeholder="Special instructions for seller"
             sx={{
               bgcolor: "#f3f3f3",
               borderRadius: 1,
@@ -63,7 +76,11 @@ function CartSummary() {
       )}
 
       {/* Information about taxes, shipping, etc. */}
-      <Typography variant="body1" color="text.secondary" sx={{ fontStyle: "italic" }}>
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        sx={{ fontStyle: "italic" }}
+      >
         Shipping, taxes, and discounts will be calculated at checkout.
       </Typography>
 

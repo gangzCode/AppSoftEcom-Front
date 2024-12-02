@@ -33,11 +33,11 @@ export const getTopCategoriesForMenu = async () => {
 
 export const updateUserProfile = async (userData, token) => {
   try {
-    console.log("Sending token in request:", token); 
+    console.log("Sending token in request:", token);
     const res = await axios.put(baseUrl + "/profile/update", userData, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(res.data);
@@ -61,68 +61,68 @@ export const getBestSellingProducts = async () => {
 };
 
 export const getDayFlashSaleProducts = async () => {
-    try {
-      const res = await axios.get(baseUrl + "/day-flash-sale", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
-    }
+  try {
+    const res = await axios.get(baseUrl + "/day-flash-sale", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
 };
 
 export const getSpecialDayOfferSaleProducts = async () => {
-    try {
-      const res = await axios.get(baseUrl + "/special-offer", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
-    }
+  try {
+    const res = await axios.get(baseUrl + "/special-offer", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
 };
 
 export const getDealsofDayProducts = async () => {
-    try {
-      const res = await axios.get(baseUrl + "/deal-of-day", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
-    }
+  try {
+    const res = await axios.get(baseUrl + "/deal-of-day", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
 };
 
 export const getMonthlyFlashSaleProducts = async () => {
-    try {
-      const res = await axios.get(baseUrl + "/month-flash-sale", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
-    }
+  try {
+    const res = await axios.get(baseUrl + "/month-flash-sale", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
 };
 
 export const getDealsofMonthProducts = async () => {
-    try {
-      const res = await axios.get(baseUrl + "/deal-of-month", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response ? error.response.status : error;
-    }
+  try {
+    const res = await axios.get(baseUrl + "/deal-of-month", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
 };
 
 export const getBestBrandedProducts = async () => {
@@ -140,14 +140,11 @@ export const getBestBrandedProducts = async () => {
 
 export const getBestCategoryProducts = async () => {
   try {
-    const res = await axios.get(
-      baseUrl + "/best-category",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await axios.get(baseUrl + "/best-category", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
@@ -407,6 +404,27 @@ export const updatePassword = async (code, email, password) => {
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const getCartDetails = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+
+    const response = await axios.get(`${baseUrl}/card-details`, {
+      headers,
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
