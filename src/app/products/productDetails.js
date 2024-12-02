@@ -444,12 +444,12 @@ const ProductDetailsPage = () => {
                     fontSize: "1.25em",
                   }}
                 >
-                  {quantity}
+                  {availableStock === 0 ? 0 : quantity}
                 </Typography>
                 <IconButton
                   size="small"
                   onClick={handleIncrement}
-                  disabled={quantity === availableStock}
+                  disabled={quantity === availableStock || availableStock === 0}
                   sx={{
                     color: "#000",
                     p: 1,

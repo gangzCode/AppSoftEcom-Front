@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import { Facebook, Instagram, PinDrop } from "@mui/icons-material";
-import { fetchSystemData,getTopCategoriesForMenu } from "../services/apiCalls";
+import { fetchSystemData, getTopCategoriesForMenu } from "../services/apiCalls";
 
 const Footer = () => {
   const [systemData, setSystemData] = useState({
@@ -79,7 +80,9 @@ const Footer = () => {
             <PhoneIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.phone}</Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
+          >
             <EmailIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.email}</Typography>
           </Box>
@@ -144,9 +147,14 @@ const Footer = () => {
           </Typography>
           <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
             {menus.map((item, index) => (
-              <Link key={index} href={item.link || "#"} color={"inherit"} underline="none">
+              <RouterLink
+                key={index}
+                to={`/products/${item.id}`}
+                color={"inherit"}
+                underline="none"
+              >
                 <Typography fontSize={"16px"}>{item.name}</Typography>
-              </Link>
+              </RouterLink>
             ))}
           </Grid>
         </Grid>
