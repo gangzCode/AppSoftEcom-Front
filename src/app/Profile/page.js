@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -9,6 +9,8 @@ import {
   Divider,
   IconButton,
   Box,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   Email,
@@ -17,8 +19,69 @@ import {
   Phone,
   Person,
 } from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { updateUserProfile } from "../../services/apiCalls";
 
 function ProfilePage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [firstName, setFirstName] = useState(user?.first_name || "");
+  const [lastName, setLastName] = useState(user?.last_name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [gender, setGender] = useState(user?.gender || "");
+  const [dob, setDob] = useState(user?.dob || "");
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.first_name || "");
+      setLastName(user.last_name || "");
+      setPhone(user.phone || "");
+      setGender(user.gender || "");
+      setDob(user.dob || "");
+    }
+  }, [user]);
+
+  const handleSignOut = () => {
+    logout();
+    navigate("/");
+  };
+
+  const handleSaveChanges = async () => {
+    console.log('ddsds',user);
+    const savedData = localStorage.getItem("user");
+    const { token } = JSON.parse(savedData);
+    const updatedData = {
+      first_name: firstName,
+      last_name: lastName,
+      phone,
+      gender,
+      dob,
+    };
+
+    try {
+      const response = await updateUserProfile(updatedData, token);
+      console.log("Profile updated successfully", response);
+      setSnackbarMessage("Profile updated successfully");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error("Error updating profile", error);
+      setSnackbarMessage("Failed to update profile. Please try again.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  };
+
+  if (!user) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
     <Container sx={{ marginY: 8 }}>
       {/* Breadcrumb */}
@@ -36,13 +99,13 @@ function ProfilePage() {
         <Grid item xs={12} sm="auto">
           <Avatar
             alt="User Profile"
-            src="/path-to-profile-picture.jpg"
+            src={user?.profile_image || "/path-to-profile-picture.jpg"}
             sx={{ width: 100, height: 100, borderRadius: 2 }}
           />
         </Grid>
         <Grid item xs>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Brinthan
+            {user.first_name} {user.last_name}
           </Typography>
           <Typography
             variant="body2"
@@ -50,7 +113,7 @@ function ProfilePage() {
             sx={{ display: "flex", alignItems: "center" }}
           >
             <Email fontSize="small" sx={{ marginRight: 0.5 }} />{" "}
-            brinthsega@gmail.com
+            {user?.email || "No email provided"}
           </Typography>
         </Grid>
         <Grid item>
@@ -58,6 +121,7 @@ function ProfilePage() {
             variant="contained"
             color="primary"
             sx={{ padding: "8px 16px", textTransform: "none" }}
+            onClick={handleSignOut}
           >
             Sign Out
           </Button>
@@ -105,17 +169,49 @@ function ProfilePage() {
           </Typography>
 
           <Grid container spacing={2}>
+            {/* First Name */}
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Your Name" required />
+              <TextField
+                fullWidth
+                label="First Name"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
             </Grid>
+
+            {/* Last Name */}
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="E-mail Address" required />
+              <TextField
+                fullWidth
+                label="Last Name"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
             </Grid>
+
+            {/* Email Address (Read-only) */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="E-mail Address"
+                required
+                value={user?.email || ""}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
+
+            {/* Date of Birth */}
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Date of Birth"
-                placeholder="MM/DD/YYYY"
+                placeholder="YYYY-MM-DD"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
                 InputProps={{
                   endAdornment: (
                     <IconButton position="end">
@@ -126,11 +222,17 @@ function ProfilePage() {
                 required
               />
             </Grid>
+
+            {/* Gender and Phone Number on the same row */}
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 select
+                label="Gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
                 SelectProps={{ native: true }}
+                InputLabelProps={{ shrink: true }}
                 required
               >
                 <option value="">Select Gender</option>
@@ -139,9 +241,16 @@ function ProfilePage() {
                 <option value="other">Other</option>
               </TextField>
             </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="Phone Number" required />
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
             </Grid>
+
             <Grid item xs={12}>
               <Button
                 variant="contained"
@@ -150,8 +259,8 @@ function ProfilePage() {
                 sx={{
                   padding: 2,
                   fontSize: "16px",
-                  // "&:hover": { backgroundColor: "#333" },
                 }}
+                onClick={handleSaveChanges}
               >
                 Save Changes
               </Button>
@@ -159,6 +268,21 @@ function ProfilePage() {
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Snackbar for success or error */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

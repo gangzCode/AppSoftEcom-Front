@@ -51,6 +51,8 @@ import {
   quickSearch,
   fetchSystemData,
 } from "../services/apiCalls";
+import { useAuth } from "../context/AuthContext"; 
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -68,12 +70,23 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     logo: "",
   });
   const [bottomValue, setBottomValue] = useState(0);
-
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   let closeMenuTimer;
 
+  const handleProfileClick = () => {
+    console.log('user:', user);
+    
+    if (user) {
+      navigate("/profile");
+    } else {
+      navigate("/signin");
+    }
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -250,9 +263,9 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         showLabels
       >
         <BottomNavigationAction onClick={toggleMenu} icon={<MenuIcon />} />
-        <RouterLink to={"/signin"}>
-          <BottomNavigationAction label="Profile" icon={<Person />} />
-        </RouterLink>
+        
+        <BottomNavigationAction label="Profile" onClick={handleProfileClick} icon={<Person />} />
+      
         <BottomNavigationAction icon={<FavoriteBorderRounded />} />
         <BottomNavigationAction
           onTouchStart={toggleCart}
@@ -364,10 +377,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               justifyContent="space-around"
               alignItems="center"
             >
-              <IconButton>
-                <RouterLink to={"/signin"}>
+              <IconButton onClick={handleProfileClick}>
                   <AccountCircleOutlined />
-                </RouterLink>
               </IconButton>
               <IconButton>
                 <RouterLink>

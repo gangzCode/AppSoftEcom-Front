@@ -31,6 +31,22 @@ export const getTopCategoriesForMenu = async () => {
   }
 };
 
+export const updateUserProfile = async (userData, token) => {
+  try {
+    console.log("Sending token in request:", token); 
+    const res = await axios.put(baseUrl + "/profile/update", userData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
 export const getBestSellingProducts = async () => {
   try {
     const res = await axios.get(baseUrl + "/products/best-sale?items=", {

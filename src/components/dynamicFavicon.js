@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { fetchSystemData } from "../services/apiCalls"; // Assume this fetches your data
+import { fetchSystemData } from "../services/apiCalls";
 
 const DynamicFavicon = () => {
   useEffect(() => {

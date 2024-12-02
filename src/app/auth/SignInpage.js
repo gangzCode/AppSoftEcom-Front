@@ -10,12 +10,14 @@ import {
 } from "@mui/material";
 import { loginUser } from "../../services/apiCalls";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -23,13 +25,15 @@ const SignInPage = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+  
     try {
       const response = await loginUser(email, password);
       console.log("Login successful:", response);
       if (response.http_status === 200) {
+        const { token, info } = response.data;
+        login(token, info); // Pass both token and user info to login
         setSuccess("Login successful!");
-        navigate("/");
+        navigate("/profile");
       } else {
         setError(response.message || "Login failed. Please try again.");
       }
@@ -37,6 +41,7 @@ const SignInPage = () => {
       setError(err.message || "Login failed. Please try again.");
     }
   };
+  
 
   return (
     <Container

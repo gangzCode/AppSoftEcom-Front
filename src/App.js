@@ -24,6 +24,8 @@ import OTPPage from "./app/auth/OTPPage";
 import ForgotPasswordPage from "./app/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./app/auth/ResetPasswordPage";
 import DynamicFavicon from "./components/dynamicFavicon";
+import PrivateRoute from "./components/privateRoute";
+import { AuthProvider } from "./context/AuthContext";
 
 // Define theme
 /* const theme = createTheme({
@@ -50,7 +52,14 @@ function Layout() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/products/:categoryId" element={<ProductsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/otp" element={<OTPPage />} />
@@ -72,9 +81,11 @@ function Layout() {
 
 const App = () => (
   <Provider store={store}>
+    <AuthProvider>
     <BrowserRouter>
       <Layout />
     </BrowserRouter>
+    </AuthProvider>
   </Provider>
 );
 
