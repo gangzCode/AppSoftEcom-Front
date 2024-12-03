@@ -242,7 +242,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   //     items: ["Our Story", "Careers", "Contact Us"],
   //   },
   // ];
-
+ 
   const bottomNav = (
     <Paper
       sx={{
@@ -719,7 +719,22 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                         </Grid>
                       ))}
 
-                      {/* {[...Array(5 - menu.sub_category.length)].map((item, i) => {
+                      {menu.sub_category && menu.sub_category.length < 5 && (
+                              Array.from({ length: 5 - menu.sub_category.length }).map((_, fillIndex) => (
+                                <Grid item xs={2.4}>
+                                  
+                                <Box key={`fill-${fillIndex}`} sx={{ textAlign: "center" }}>
+                                  <img
+                                    src={menu.image}
+                                    alt={menu.name}
+                                    height={"100%"}
+                                    width={"auto"}
+                                  />
+                                </Box>
+                                </Grid>
+                              ))
+                      )}
+                    {/*   {[...Array(5 - menu.sub_category.length)].map((item, i) => {
                   return (
                     <Grid item xs={2.4}>
                       <Box

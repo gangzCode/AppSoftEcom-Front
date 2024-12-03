@@ -224,7 +224,7 @@ export const fetchProductById = async (id) => {
 };
 
 export const quickSearch = async (term) => {
-  let controller = new AbortController(); // Local controller to avoid using a global variable
+  let controller = new AbortController();
   const signal = controller.signal;
 
   try {
@@ -239,7 +239,7 @@ export const quickSearch = async (term) => {
       }
     );
 
-    return response.data; // Return the response data directly
+    return response.data;
   } catch (error) {
     // Handle specific errors (e.g., aborted requests)
     if (axios.isCancel(error)) {
@@ -260,7 +260,7 @@ export const subscribeToNewsApi = async (username) => {
         headers: { "Content-Type": "application/json" },
       }
     );
-    return response.data; // Return the response data directly
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw error.response.status;
@@ -277,8 +277,19 @@ export const fetchSystemData = async (id) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res + "res api");
+    return res.data.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
 
+export const getBrandLogos = async (id) => {
+  try {
+    const res = await axios.get(baseUrl + `/brands`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return res.data.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
