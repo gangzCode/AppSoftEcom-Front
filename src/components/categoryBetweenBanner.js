@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import { getPromotions } from "../services/apiCalls";
 import { Link } from "react-router-dom";
+import { Container } from "../common/Spacing";
 
 const CategoryBetweenBanner = () => {
   const [promotions, setPromotions] = useState([]);
@@ -30,7 +31,7 @@ const CategoryBetweenBanner = () => {
   };
 
   return (
-    <Box sx={{}}>
+    <Container>
       <Grid container spacing={4}>
         {promotions
           .filter((promo) => promo.type === "Category")
@@ -135,7 +136,7 @@ const CategoryBetweenBanner = () => {
             </Grid>
           ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

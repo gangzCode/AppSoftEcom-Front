@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
+import { Container } from "../common/Spacing";
 
 const Brands = () => {
   // Sample brand image URLs
@@ -12,7 +13,7 @@ const Brands = () => {
   ];
 
   return (
-    <Box sx={{ padding: "4em 0" }}>
+    <Container>
       <Grid container spacing={2} justifyContent="space-between">
         {brandImages.map((image, index) => (
           <Grid item key={index} xs={2}>
@@ -30,7 +31,7 @@ const Brands = () => {
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

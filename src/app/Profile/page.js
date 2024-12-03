@@ -11,6 +11,14 @@ import {
   Box,
   Snackbar,
   Alert,
+  Tabs,
+  Tab,
+  Card,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import {
   Email,
@@ -18,10 +26,283 @@ import {
   CalendarToday,
   Phone,
   Person,
+  Edit,
+  Delete,
+  Add,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { updateUserProfile } from "../../services/apiCalls";
+
+function TabPanel({ children, value, index, ...other }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`profile-tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+function AddressBook() {
+  const [addresses, setAddresses] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [formData, setFormData] = useState({
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    isDefault: false,
+  });
+
+  const handleOpenDialog = (address = null) => {
+    if (address) {
+      setFormData(address);
+      setSelectedAddress(address);
+    } else {
+      setFormData({
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "",
+        isDefault: false,
+      });
+      setSelectedAddress(null);
+    }
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedAddress(null);
+  };
+
+  const handleSaveAddress = () => {
+    if (selectedAddress) {
+      setAddresses(
+        addresses.map((addr) =>
+          addr.id === selectedAddress.id ? formData : addr
+        )
+      );
+    } else {
+      setAddresses([...addresses, { ...formData, id: Date.now() }]);
+    }
+    handleCloseDialog();
+  };
+
+  const handleDeleteAddress = (addressId) => {
+    setAddresses(addresses.filter((addr) => addr.id !== addressId));
+  };
+
+  return (
+    <Box>
+      <Button
+        startIcon={<Add />}
+        variant="contained"
+        onClick={() => handleOpenDialog()}
+        sx={{ mb: 2 }}
+      >
+        Add New Address
+      </Button>
+
+      <Grid container spacing={2}>
+        {addresses.map((address) => (
+          <Grid item xs={12} md={6} key={address.id}>
+            <Card>
+              <CardContent>
+                <Box display="flex" justifyContent="space-between">
+                  <Box>
+                    <Typography variant="body1">{address.street}</Typography>
+                    <Typography variant="body2">
+                      {`${address.city}, ${address.state} ${address.zipCode}`}
+                    </Typography>
+                    <Typography variant="body2">{address.country}</Typography>
+                  </Box>
+                  <Box>
+                    <IconButton onClick={() => handleOpenDialog(address)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteAddress(address.id)}>
+                      <Delete />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>
+          {selectedAddress ? "Edit Address" : "Add New Address"}
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }} component="form">
+            <TextField
+              fullWidth
+              label="Street Address"
+              value={formData.street}
+              onChange={(e) =>
+                setFormData({ ...formData, street: e.target.value })
+              }
+              margin="dense"
+            />
+            <TextField
+              fullWidth
+              label="City"
+              value={formData.city}
+              onChange={(e) =>
+                setFormData({ ...formData, city: e.target.value })
+              }
+              margin="dense"
+            />
+            <TextField
+              fullWidth
+              label="State"
+              value={formData.state}
+              onChange={(e) =>
+                setFormData({ ...formData, state: e.target.value })
+              }
+              margin="dense"
+            />
+            <TextField
+              fullWidth
+              label="Zip Code"
+              value={formData.zipCode}
+              onChange={(e) =>
+                setFormData({ ...formData, zipCode: e.target.value })
+              }
+              margin="dense"
+            />
+            <TextField
+              fullWidth
+              label="Country"
+              value={formData.country}
+              onChange={(e) =>
+                setFormData({ ...formData, country: e.target.value })
+              }
+              margin="dense"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSaveAddress} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+}
+
+const OrdersHistory = () => {
+  const mockOrders = [
+    {
+      id: "ORD001",
+      date: "2024-03-15",
+      status: "Delivered",
+      total: 299.99,
+      items: [
+        { name: "Blue T-Shirt", quantity: 2, price: 49.99 },
+        { name: "Black Jeans", quantity: 1, price: 199.99 },
+      ],
+    },
+    {
+      id: "ORD002",
+      date: "2024-03-10",
+      status: "Processing",
+      total: 159.99,
+      items: [{ name: "Running Shoes", quantity: 1, price: 159.99 }],
+    },
+    {
+      id: "ORD003",
+      date: "2024-03-05",
+      status: "Shipped",
+      total: 89.97,
+      items: [{ name: "Baseball Cap", quantity: 3, price: 29.99 }],
+    },
+  ];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "success";
+      case "Processing":
+        return "warning";
+      case "Shipped":
+        return "info";
+      default:
+        return "default";
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Recent Orders
+      </Typography>
+      <Grid container spacing={2}>
+        {mockOrders.map((order) => (
+          <Grid item xs={12} key={order.id}>
+            <Card>
+              <CardContent>
+                <Box display="flex" justifyContent="space-between" mb={2}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Order #{order.id}
+                  </Typography>
+                  <Alert severity={getStatusColor(order.status)} sx={{ py: 0 }}>
+                    {order.status}
+                  </Alert>
+                </Box>
+
+                <Typography color="text.secondary" gutterBottom>
+                  Ordered on: {new Date(order.date).toLocaleDateString()}
+                </Typography>
+
+                <Divider sx={{ my: 2 }} />
+
+                {order.items.map((item, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    justifyContent="space-between"
+                    mb={1}
+                  >
+                    <Typography>
+                      {item.quantity}x {item.name}
+                    </Typography>
+                    <Typography>
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </Typography>
+                  </Box>
+                ))}
+
+                <Divider sx={{ my: 2 }} />
+
+                <Box display="flex" justifyContent="space-between">
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Total
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    ${order.total.toFixed(2)}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
 
 function ProfilePage() {
   const { user, logout } = useAuth();
@@ -36,6 +317,12 @@ function ProfilePage() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
+
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   useEffect(() => {
     if (user) {
@@ -53,7 +340,7 @@ function ProfilePage() {
   };
 
   const handleSaveChanges = async () => {
-    console.log('ddsds',user);
+    console.log("ddsds", user);
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
     const updatedData = {
@@ -130,146 +417,133 @@ function ProfilePage() {
 
       <Divider sx={{ my: 3 }} />
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} sm={3}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography
-              variant="subtitle1"
-              color="primary"
-              sx={{ display: "flex", alignItems: "center" }}
-            >
-              <Person sx={{ marginRight: 1 }} /> Account Overview
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-            >
-              <AccountCircle sx={{ marginRight: 1 }} /> Address Book
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-            >
-              <Phone sx={{ marginRight: 1 }} /> My Orders
-            </Typography>
+      <Box sx={{ width: "100%" }}>
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="profile tabs"
+          sx={{ borderBottom: 1, borderColor: "divider" }}
+        >
+          <Tab
+            icon={<Person />}
+            iconPosition="start"
+            label="Account Overview"
+          />
+          <Tab
+            icon={<AccountCircle />}
+            iconPosition="start"
+            label="Address Book"
+          />
+          <Tab icon={<Phone />} iconPosition="start" label="My Orders" />
+        </Tabs>
+
+        <TabPanel value={tabValue} index={0}>
+          <Box sx={{ mt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="E-mail Address"
+                  required
+                  value={user?.email || ""}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Date of Birth"
+                  placeholder="YYYY-MM-DD"
+                  value={dob}
+                  onChange={(e) => setDob(e.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton position="end">
+                        <CalendarToday fontSize="small" />
+                      </IconButton>
+                    ),
+                  }}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  SelectProps={{ native: true }}
+                  InputLabelProps={{ shrink: true }}
+                  required
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  sx={{
+                    padding: 2,
+                    fontSize: "16px",
+                  }}
+                  onClick={handleSaveChanges}
+                >
+                  Save Changes
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
-        </Grid>
+        </TabPanel>
 
-        <Grid item xs={12} sm={9}>
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            Account Overview
-          </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ marginBottom: 2 }}
-          >
-            Feel free to edit any of your details so your account is totally up
-            to date.
-          </Typography>
+        <TabPanel value={tabValue} index={1}>
+          <AddressBook />
+        </TabPanel>
 
-          <Grid container spacing={2}>
-            {/* First Name */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="First Name"
-                required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </Grid>
+        <TabPanel value={tabValue} index={2}>
+          <OrdersHistory />
+        </TabPanel>
+      </Box>
 
-            {/* Last Name */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Last Name"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </Grid>
-
-            {/* Email Address (Read-only) */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="E-mail Address"
-                required
-                value={user?.email || ""}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-
-            {/* Date of Birth */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Date of Birth"
-                placeholder="YYYY-MM-DD"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton position="end">
-                      <CalendarToday fontSize="small" />
-                    </IconButton>
-                  ),
-                }}
-                required
-              />
-            </Grid>
-
-            {/* Gender and Phone Number on the same row */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                select
-                label="Gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                SelectProps={{ native: true }}
-                InputLabelProps={{ shrink: true }}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{
-                  padding: 2,
-                  fontSize: "16px",
-                }}
-                onClick={handleSaveChanges}
-              >
-                Save Changes
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* Snackbar for success or error */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
