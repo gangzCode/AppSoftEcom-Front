@@ -12,6 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { Container } from "../common/Spacing";
 
 const products = {
   BestSellers: [
@@ -119,7 +120,7 @@ const TabSection = () => {
   const tabKeys = Object.keys(products);
 
   return (
-    <Box sx={{ width: "100%", margin: "2em 0", padding: "4em 0" }}>
+    <Container>
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -248,7 +249,7 @@ const TabSection = () => {
           </Box>
         ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

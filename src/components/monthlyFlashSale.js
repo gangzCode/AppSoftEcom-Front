@@ -4,6 +4,7 @@ import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { getMonthlyFlashSaleProducts } from "../services/apiCalls";
+import { Container } from "../common/Spacing";
 
 const MonthlyFlashSale = () => {
   const scrollContainerRef = useRef(null);
@@ -44,7 +45,7 @@ const MonthlyFlashSale = () => {
   });
 
   return (
-    <Box sx={{ padding: "40px 0", margin: "2em 0" }}>
+    <Container>
       <Typography
         variant="p"
         fontSize={"12px"}
@@ -219,7 +220,7 @@ const MonthlyFlashSale = () => {
           <Typography variant="body1">No products available.</Typography>
         )}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

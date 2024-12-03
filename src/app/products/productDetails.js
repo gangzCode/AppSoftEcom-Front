@@ -28,7 +28,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ProductDetailAccordian from "./ProductDetailAccordian";
-import { fetchProductById } from "../../services/apiCalls";
+import { addToCart, fetchProductById } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -190,6 +190,26 @@ const ProductDetailsPage = () => {
 
   const handleDecrement = () => {
     setQuantity((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleAddToCart = async () => {
+    const cartItem = {
+      product_id: product.id,
+      quantity: quantity.toString(),
+      variant_id: selectedVariations,
+      unit_price: totalPrice.toString(),
+    };
+    try {
+      const response = await addToCart(cartItem);
+      console.log(response + "added to cart");
+
+      // Handle success - show notification, update cart state etc.
+    } catch (error) {
+      console.log("Error adding to cart:", error);
+      console.log(cartItem);
+
+      // Handle error - show error message etc.
+    }
   };
 
   if (loading) {
@@ -531,6 +551,7 @@ const ProductDetailsPage = () => {
                   fullWidth
                   sx={{ flexGrow: 1 }}
                   disabled={availableStock === 0}
+                  onClick={handleAddToCart}
                 >
                   Add to Cart
                 </Button>

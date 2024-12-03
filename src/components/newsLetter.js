@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Grid } from "@mui/material";
 import swal from "sweetalert2"; // Import SweetAlert2
 import { subscribeToNewsApi } from "../services/apiCalls"; // Assuming your API function is in services/apiCalls
+import { Container } from "../common/Spacing";
 
 const Newsletter = () => {
   const [email, setEmail] = useState(""); // State for email input
@@ -39,9 +40,8 @@ const Newsletter = () => {
   };
 
   return (
-    <Box
+    <Container
       sx={{
-        margin: "2em 0 4em",
         padding: "2em 9em",
         backgroundColor: "#f5f5f5",
         borderRadius: "20px",
@@ -127,7 +127,7 @@ const Newsletter = () => {
           </Box>
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

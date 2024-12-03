@@ -1,83 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
-import {
-  ChevronRight,
-  ShoppingCart,
-  Favorite,
-  Search,
-  Layers,
-} from "@mui/icons-material";
+import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { getBestSellingProducts } from "../services/apiCalls";
+import { Container } from "../common/Spacing";
 
 const BestSeller = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [products, setproducts] = useState("");
-
-  // const products = [
-  //   {
-  //     id: 1,
-  //     image:
-  //       "https://dt-elektrix.myshopify.com/cdn/shop/products/Electro07.jpg?v=1666157970&width=360",
-  //     hoverImage: "https://placehold.co/360x340?text=Hover+Image+1",
-  //     description: "Product 1",
-  //     price: "$19.99",
-  //   },
-  //   {
-  //     id: 2,
-  //     image: "https://placehold.co/360x340",
-  //     hoverImage: "https://placehold.co/360x340?text=Hover+Image+2",
-  //     description: "Product 2",
-  //     price: "$29.99",
-  //   },
-  //   {
-  //     id: 3,
-  //     image: "https://placehold.co/360x340",
-  //     hoverImage: "https://placehold.co/360x340?text=Hover+Image+3",
-  //     description: "Product 3",
-  //     price: "$39.99",
-  //   },
-  //   {
-  //     id: 4,
-  //     image: "https://placehold.co/360x340",
-  //     hoverImage: "https://placehold.co/360x340?text=Hover+Image+4",
-  //     description: "Product 4",
-  //     price: "$49.99",
-  //   },
-  //   {
-  //     id: 5,
-  //     image: "https://placehold.co/360x340",
-  //     hoverImage: "https://placehold.co/360x340?text=Hover+Image+5",
-  //     description: "Product 5",
-  //     price: "$59.99",
-  //   },
-  //   {
-  //     id: 6,
-  //     image: "https://placehold.co/360x340",
-  //     description: "Product 6",
-  //     price: "$49.99",
-  //   },
-  //   {
-  //     id: 7,
-  //     image: "https://placehold.co/360x340",
-  //     description: "Product 7",
-  //     price: "$59.99",
-  //   },
-  //   {
-  //     id: 8,
-  //     image: "https://placehold.co/360x340",
-  //     description: "Product 8",
-  //     price: "$49.99",
-  //   },
-  //   {
-  //     id: 9,
-  //     image: "https://placehold.co/360x340",
-  //     description: "Product 9",
-  //     price: "$59.99",
-  //   },
-  // ];
 
   useEffect(() => {
     const fetchGetProducts = async () => {
@@ -109,7 +41,7 @@ const BestSeller = () => {
   });
 
   return (
-    <Box sx={{ padding: "40px 0", margin: "2em 0" }}>
+    <Container>
       <Typography
         variant="p"
         fontSize={"12px"}
@@ -141,7 +73,7 @@ const BestSeller = () => {
           overflowX: "auto",
           whiteSpace: "nowrap",
           gap: 3,
-          padding: 2,
+          // padding: 2,
           scrollBehavior: "smooth",
           paddingBottom: "50px",
           "&::-webkit-scrollbar": {
@@ -285,7 +217,7 @@ const BestSeller = () => {
             </Link>
           ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

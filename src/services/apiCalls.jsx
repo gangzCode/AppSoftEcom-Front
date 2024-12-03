@@ -445,3 +445,36 @@ export const getCartDetails = async () => {
     }
   }
 };
+
+export const addToCart = async (cartItem) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      "https://ecom-test2.yalpos.com/api/add-card",
+      {
+        products: [
+          {
+            product_id: cartItem.product_id,
+            discount: cartItem.discount || "",
+            quantity: cartItem.quantity || "1",
+            line_discount_type: "percentage",
+            variant_id: cartItem.variant_id,
+            unit_price: cartItem.unit_price,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    throw error;
+  }
+};

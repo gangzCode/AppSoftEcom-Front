@@ -10,6 +10,7 @@ import {
 } from "@mui/icons-material";
 import { getBestBrandedProducts } from "../services/apiCalls";
 import { Link } from "react-router-dom";
+import { Container } from "../common/Spacing";
 
 const BestBrand = () => {
   const scrollContainerRef = useRef(null);
@@ -46,7 +47,7 @@ const BestBrand = () => {
   });
 
   return (
-    <Box sx={{ padding: "40px 0", margin: "2em 0" }}>
+    <Container>
       <Typography
         variant="p"
         fontSize={"12px"}
@@ -223,7 +224,7 @@ const BestBrand = () => {
             </Link>
           ))}
       </Box>
-    </Box>
+    </Container>
   );
 };
 

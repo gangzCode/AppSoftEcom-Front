@@ -10,6 +10,7 @@ import {
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import { Container } from "../common/Spacing";
 
 const InfoSection = () => {
   const infoItems = [
@@ -36,7 +37,7 @@ const InfoSection = () => {
   ];
 
   return (
-    <Box sx={{}}>
+    <Container>
       <Grid container spacing={4} justifyContent="space-between">
         {infoItems.map((item, index) => (
           <Grid item xs={12} md={4} key={index}>
@@ -44,54 +45,62 @@ const InfoSection = () => {
               elevation={0}
               sx={{
                 textAlign: "left",
-                padding: 3,
                 borderRadius: 2,
                 display: "flex",
                 flexDirection: "row",
+                alignItems: "center",
+                padding: 2,
               }}
             >
-              <Grid md={3}>
-                <Box sx={{}}>{item.icon}</Box>
-              </Grid>
-              <Grid md={9}>
-                <Box>
-                  <Typography
-                    variant="p"
-                    fontSize={"10px"}
-                    color={"#1e1e1e"}
-                    sx={{
-                      position: "relative",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        top: "50%",
-                        marginLeft: "1em",
-                        transform: "translateY(-50%)",
-                        width: "150px",
-                        height: "2px",
-                        backgroundColor: "#2189ff",
-                      },
-                    }}
-                  >
-                    {item.title}
-                  </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mt: 1 }}>
-                    {item.subtitle}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {item.description}
-                  </Typography>
-                </Box>
-              </Grid>
+              <Box
+                sx={{
+                  mr: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "100px",
+                }}
+              >
+                {item.icon}
+              </Box>
+              <Box>
+                <Typography
+                  variant="p"
+                  fontSize={"10px"}
+                  color={"#1e1e1e"}
+                  sx={{
+                    position: "relative",
+                    display: "inline-block",
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "50%",
+                      marginLeft: "1em",
+                      transform: "translateY(-50%)",
+                      width: "150px",
+                      height: "2px",
+                      backgroundColor: "#2189ff",
+                    },
+                  }}
+                >
+                  {item.title}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, mt: 1 }}>
+                  {item.subtitle}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ mt: 1 }}
+                >
+                  {item.description}
+                </Typography>
+              </Box>
             </Card>
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

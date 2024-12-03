@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography, Button } from "@mui/material";
 import { getPromotions } from "../services/apiCalls";
 import { Link } from "react-router-dom";
+import { Container } from "../common/Spacing";
 
 const DealsBetweenBanner = () => {
   const [promotions, setpromotions] = useState([]);
@@ -23,7 +24,7 @@ const DealsBetweenBanner = () => {
   }, []);
 
   return (
-    <Box sx={{}}>
+    <Container>
       <Grid container spacing={4}>
         {promotions
           .filter((promo) => promo.type === "Deal")
@@ -139,7 +140,7 @@ const DealsBetweenBanner = () => {
             </Grid>
           ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 

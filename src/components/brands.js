@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { getBrandLogos } from "../services/apiCalls";
+import { Container } from "../common/Spacing";
 
 const Brands = () => {
   const [brandImages, setBrandImages] = useState([]);
@@ -19,7 +20,7 @@ const Brands = () => {
   }, []);
 
   return (
-    <Box sx={{ padding: "4em 0" }}>
+    <Container>
       <Grid container spacing={2} justifyContent="space-between">
         {brandImages.slice(0, 5).map((brand) => (
           <Grid item key={brand.id} xs={2}>
@@ -37,7 +38,7 @@ const Brands = () => {
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
