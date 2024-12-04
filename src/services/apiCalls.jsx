@@ -3,6 +3,16 @@ import axiosInstance from "../api/axiosInstance";
 
 export const baseUrl = "https://ecom-test2.yalpos.com/api";
 
+export const getIPAddress = async () => {
+  try {
+    const response = await axios.get("https://api.ipify.org?format=json");
+    return response.data.ip;
+  } catch (error) {
+    console.error("Error getting IP:", error);
+    return "0.0.0.0";
+  }
+};
+
 export const getCategoriesForAllCategoriesDrop = async () => {
   try {
     const res = await axios.get(baseUrl + "/all-categories?items=", {
@@ -416,29 +426,40 @@ export const updatePassword = async (code, email, password) => {
 
 export const getCartDetails = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const headers = {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
+    const userStr = localStorage.getItem("user");
+    let response;
 
-    const response = await axios.get(`${baseUrl}/card-details`, {
-      headers,
-    });
+    if (userStr) {
+      const token = JSON.parse(userStr).token;
+      response = await axios.get(`${baseUrl}/card-details`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      const ip_address = await getIPAddress();
+      response = await axios.get(`${baseUrl}/card-details`, {
+        params: {
+          ip_address,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+
     return response.data;
   } catch (error) {
     if (error.response) {
       throw error.response.data;
-    } else {
-      throw error;
     }
+    throw error;
   }
 };
 
-export const addToCart = async (cartItem) => {
+export const addToCart = async (token, cartItem) => {
   try {
-    const token = localStorage.getItem("token");
-
     const response = await axios.post(
       "https://ecom-test2.yalpos.com/api/add-card",
       {
@@ -447,7 +468,7 @@ export const addToCart = async (cartItem) => {
             product_id: cartItem.product_id,
             discount: cartItem.discount || "",
             quantity: cartItem.quantity || "1",
-            line_discount_type: "percentage",
+            line_discount_type: cartItem.line_discount_type || "",
             variant_id: cartItem.variant_id,
             unit_price: cartItem.unit_price,
           },
@@ -464,6 +485,41 @@ export const addToCart = async (cartItem) => {
     return response.data;
   } catch (error) {
     console.error("Add to cart error:", error);
+    throw error;
+  }
+};
+
+export const addToCartGuest = async (cartItem) => {
+  try {
+    const ip_address = await getIPAddress();
+
+    console.log("ipaddress:>>>>", ip_address);
+
+    const response = await axios.post(
+      "https://ecom-test2.yalpos.com/api/guest/add-card",
+      {
+        ip_address,
+        products: [
+          {
+            product_id: cartItem.product_id,
+            variant_id: cartItem.variant_id,
+            quantity: cartItem.quantity || "1",
+            unit_price: cartItem.unit_price,
+            discount: cartItem.discount || "",
+            line_discount_type: cartItem.line_discount_type || "",
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Add to cart guest error:", error);
     throw error;
   }
 };

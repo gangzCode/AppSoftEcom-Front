@@ -40,6 +40,7 @@ function CartItem({ item, onQuantityChange }) {
         src={item.product.images[0] || "https://placehold.co/140x200"}
         alt={item.product.name}
         sx={{
+          objectFit: "contain",
           width: { xs: "100%", md: 200 },
           height: { xs: 150, md: 250 },
           borderRadius: 1,
