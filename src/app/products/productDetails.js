@@ -18,6 +18,8 @@ import {
   Link,
   styled,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -28,7 +30,11 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ProductDetailAccordian from "./ProductDetailAccordian";
-import { addToCart, fetchProductById } from "../../services/apiCalls";
+import {
+  addToCart,
+  addToCartGuest,
+  fetchProductById,
+} from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -39,7 +45,11 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const { productId } = useParams();
   const [selectedVariations, setSelectedVariations] = useState({});
+  const [selectedCombination, setSelectedCombination] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const fetchGetProductDetails = async () => {
@@ -72,6 +82,21 @@ const ProductDetailsPage = () => {
               console.log(
                 JSON.stringify(matchingCombination) + "matchingCombination"
               );
+              console.log(JSON.stringify(firstOption) + "firstOption");
+
+              console.log(
+                "matmatchingCombinationchingCombination",
+                matchingCombination
+              );
+
+              if (matchingCombination) {
+                setSelectedCombination({
+                  id: matchingCombination.attribute_id,
+                  price: matchingCombination.price || product.sales_price,
+                  stock: matchingCombination.stock,
+                  sku: matchingCombination.sku,
+                });
+              }
 
               if (matchingCombination && matchingCombination.stock > 0) {
                 initialVariations[variation.name] = firstOption.name;
@@ -162,24 +187,46 @@ const ProductDetailsPage = () => {
     );
   }, [product, selectedVariations]);
 
-  const handleSelectVariation = (variationName, option) => {
-    const updatedVariations = {
-      ...selectedVariations,
-      [variationName]: option.name,
-    };
+  const handleSelectVariation = (variationName, selectedOption) => {
+    // Update selected variations while preserving other choices
+    setSelectedVariations((prev) => ({
+      ...prev,
+      [variationName]: selectedOption.name,
+    }));
 
+    // Get all current variations after update
+    const allVariations = product.product_variation_tempalte.reduce(
+      (acc, variation) => {
+        const optionForVariation =
+          variation.name === variationName
+            ? selectedOption.name
+            : selectedVariations[variation.name];
+
+        return {
+          ...acc,
+          [variation.name]: optionForVariation,
+        };
+      }
+    );
+
+    // Find matching combination that matches all selected variations
     const matchingCombination = product.product_variation_combination.find(
-      (combination) =>
-        Object.entries(updatedVariations).every(
-          ([key, value]) => combination.attributes[key] === value
-        )
+      (combination) => {
+        // Compare each attribute in combination with selected variations
+        return Object.entries(combination.attributes).every(
+          ([key, value]) => value === allVariations[key]
+        );
+      }
     );
 
     if (matchingCombination) {
-      setSelectedImage(matchingCombination.image);
+      setSelectedCombination({
+        id: matchingCombination.attribute_id,
+        price: matchingCombination.price || product.sales_price,
+        stock: matchingCombination.stock,
+        sku: matchingCombination.sku,
+      });
     }
-
-    setSelectedVariations(updatedVariations);
   };
 
   const handleIncrement = () => {
@@ -190,23 +237,57 @@ const ProductDetailsPage = () => {
     setQuantity((prev) => Math.max(prev - 1, 1));
   };
 
+  const getAuthToken = () => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      throw new Error("User data is missing from storage");
+    }
+
+    try {
+      const userData = JSON.parse(userStr);
+      if (!userData.token) {
+        throw new Error("Authentication token is missing");
+      }
+      return userData.token;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      throw new Error("Invalid user data in storage");
+    }
+  };
+
   const handleAddToCart = async () => {
+    const userStr = localStorage.getItem("user");
     const cartItem = {
       product_id: product.id,
+      discount: product.discount || "",
       quantity: quantity.toString(),
-      variant_id: selectedVariations,
-      unit_price: totalPrice.toString(),
+      line_discount_type: "percentage",
+      variant_id: selectedCombination.id,
+      unit_price: selectedCombination.price.toString(),
     };
+
     try {
-      const response = await addToCart(cartItem);
-      console.log(response + "added to cart");
+      if (userStr) {
+        const token = getAuthToken();
+        await addToCart(token, cartItem);
+      } else {
+        await addToCartGuest(cartItem);
+      }
 
-      // Handle success - show notification, update cart state etc.
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Added to cart successfully");
+      setSnackbarOpen(true);
     } catch (error) {
-      console.log("Error adding to cart:", error);
-      console.log(cartItem);
+      console.error("Failed to add to cart:", error);
 
-      // Handle error - show error message etc.
+      const message =
+        error.message === "Authentication token is missing"
+          ? "Please login to add items to cart"
+          : "Failed to add to cart";
+
+      setSnackbarSeverity("error");
+      setSnackbarMessage(message);
+      setSnackbarOpen(true);
     }
   };
 
@@ -701,6 +782,20 @@ const ProductDetailsPage = () => {
           )}
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   ) : (
     <Box
