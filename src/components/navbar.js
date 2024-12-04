@@ -43,8 +43,6 @@ import {
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import CartSliderItem from "./CartSlider/cartSliderItem";
-import CartSliderNotes from "./CartSlider/cartSliderNotes";
 import {
   getCategoriesForAllCategoriesDrop,
   getTopCategoriesForMenu,
@@ -53,6 +51,7 @@ import {
 } from "../services/apiCalls";
 import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from "react-router-dom";
+import CartDrawer from './CartDrawer';
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -395,67 +394,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         )}
       </Grid>
 
-      <Drawer
-        anchor="right"
-        open={cartOpen}
-        onClose={toggleCart}
-        PaperProps={{
-          sx: { width: { xs: "100%", md: 400 }, p: 4, bgcolor: "#f7f7f7" },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          flexDirection={"row"}
-          alignItems="flex-end"
-        >
-          <Typography variant="h4" fontWeight={"light"} gutterBottom>
-            Your Cart
-          </Typography>
-          <IconButton onClick={toggleCart} color="blackbutton">
-            <Close />
-          </IconButton>
-        </Box>
-        <Divider />
-        <CartSliderItem />
-        <CartSliderItem />
-        <CartSliderNotes />
-        <Box
-          sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
-          display={"flex"}
-          flexDirection={"row"}
-          justifyContent={"space-between"}
-        >
-          <Typography variant="body1" fontWeight="bold">
-            Total
-          </Typography>
-          <Typography variant="body1" fontWeight="bold">
-            ${"1000"}
-          </Typography>
-        </Box>
-        <Typography variant="body1" mt={2} fontSize={14}>
-          Shipping, taxes, and discounts will be calculated at checkout.
-        </Typography>
-
-        <Box display="flex" justifyContent="space-between" marginTop={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            href="/checkout"
-            onClick={toggleCart}
-          >
-            Checkout
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            href="/cart"
-            onClick={toggleCart}
-          >
-            View Cart
-          </Button>
-        </Box>
-      </Drawer>
+      <CartDrawer open={cartOpen} onClose={toggleCart} />
 
       <Drawer
         anchor="left"

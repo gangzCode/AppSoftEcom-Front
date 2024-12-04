@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography } from "@mui/material";
-import { getCartDetails, fetchProductById } from "../../services/apiCalls";
+import React, { useState, useEffect } from "react";
+import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
+import { getCartDetails } from "../../services/apiCalls";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -10,50 +10,41 @@ const CartPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const cartResponse = await getCartDetails();
-        const itemsWithDetails = await Promise.all(
-          cartResponse.data.map(async (item) => {
-            const productResponse = await fetchProductById(item.product_id);
-            return {
-              ...item,
-              productDetails: productResponse.data,
-            };
-          })
-        );
-
-        setCartItems(itemsWithDetails);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCartData();
+    fetchCartItems();
   }, []);
 
-  const handleQuantityChange = (itemId, newQuantity) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const fetchCartItems = async () => {
+    try {
+      setLoading(true);
+      const response = await getCartDetails();
+      setCartItems(response.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce(
-      (acc, item) => acc + item.productDetails.price * item.quantity,
-      0
+  if (loading) {
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ minHeight: "50vh" }}
+      >
+        <CircularProgress />
+      </Grid>
     );
-  };
+  }
 
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const shipping = 10;
-    return subtotal + shipping;
-  };
+  if (error) {
+    return (
+      <Grid container justifyContent="center" alignItems="center">
+        <Typography color="error">{error}</Typography>
+      </Grid>
+    );
+  }
 
   return (
     <Grid
@@ -70,24 +61,24 @@ const CartPage = () => {
         mb={{ xs: 4, md: 0 }}
         alignContent={"flex-start"}
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ height: "fit-content" }}>
           <Typography variant="h4" fontSize={30} sx={{ fontWeight: 600 }}>
             Products ({cartItems.length})
           </Typography>
         </Grid>
-
-        <Grid container item rowSpacing={2} xs={12}>
+        <Grid
+          container
+          item
+          rowSpacing={2}
+          xs={12}
+          sx={{ height: "fit-content" }}
+        >
           {cartItems.map((item) => (
-            <Grid item xs={12} key={item.id}>
-              <CartItem
-                item={item}
-                productDetails={item.productDetails}
-                onQuantityChange={handleQuantityChange}
-              />
+            <Grid item xs={12} key={item.card_id}>
+              <CartItem item={item} onQuantityChange={fetchCartItems} />
             </Grid>
           ))}
         </Grid>
-
         <Grid
           container
           item
@@ -96,14 +87,17 @@ const CartPage = () => {
           justifyContent={"space-between"}
         >
           <Grid item>
-            <Button variant="contained">Continue Shopping</Button>
+            <Button variant="contained" href="/products">
+              Continue Shopping
+            </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained">Update Cart</Button>
+            <Button variant="contained" onClick={fetchCartItems}>
+              Update Cart
+            </Button>
           </Grid>
         </Grid>
       </Grid>
-
       <Grid container item xs={12} md alignContent={"flex-start"}>
         <Grid item xs={12}>
           <Typography variant="h4" fontSize={30} sx={{ fontWeight: 600 }}>
@@ -111,8 +105,11 @@ const CartPage = () => {
           </Typography>
         </Grid>
         <CartSummary
-          items={cartItems}
-          onQuantityChange={handleQuantityChange}
+          total={cartItems.reduce(
+            (sum, item) =>
+              sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
+            0
+          )}
         />
       </Grid>
     </Grid>
