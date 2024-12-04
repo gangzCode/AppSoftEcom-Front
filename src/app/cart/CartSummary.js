@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Box, Typography, Button, Stack, TextField } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VoucherInput from "./VoucherInput";
 import ShippingEstimate from "./ShippingEstimate";
 
-function CartSummary() {
-  const subtotal = 3700.0;
-
+function CartSummary({ total = 0, shipping = 0, tax = 0 }) {
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
   const [isShippingExpanded, setIsShippingExpanded] = useState(false);
+  const [orderNote, setOrderNote] = useState("");
 
   const handleNotesExpand = () => {
     setIsNotesExpanded(!isNotesExpanded);
@@ -25,19 +17,39 @@ function CartSummary() {
     setIsShippingExpanded(!isShippingExpanded);
   };
 
+  const finalTotal = total + shipping + tax;
+
   return (
     <Stack
       sx={{
         mt: 3,
         width: "100%",
+        bgcolor: "#f8f8f8",
+        p: 2,
+        borderRadius: 1,
       }}
       alignItems={"flex-start"}
-      // justifyContent={""}
       spacing={2}
     >
       {/* Subtotal Display */}
-      <Typography variant="body" color={"primary"} sx={{ fontWeight: "bold" }}>
-        Subtotal : ${subtotal.toFixed(2)}
+      <Typography variant="body1" color="primary" sx={{ fontWeight: "bold" }}>
+        Subtotal: ${total.toFixed(2)}
+      </Typography>
+
+      {shipping > 0 && (
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+          Shipping: ${shipping.toFixed(2)}
+        </Typography>
+      )}
+
+      {tax > 0 && (
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+          Tax: ${tax.toFixed(2)}
+        </Typography>
+      )}
+
+      <Typography variant="h6" color="primary" sx={{ fontWeight: "bold" }}>
+        Total: ${finalTotal.toFixed(2)}
       </Typography>
 
       {/* Add Note Button */}
@@ -67,38 +79,34 @@ function CartSummary() {
             minRows={4}
             maxRows={7}
             variant="outlined"
+            value={orderNote}
+            onChange={(e) => setOrderNote(e.target.value)}
             sx={{
-              bgcolor: "#f3f3f3",
+              bgcolor: "#fff",
               borderRadius: 1,
             }}
           />
         </Box>
       )}
 
-      {/* Information about taxes, shipping, etc. */}
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ fontStyle: "italic" }}
-      >
+      <Typography variant="body2" color="text.secondary">
         Shipping, taxes, and discounts will be calculated at checkout.
       </Typography>
 
       <VoucherInput />
 
-      {/* Checkout Button */}
       <Button
         variant="contained"
         fullWidth
         sx={{
           color: "#fff",
+          py: 1.5,
         }}
         href="/checkout"
       >
-        Checkout
+        Checkout (${finalTotal.toFixed(2)})
       </Button>
 
-      {/* Get Shipping Estimates Button */}
       <Button
         variant="contained"
         fullWidth

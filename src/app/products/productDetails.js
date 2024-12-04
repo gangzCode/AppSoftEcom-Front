@@ -69,6 +69,10 @@ const ProductDetailsPage = () => {
                     combination.attributes[variation.name] === firstOption.name
                 );
 
+              console.log(
+                JSON.stringify(matchingCombination) + "matchingCombination"
+              );
+
               if (matchingCombination && matchingCombination.stock > 0) {
                 initialVariations[variation.name] = firstOption.name;
               }
@@ -89,12 +93,6 @@ const ProductDetailsPage = () => {
 
     fetchGetProductDetails();
   }, [productId]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-
-    return () => {};
-  }, []);
 
   const calculateTotalPrice = useCallback(() => {
     if (!product || !selectedVariations) return 0;
