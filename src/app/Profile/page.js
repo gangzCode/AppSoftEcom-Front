@@ -19,6 +19,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Email,
@@ -32,7 +34,9 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { updateUserProfile } from "../../services/apiCalls";
+import { updateUserProfile,createUserAddress,getUserAddress } from "../../services/apiCalls";
+import { Chip } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'; 
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -48,17 +52,41 @@ function TabPanel({ children, value, index, ...other }) {
 }
 
 function AddressBook() {
+  const { user } = useAuth();
   const [addresses, setAddresses] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [formData, setFormData] = useState({
-    street: "",
+    address: "",
     city: "",
     state: "",
-    zipCode: "",
+    postal_code: "",
     country: "",
-    isDefault: false,
+    is_default: 0,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      const savedData = localStorage.getItem("user");
+      const { token } = JSON.parse(savedData);
+  
+      try {
+        const response = await getUserAddress(token);
+        const fetchedAddresses = response.data || [];
+  
+        console.log('Fetched Addresses:', fetchedAddresses);
+        setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
+      } catch (err) {
+        console.error("Error fetching addresses:", err);
+        setError("Failed to load addresses. Please try again.");
+        setAddresses([]);
+      }
+    };
+  
+    fetchAddresses();
+  }, []);
 
   const handleOpenDialog = (address = null) => {
     if (address) {
@@ -66,12 +94,12 @@ function AddressBook() {
       setSelectedAddress(address);
     } else {
       setFormData({
-        street: "",
+        address: "",
         city: "",
         state: "",
-        zipCode: "",
+        postal_code: "",
         country: "",
-        isDefault: false,
+        is_default: 0,
       });
       setSelectedAddress(null);
     }
@@ -83,21 +111,43 @@ function AddressBook() {
     setSelectedAddress(null);
   };
 
-  const handleSaveAddress = () => {
-    if (selectedAddress) {
-      setAddresses(
-        addresses.map((addr) =>
-          addr.id === selectedAddress.id ? formData : addr
-        )
-      );
-    } else {
-      setAddresses([...addresses, { ...formData, id: Date.now() }]);
-    }
-    handleCloseDialog();
-  };
-
   const handleDeleteAddress = (addressId) => {
     setAddresses(addresses.filter((addr) => addr.id !== addressId));
+  };
+
+  const handleSaveAddress = async () => {
+    setLoading(true);
+    setError(null);
+    const savedData = localStorage.getItem("user");
+    const { token } = JSON.parse(savedData);
+  
+    const addressData = {
+      ...formData,
+      userId: user?.id,
+      is_default: formData.is_default === 1 ? 1 : 0,
+    };
+  
+    try {
+      const res = await createUserAddress(addressData, token);
+      console.log('Address saved:', res);
+  
+      if (selectedAddress) {
+        setAddresses(
+          addresses.map((addr) =>
+            addr.id === selectedAddress.id ? formData : addr
+          )
+        );
+      } else {
+        setAddresses([...addresses, { ...formData, id: Date.now() }]);
+      }
+  
+      handleCloseDialog();
+    } catch (err) {
+      console.error("Error updating address", err);
+      setError("Failed to save the address. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -111,33 +161,51 @@ function AddressBook() {
         Add New Address
       </Button>
 
-      <Grid container spacing={2}>
-        {addresses.map((address) => (
-          <Grid item xs={12} md={6} key={address.id}>
-            <Card>
-              <CardContent>
-                <Box display="flex" justifyContent="space-between">
-                  <Box>
-                    <Typography variant="body1">{address.street}</Typography>
-                    <Typography variant="body2">
-                      {`${address.city}, ${address.state} ${address.zipCode}`}
-                    </Typography>
-                    <Typography variant="body2">{address.country}</Typography>
-                  </Box>
-                  <Box>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Street Address</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>State</TableCell>
+              <TableCell>Postal Code</TableCell>
+              <TableCell>Default Address</TableCell>
+              <TableCell>Country</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Array.isArray(addresses) && addresses.length > 0 ? (
+              addresses.map((address) => (
+                <TableRow key={address.id}>
+                  <TableCell>{address.address}</TableCell>
+                  <TableCell>{address.city}</TableCell>
+                  <TableCell>{address.state || ''}</TableCell>
+                  <TableCell>{address.postal_code || ''}</TableCell>
+                  <TableCell>{address.is_default === 1 && (
+                      <Chip label="Default Address" color="success" sx={{ mr: 1 }} />
+                    )}</TableCell>
+                  <TableCell>{address.country}</TableCell>
+                  <TableCell>
                     <IconButton onClick={() => handleOpenDialog(address)}>
                       <Edit />
                     </IconButton>
                     <IconButton onClick={() => handleDeleteAddress(address.id)}>
                       <Delete />
                     </IconButton>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Typography>No addresses found</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
@@ -148,9 +216,9 @@ function AddressBook() {
             <TextField
               fullWidth
               label="Street Address"
-              value={formData.street}
+              value={formData.address}
               onChange={(e) =>
-                setFormData({ ...formData, street: e.target.value })
+                setFormData({ ...formData, address: e.target.value })
               }
               margin="dense"
             />
@@ -174,10 +242,10 @@ function AddressBook() {
             />
             <TextField
               fullWidth
-              label="Zip Code"
-              value={formData.zipCode}
+              label="Postal Code"
+              value={formData.postal_code}
               onChange={(e) =>
-                setFormData({ ...formData, zipCode: e.target.value })
+                setFormData({ ...formData, postal_code: e.target.value })
               }
               margin="dense"
             />
@@ -189,6 +257,21 @@ function AddressBook() {
                 setFormData({ ...formData, country: e.target.value })
               }
               margin="dense"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.is_default === 1}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      is_default: e.target.checked ? 1 : 0,
+                    });
+                  }}
+                />
+              }
+              label="Set as Default Address"
+              sx={{ mt: 2 }}
             />
           </Box>
         </DialogContent>

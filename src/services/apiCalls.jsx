@@ -109,6 +109,20 @@ export const getDealsofDayProducts = async () => {
   }
 };
 
+export const getUserAddress = async (token) => {
+  try {
+    const response = await axios.get(baseUrl + "/address", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.status || error.message;
+  }
+};
+
 export const getMonthlyFlashSaleProducts = async () => {
   try {
     const res = await axios.get(baseUrl + "/month-flash-sale", {
@@ -251,13 +265,26 @@ export const quickSearch = async (term) => {
 
     return response.data;
   } catch (error) {
-    // Handle specific errors (e.g., aborted requests)
     if (axios.isCancel(error)) {
       console.log("Request was aborted");
     } else {
       console.error("Request failed", error);
     }
     throw error;
+  }
+};
+
+export const createUserAddress = async (userAddressData, token) => {
+  try {
+    const res = await axios.post(baseUrl + "/address/create", userAddressData, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
   }
 };
 
