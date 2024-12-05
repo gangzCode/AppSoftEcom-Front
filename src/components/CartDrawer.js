@@ -7,15 +7,22 @@ import {
   IconButton,
   Divider,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
-import { getCartDetails } from "../services/apiCalls";
+import { getCartDetails, clearCart } from "../services/apiCalls";
 
 const CartDrawer = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [clearingCart, setClearingCart] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const fetchCart = async () => {
     try {
@@ -26,6 +33,25 @@ const CartDrawer = ({ open, onClose }) => {
       console.error("Failed to fetch cart:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleClearCart = async () => {
+    try {
+      setClearingCart(true);
+      await clearCart(1);
+      await fetchCart();
+
+      setSnackbarMessage("Cart cleared successfully");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+      setSnackbarMessage("Failed to clear cart");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setClearingCart(false);
     }
   };
 
@@ -118,6 +144,35 @@ const CartDrawer = ({ open, onClose }) => {
           View Cart
         </Button>
       </Box>
+
+      <Box display="flex" justifyContent="space-between" marginTop={2}>
+        <LoadingButton
+          loading={clearingCart}
+          variant="contained"
+          color="error"
+          onClick={handleClearCart}
+          disabled={cartItems.length === 0}
+        >
+          Clear Cart
+        </LoadingButton>
+        <Button variant="contained" onClick={onClose}>
+          Close
+        </Button>
+      </Box>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Drawer>
   );
 };

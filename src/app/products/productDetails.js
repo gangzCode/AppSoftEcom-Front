@@ -38,6 +38,7 @@ import {
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
@@ -51,6 +52,7 @@ const ProductDetailsPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
     const fetchGetProductDetails = async () => {
@@ -261,6 +263,7 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = async () => {
     try {
+      setIsAddingToCart(true);
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
 
@@ -302,6 +305,8 @@ const ProductDetailsPage = () => {
       setSnackbarSeverity("error");
       setSnackbarMessage("Failed to add to cart");
       setSnackbarOpen(true);
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -637,17 +642,16 @@ const ProductDetailsPage = () => {
               width={{ xs: "100%", md: "420px" }}
             >
               <Grid item xs={12} md={6}>
-                <Button
+                <LoadingButton
+                  loading={isAddingToCart}
+                  disabled={isAddingToCart}
                   variant="contained"
-                  color="bluebutton"
-                  startIcon={<ShoppingCartIcon />}
-                  fullWidth
-                  sx={{ flexGrow: 1 }}
-                  disabled={availableStock === 0}
                   onClick={handleAddToCart}
+                  sx={{ width: "100%" }}
+                  startIcon={<ShoppingCartIcon />}
                 >
                   Add to Cart
-                </Button>
+                </LoadingButton>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Button

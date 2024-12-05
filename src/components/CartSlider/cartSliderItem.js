@@ -6,20 +6,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { DeleteOutline } from "@mui/icons-material";
+import { deleteCartItem } from "../../services/apiCalls";
 
 const CartSliderItem = ({ item, onUpdate }) => {
-  // const handleQuantityChange = async (newQuantity) => {
-  //   try {
-  //     await updateCartItemQuantity(item.card_id, newQuantity);
-  //     onUpdate();
-  //   } catch (error) {
-  //     console.error("Failed to update quantity:", error);
-  //   }
-  // };
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await deleteCartItem(item.card_id);
+      onUpdate();
+    } catch (error) {
+      console.error("Failed to delete item:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Grid container sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}>
@@ -66,10 +72,7 @@ const CartSliderItem = ({ item, onUpdate }) => {
               <AddIcon fontSize="small" />
             </IconButton> */}
           </Box>
-          <IconButton
-            size="small"
-            // onClick={() => handleQuantityChange(0)}
-          >
+          <IconButton size="small" onClick={handleDelete} disabled={loading}>
             <DeleteOutline />
           </IconButton>
         </Stack>
