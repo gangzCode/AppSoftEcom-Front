@@ -123,6 +123,42 @@ export const getUserAddress = async (token) => {
   }
 };
 
+export const deleteUserAddress = async (id, token) => {
+  try {
+    const response = await axios.delete(`${baseUrl}/address/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data; // Return the server response
+  } catch (error) {
+    throw error.response?.status || error.message; // Handle errors
+  }
+};
+
+export const updateUserAddress = async (token,addressId, addressData) => {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/address/update/${addressId}`,
+      addressData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data; 
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    } else {
+      throw error;
+    }
+  }
+};
+
 export const getMonthlyFlashSaleProducts = async () => {
   try {
     const res = await axios.get(baseUrl + "/month-flash-sale", {
@@ -469,7 +505,7 @@ export const getCartDetails = async () => {
 
     if (userStr) {
       const token = JSON.parse(userStr).token;
-      response = await axios.get(`${baseUrl}/card-details`, {
+      response = await axios.get(`${baseUrl}/get-cart`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

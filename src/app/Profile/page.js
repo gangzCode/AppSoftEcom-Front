@@ -34,7 +34,7 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { updateUserProfile,createUserAddress,getUserAddress } from "../../services/apiCalls";
+import { updateUserProfile,createUserAddress,getUserAddress,deleteUserAddress,updateUserAddress } from "../../services/apiCalls";
 import { Chip } from '@mui/material';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'; 
 
@@ -66,27 +66,29 @@ function AddressBook() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
-    const fetchAddresses = async () => {
-      const savedData = localStorage.getItem("user");
-      const { token } = JSON.parse(savedData);
-  
-      try {
-        const response = await getUserAddress(token);
-        const fetchedAddresses = response.data || [];
-  
-        console.log('Fetched Addresses:', fetchedAddresses);
-        setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
-      } catch (err) {
-        console.error("Error fetching addresses:", err);
-        setError("Failed to load addresses. Please try again.");
-        setAddresses([]);
-      }
-    };
-  
     fetchAddresses();
-  }, []);
+  }, []); 
+  
+  const fetchAddresses = async () => {
+    const savedData = localStorage.getItem("user");
+    const { token } = JSON.parse(savedData);
+
+    try {
+      const response = await getUserAddress(token);
+      const fetchedAddresses = response.data || [];
+
+      console.log('Fetched Addresses:', fetchedAddresses);
+      setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
+    } catch (err) {
+      console.error("Error fetching addresses:", err);
+      setError("Failed to load addresses. Please try again.");
+      setAddresses([]);
+    }
+  };
+  
 
   const handleOpenDialog = (address = null) => {
     if (address) {
@@ -111,8 +113,18 @@ function AddressBook() {
     setSelectedAddress(null);
   };
 
-  const handleDeleteAddress = (addressId) => {
-    setAddresses(addresses.filter((addr) => addr.id !== addressId));
+  const handleDeleteAddress = async (addressId) => {
+    const savedData = localStorage.getItem("user");
+    const { token } = JSON.parse(savedData);
+  
+    try {
+      await deleteUserAddress(addressId, token);
+  
+      setAddresses(addresses.filter((addr) => addr.id !== addressId));
+    } catch (err) {
+      console.error("Error deleting address:", err);
+      setError("Failed to delete the address. Please try again.");
+    }
   };
 
   const handleSaveAddress = async () => {
@@ -128,28 +140,55 @@ function AddressBook() {
     };
   
     try {
-      const res = await createUserAddress(addressData, token);
-      console.log('Address saved:', res);
+      // If setting a new address as default, reset all other addresses' is_default to 0
+      if (addressData.is_default === 1) {
+        // Update all other addresses to have is_default = 0
+        const updatedAddresses = addresses.map((addr) => ({
+          ...addr,
+          is_default: addr.id === selectedAddress?.id ? 1 : 0, // set the selected address as default
+        }));
   
-      if (selectedAddress) {
-        setAddresses(
-          addresses.map((addr) =>
-            addr.id === selectedAddress.id ? formData : addr
-          )
+        // Update the address list locally
+        setAddresses(updatedAddresses);
+  
+        // Update the backend with the new state
+        await Promise.all(
+          updatedAddresses.map(async (address) => {
+            // If this address is being updated or created, set it as the default
+            await updateUserAddress(token, address.id, { ...address, is_default: address.is_default });
+          })
         );
+      }
+  
+      // If updating an existing address
+      if (selectedAddress) {
+        const updatedAddress = await updateUserAddress(
+          token,
+          selectedAddress.id,
+          addressData
+        );
+        console.log("Address updated:", updatedAddress);
+  
+        // Refetch the updated list of addresses from the backend
+        await fetchAddresses();  // Correct function name here
       } else {
-        setAddresses([...addresses, { ...formData, id: Date.now() }]);
+        // Create a new address
+        const newAddress = await createUserAddress(addressData, token);
+        console.log("Address saved:", newAddress);
+  
+        // Refetch the updated list of addresses from the backend
+        await fetchAddresses();  // Correct function name here
       }
   
       handleCloseDialog();
     } catch (err) {
-      console.error("Error updating address", err);
+      console.error("Error saving address:", err);
       setError("Failed to save the address. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
-
+  };  
+  
   return (
     <Box>
       <Button
@@ -183,7 +222,12 @@ function AddressBook() {
                   <TableCell>{address.state || ''}</TableCell>
                   <TableCell>{address.postal_code || ''}</TableCell>
                   <TableCell>{address.is_default === 1 && (
-                      <Chip label="Default Address" color="success" sx={{ mr: 1 }} />
+                      <Chip label="DEFAULT" sx={{
+                        mr: 1,
+                        backgroundColor: 'darkgreen', 
+                        color: 'white',
+                        fontWeight: 'bold',
+                      }}  />
                     )}</TableCell>
                   <TableCell>{address.country}</TableCell>
                   <TableCell>
