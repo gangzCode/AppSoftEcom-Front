@@ -50,21 +50,21 @@ const CartSliderItem = ({ item, onUpdate }) => {
         </Box>
         <Stack direction={"row"} alignItems={"center"} mt={1} gap={4}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton
+            {/* <IconButton
               size="small"
               // onClick={() => handleQuantityChange(parseFloat(item.quantity) - 1)}
               disabled={parseFloat(item.quantity) <= 1}
             >
               <RemoveIcon fontSize="small" />
-            </IconButton>
-            <Typography>{item.quantity}</Typography>
-            <IconButton
+            </IconButton> */}
+            <Typography>Quantity: {parseFloat(item.quantity)}</Typography>
+            {/* <IconButton
               size="small"
               // onClick={() => handleQuantityChange(parseFloat(item.quantity) + 1)}
               disabled={parseFloat(item.quantity) >= item.stock}
             >
               <AddIcon fontSize="small" />
-            </IconButton>
+            </IconButton> */}
           </Box>
           <IconButton
             size="small"

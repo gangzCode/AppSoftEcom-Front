@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
-import { getCartDetails } from "../../services/apiCalls";
+import { clearCart, getCartDetails } from "../../services/apiCalls";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -18,6 +18,7 @@ const CartPage = () => {
       setLoading(true);
       const response = await getCartDetails();
       setCartItems(response.data);
+      console.log(JSON.stringify(cartItems) + "cartItems");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -91,7 +92,23 @@ const CartPage = () => {
               Continue Shopping
             </Button>
           </Grid>
-          <Grid item>
+          <Grid item sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={async () => {
+                try {
+                  console.log(JSON.stringify(cartItems) + "cartItems");
+
+                  await clearCart(cartItems.card_id);
+                  fetchCartItems();
+                } catch (error) {
+                  setError("Failed to clear cart");
+                }
+              }}
+            >
+              Clear Cart
+            </Button>
             <Button variant="contained" onClick={fetchCartItems}>
               Update Cart
             </Button>
