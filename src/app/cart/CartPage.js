@@ -21,11 +21,14 @@ import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import {
   clearCart,
-  getCartDetails,getIPAddress,
+  getCartDetails,
+  getIPAddress,
   deleteCartItem,
+  updateCartItem,
 } from "../../services/apiCalls";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { LoadingButton } from "@mui/lab";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -34,17 +37,18 @@ const CartPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [loadingItems, setLoadingItems] = useState({});
+  const [clearingCart, setClearingCart] = useState(false);
 
   useEffect(() => {
     fetchCartItems();
   }, []);
 
-
   const fetchCartItems = async () => {
     try {
       setLoading(true);
       const response = await getCartDetails();
-  
+
       if (!response.data) {
         setCartItems([]);
       } else {
@@ -78,20 +82,44 @@ const CartPage = () => {
 
   const handleClearCart = async () => {
     try {
+      setClearingCart(true);
       const savedData = localStorage.getItem("user");
       const { token } = JSON.parse(savedData);
-      console.log('ddsfsdfsdfv',token)
-  
+      console.log("ddsfsdfsdfv", token);
+
       if (token) {
         await clearCart(token, null);
       } else {
-        const ipAddress = await getIPAddress(); 
+        const ipAddress = await getIPAddress();
         await clearCart(null, ipAddress);
       }
-  
+
       fetchCartItems();
     } catch (err) {
       setError("Failed to clear cart. Please try again.");
+    } finally {
+      setClearingCart(false);
+    }
+  };
+
+  const handleQuantityChange = async (item, newQuantity) => {
+    try {
+      setLoadingItems((prev) => ({ ...prev, [item.card_id]: true }));
+
+      await updateCartItem({
+        card_id: item.card_id,
+        quantity: newQuantity.toString(),
+        discount: item.discount,
+      });
+
+      await fetchCartItems();
+    } catch (error) {
+      console.error("Failed to update quantity:", error);
+      setSnackbarMessage("Failed to update quantity");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setLoadingItems((prev) => ({ ...prev, [item.card_id]: false }));
     }
   };
 
@@ -162,50 +190,65 @@ const CartPage = () => {
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        borderRadius: "50px",
-                        border: "1px solid #e0e0e0",
-                        backgroundColor: "#f5f5f5",
-                        overflow: "hidden",
-                        width: "130px",
+                        justifyContent: "center",
                       }}
                     >
                       <IconButton
                         size="small"
-                        onClick={() =>{}}
+                        onClick={() =>
+                          handleQuantityChange(
+                            item,
+                            parseFloat(item.quantity) - 1
+                          )
+                        }
+                        disabled={
+                          loadingItems[item.card_id] ||
+                          parseFloat(item.quantity) <= 1
+                        }
                         sx={{
                           color: "#000",
                           p: 1,
-                          width: "35%",
-                          borderRadius: 0,
-                          "&:hover": {
-                            backgroundColor: "#e0e0e0",
-                          },
+                          width: "25%",
+                          borderRadius: 25,
+                          "&:hover": { backgroundColor: "#e0e0e0" },
                         }}
                       >
-                        <RemoveIcon fontSize="small" sx={{ fontWeight: 200 }} />
+                        <RemoveIcon fontSize="small" />
                       </IconButton>
+
                       <Typography
                         variant="body1"
                         sx={{
-                          mx: 0,
+                          mx: 2,
                           textAlign: "center",
-                          flexGrow: 1,
                           fontSize: "1.25em",
                         }}
                       >
-                        {0}
+                        {loadingItems[item.card_id] ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          item.quantity
+                        )}
                       </Typography>
+
                       <IconButton
                         size="small"
-                        onClick={() =>{}}
+                        onClick={() =>
+                          handleQuantityChange(
+                            item,
+                            parseFloat(item.quantity) + 1
+                          )
+                        }
+                        disabled={
+                          loadingItems[item.card_id] ||
+                          parseFloat(item.quantity) >= item.stock
+                        }
                         sx={{
                           color: "#000",
                           p: 1,
-                          width: "35%",
-                          borderRadius: 0,
-                          "&:hover": {
-                            backgroundColor: "#e0e0e0",
-                          },
+                          width: "25%",
+                          borderRadius: 25,
+                          "&:hover": { backgroundColor: "#e0e0e0" },
                         }}
                       >
                         <AddIcon fontSize="small" />
@@ -239,13 +282,15 @@ const CartPage = () => {
             </Button>
           </Grid>
           <Grid item sx={{ display: "flex", gap: 2 }}>
-            <Button
+            <LoadingButton
+              loading={clearingCart}
               variant="contained"
               color="error"
               onClick={handleClearCart}
+              disabled={cartItems.length === 0}
             >
               Clear Cart
-            </Button>
+            </LoadingButton>
             <Button variant="contained" onClick={fetchCartItems}>
               Update Cart
             </Button>

@@ -49,9 +49,10 @@ import {
   quickSearch,
   fetchSystemData,
 } from "../services/apiCalls";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import CartDrawer from './CartDrawer';
+import CartDrawer from "./CartDrawer";
+import WishlistDrawer from "./WishlistDrawer";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -73,19 +74,20 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [wishlistOpen, setWishlistOpen] = useState(false);
 
   let closeMenuTimer;
 
   const handleProfileClick = () => {
-    console.log('user:', user);
-    
+    console.log("user:", user);
+
     if (user) {
       navigate("/profile");
     } else {
       navigate("/signin");
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -213,6 +215,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     setMenuOpen(!menuOpen);
   };
 
+  const toggleWishlist = () => {
+    setWishlistOpen(!wishlistOpen);
+  };
+
   // console.log([...Array(5 - 3)]);
 
   // const menus = [
@@ -241,7 +247,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   //     items: ["Our Story", "Careers", "Contact Us"],
   //   },
   // ];
- 
+
   const bottomNav = (
     <Paper
       sx={{
@@ -262,9 +268,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         showLabels
       >
         <BottomNavigationAction onClick={toggleMenu} icon={<MenuIcon />} />
-        
-        <BottomNavigationAction label="Profile" onClick={handleProfileClick} icon={<Person />} />
-      
+
+        <BottomNavigationAction
+          label="Profile"
+          onClick={handleProfileClick}
+          icon={<Person />}
+        />
+
         <BottomNavigationAction icon={<FavoriteBorderRounded />} />
         <BottomNavigationAction
           onTouchStart={toggleCart}
@@ -377,12 +387,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               alignItems="center"
             >
               <IconButton onClick={handleProfileClick}>
-                  <AccountCircleOutlined />
+                <AccountCircleOutlined />
               </IconButton>
-              <IconButton>
-                <RouterLink>
-                  <FavoriteBorderRounded />
-                </RouterLink>
+              <IconButton onClick={toggleWishlist}>
+                <FavoriteBorderRounded />
               </IconButton>
               <IconButton onClick={toggleCart}>
                 <RouterLink>
@@ -395,6 +403,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       </Grid>
 
       <CartDrawer open={cartOpen} onClose={toggleCart} />
+      <WishlistDrawer open={wishlistOpen} onClose={toggleWishlist} />
 
       <Drawer
         anchor="left"
@@ -658,22 +667,26 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                         </Grid>
                       ))}
 
-                      {menu.sub_category && menu.sub_category.length < 5 && (
-                              Array.from({ length: 5 - menu.sub_category.length }).map((_, fillIndex) => (
-                                <Grid item xs={2.4}>
-                                  
-                                <Box key={`fill-${fillIndex}`} sx={{ textAlign: "center" }}>
-                                  <img
-                                    src={menu.image}
-                                    alt={menu.name}
-                                    height={"100%"}
-                                    width={"auto"}
-                                  />
-                                </Box>
-                                </Grid>
-                              ))
-                      )}
-                    {/*   {[...Array(5 - menu.sub_category.length)].map((item, i) => {
+                      {menu.sub_category &&
+                        menu.sub_category.length < 5 &&
+                        Array.from({
+                          length: 5 - menu.sub_category.length,
+                        }).map((_, fillIndex) => (
+                          <Grid item xs={2.4}>
+                            <Box
+                              key={`fill-${fillIndex}`}
+                              sx={{ textAlign: "center" }}
+                            >
+                              <img
+                                src={menu.image}
+                                alt={menu.name}
+                                height={"100%"}
+                                width={"auto"}
+                              />
+                            </Box>
+                          </Grid>
+                        ))}
+                      {/*   {[...Array(5 - menu.sub_category.length)].map((item, i) => {
                   return (
                     <Grid item xs={2.4}>
                       <Box

@@ -137,7 +137,7 @@ export const deleteUserAddress = async (id, token) => {
   }
 };
 
-export const updateUserAddress = async (token,addressId, addressData) => {
+export const updateUserAddress = async (token, addressId, addressData) => {
   try {
     const response = await axios.put(
       `${baseUrl}/address/update/${addressId}`,
@@ -149,7 +149,7 @@ export const updateUserAddress = async (token,addressId, addressData) => {
         },
       }
     );
-    return response.data; 
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw error.response.data;
@@ -663,3 +663,58 @@ export const clearCart = async (token, ipAddress) => {
   }
 };
 
+export const updateCartItem = async (cartItem) => {
+  try {
+    const userStr = localStorage.getItem("user");
+    let response;
+
+    console.log(JSON.stringify(cartItem));
+
+    if (userStr) {
+      const token = JSON.parse(userStr).token;
+      response = await axios.put(
+        `${baseUrl}/card-update`,
+        {
+          products: [
+            {
+              line_id: cartItem.card_id,
+              discount: cartItem.discount || "",
+              quantity: cartItem.quantity,
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } else {
+      const ip = await getIPAddress();
+      response = await axios.put(
+        `${baseUrl}/card/update`,
+        {
+          ip_address: ip,
+          products: [
+            {
+              line_id: cartItem.card_id,
+              discount: cartItem.discount || "",
+              quantity: cartItem.quantity,
+            },
+          ],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Update cart item error:", error);
+    throw error;
+  }
+};
