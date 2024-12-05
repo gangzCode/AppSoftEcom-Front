@@ -21,7 +21,7 @@ import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import {
   clearCart,
-  getCartDetails,
+  getCartDetails,getIPAddress,
   deleteCartItem,
 } from "../../services/apiCalls";
 import AddIcon from "@mui/icons-material/Add";
@@ -44,8 +44,12 @@ const CartPage = () => {
     try {
       setLoading(true);
       const response = await getCartDetails();
-      setCartItems(response.data);
-      console.log(JSON.stringify(cartItems) + "cartItems");
+  
+      if (!response.data) {
+        setCartItems([]);
+      } else {
+        setCartItems(response.data);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,11 +78,20 @@ const CartPage = () => {
 
   const handleClearCart = async () => {
     try {
-      console.log(JSON.stringify(cartItems) + "cartItems");
-      await clearCart(cartItems.card_id);
+      const savedData = localStorage.getItem("user");
+      const { token } = JSON.parse(savedData);
+      console.log('ddsfsdfsdfv',token)
+  
+      if (token) {
+        await clearCart(token, null);
+      } else {
+        const ipAddress = await getIPAddress(); 
+        await clearCart(null, ipAddress);
+      }
+  
       fetchCartItems();
-    } catch (error) {
-      setError("Failed to clear cart");
+    } catch (err) {
+      setError("Failed to clear cart. Please try again.");
     }
   };
 
@@ -226,7 +239,11 @@ const CartPage = () => {
             </Button>
           </Grid>
           <Grid item sx={{ display: "flex", gap: 2 }}>
-            <Button variant="contained" color="error" onClick={handleClearCart}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleClearCart}
+            >
               Clear Cart
             </Button>
             <Button variant="contained" onClick={fetchCartItems}>

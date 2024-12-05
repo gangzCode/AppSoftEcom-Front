@@ -628,32 +628,38 @@ export const deleteCartItem = async (cardId) => {
   }
 };
 
-export const clearCart = async (id) => {
+export const clearCart = async (token, ipAddress) => {
   try {
-    const userStr = localStorage.getItem("user");
     let response;
 
-    if (userStr) {
-      const token = JSON.parse(userStr).token;
-      response = await axios.delete(`${baseUrl}/card-clear/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+    if (token) {
+      response = await axios.post(
+        `${baseUrl}/card-clear`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } else if (ipAddress) {
+      response = await axios.post(
+        `${baseUrl}/card/clear`,
+        { ip_address: ipAddress },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     } else {
-      const ip_address = await getIPAddress();
-      response = await axios.delete(`${baseUrl}/card-clear/${id}`, {
-        params: { ip_address },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      throw new Error("Token or IP address is required to clear the cart.");
     }
-
     return response.data;
   } catch (error) {
-    console.error("Clear cart error:", error);
-    throw error;
+    console.error("Clear cart API error:", error.response || error.message);
+    throw error.response ? error.response.data : error.message;
   }
 };
+
