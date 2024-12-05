@@ -3,6 +3,7 @@ import { Box, Typography, Button, IconButton, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { deleteCartItem } from "../../services/apiCalls";
 
 function CartItem({ item, onQuantityChange }) {
   const [quantity, setQuantity] = useState(parseFloat(item.quantity));
@@ -20,6 +21,15 @@ function CartItem({ item, onQuantityChange }) {
     if (quantity > 1) {
       setQuantity(quantity - 1);
       onQuantityChange && onQuantityChange(item.card_id, quantity - 1);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteCartItem(item.card_id);
+      onQuantityChange && onQuantityChange();
+    } catch (error) {
+      console.error("Failed to remove item:", error);
     }
   };
 
@@ -122,7 +132,7 @@ function CartItem({ item, onQuantityChange }) {
           size="large"
           startIcon={<DeleteOutlinedIcon />}
           sx={{ mt: 1 }}
-          onClick={() => onQuantityChange && onQuantityChange(item.card_id, 0)}
+          onClick={handleDelete}
         >
           <Typography sx={{ fontSize: "1.2rem" }}>Remove</Typography>
         </Button>

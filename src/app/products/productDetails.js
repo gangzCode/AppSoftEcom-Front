@@ -34,6 +34,7 @@ import {
   addToCart,
   addToCartGuest,
   fetchProductById,
+  getCartDetails,
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -89,17 +90,17 @@ const ProductDetailsPage = () => {
                 matchingCombination
               );
 
+              if (matchingCombination && matchingCombination.stock > 0) {
+                initialVariations[variation.name] = firstOption.name;
+              }
+
               if (matchingCombination) {
                 setSelectedCombination({
                   id: matchingCombination.attribute_id,
-                  price: matchingCombination.price || product.sales_price,
+                  price: matchingCombination.price || product?.sales_price,
                   stock: matchingCombination.stock,
                   sku: matchingCombination.sku,
                 });
-              }
-
-              if (matchingCombination && matchingCombination.stock > 0) {
-                initialVariations[variation.name] = firstOption.name;
               }
             }
           });
@@ -124,14 +125,19 @@ const ProductDetailsPage = () => {
 
     let basePrice = 0;
 
-    product.product_variation_tempalte.forEach((variation) => {
-      const selectedOption = variation.option.find(
-        (opt) => opt.name === selectedVariations[variation.name]
-      );
-      if (selectedOption?.value) {
-        basePrice += parseFloat(selectedOption.value);
-      }
-    });
+    if (product.product_variation_tempalte.length > 0) {
+      product.product_variation_tempalte.forEach((variation) => {
+        const selectedOption = variation.option.find(
+          (opt) => opt.name === selectedVariations[variation.name]
+        );
+        if (selectedOption?.value) {
+          basePrice += parseFloat(selectedOption.value);
+        } else {
+        }
+      });
+    } else {
+      basePrice = product.sales_price;
+    }
 
     return basePrice * quantity;
   }, [product, selectedVariations, quantity]);
@@ -188,13 +194,11 @@ const ProductDetailsPage = () => {
   }, [product, selectedVariations]);
 
   const handleSelectVariation = (variationName, selectedOption) => {
-    // Update selected variations while preserving other choices
     setSelectedVariations((prev) => ({
       ...prev,
       [variationName]: selectedOption.name,
     }));
 
-    // Get all current variations after update
     const allVariations = product.product_variation_tempalte.reduce(
       (acc, variation) => {
         const optionForVariation =
@@ -209,20 +213,20 @@ const ProductDetailsPage = () => {
       }
     );
 
-    // Find matching combination that matches all selected variations
     const matchingCombination = product.product_variation_combination.find(
       (combination) => {
-        // Compare each attribute in combination with selected variations
         return Object.entries(combination.attributes).every(
           ([key, value]) => value === allVariations[key]
         );
       }
     );
 
+    console.log(matchingCombination + "match");
+
     if (matchingCombination) {
       setSelectedCombination({
         id: matchingCombination.attribute_id,
-        price: matchingCombination.price || product.sales_price,
+        price: matchingCombination.price || product?.sales_price,
         stock: matchingCombination.stock,
         sku: matchingCombination.sku,
       });
@@ -256,17 +260,33 @@ const ProductDetailsPage = () => {
   };
 
   const handleAddToCart = async () => {
-    const userStr = localStorage.getItem("user");
-    const cartItem = {
-      product_id: product.id,
-      discount: product.discount || "",
-      quantity: quantity.toString(),
-      line_discount_type: "percentage",
-      variant_id: selectedCombination.id,
-      unit_price: selectedCombination.price.toString(),
-    };
-
     try {
+      const cartResponse = await getCartDetails();
+      const cartItems = cartResponse.data || [];
+
+      const isDuplicate = cartItems.some(
+        (item) =>
+          item.product.id === product.id &&
+          item.variant_id === selectedCombination.id
+      );
+
+      if (isDuplicate) {
+        setSnackbarSeverity("warning");
+        setSnackbarMessage("This item is already in your cart");
+        setSnackbarOpen(true);
+        return;
+      }
+
+      const userStr = localStorage.getItem("user");
+      const cartItem = {
+        product_id: product.id,
+        discount: product.discount || "",
+        quantity: quantity.toString(),
+        line_discount_type: "percentage",
+        variant_id: selectedCombination.id,
+        unit_price: selectedCombination.price.toString(),
+      };
+
       if (userStr) {
         const token = getAuthToken();
         await addToCart(token, cartItem);
@@ -279,14 +299,8 @@ const ProductDetailsPage = () => {
       setSnackbarOpen(true);
     } catch (error) {
       console.error("Failed to add to cart:", error);
-
-      const message =
-        error.message === "Authentication token is missing"
-          ? "Please login to add items to cart"
-          : "Failed to add to cart";
-
       setSnackbarSeverity("error");
-      setSnackbarMessage(message);
+      setSnackbarMessage("Failed to add to cart");
       setSnackbarOpen(true);
     }
   };
@@ -786,7 +800,7 @@ const ProductDetailsPage = () => {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}

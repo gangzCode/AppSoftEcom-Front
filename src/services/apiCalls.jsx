@@ -597,3 +597,63 @@ export const addToCartGuest = async (cartItem) => {
     throw error;
   }
 };
+
+export const deleteCartItem = async (cardId) => {
+  try {
+    const userStr = localStorage.getItem("user");
+    let response;
+
+    if (userStr) {
+      const token = JSON.parse(userStr).token;
+      response = await axios.delete(`${baseUrl}/card/remove/${cardId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      const ip_address = await getIPAddress();
+      response = await axios.delete(`${baseUrl}/card/remove/${cardId}`, {
+        params: { ip_address },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Delete cart item error:", error);
+    throw error;
+  }
+};
+
+export const clearCart = async (id) => {
+  try {
+    const userStr = localStorage.getItem("user");
+    let response;
+
+    if (userStr) {
+      const token = JSON.parse(userStr).token;
+      response = await axios.delete(`${baseUrl}/card-clear/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      const ip_address = await getIPAddress();
+      response = await axios.delete(`${baseUrl}/card-clear/${id}`, {
+        params: { ip_address },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Clear cart error:", error);
+    throw error;
+  }
+};
