@@ -12,7 +12,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { DeleteOutline } from "@mui/icons-material";
 import { deleteCartItem } from "../../services/apiCalls";
 
-const CartSliderItem = ({ item, onUpdate }) => {
+const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -25,6 +25,12 @@ const CartSliderItem = ({ item, onUpdate }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleQuantityUpdate = (newQuantity) => {
+    setLoading(true);
+    onQuantityChange(item, newQuantity);
+    setLoading(false);
   };
 
   return (
@@ -56,21 +62,22 @@ const CartSliderItem = ({ item, onUpdate }) => {
         </Box>
         <Stack direction={"row"} alignItems={"center"} mt={1} gap={4}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* <IconButton
+            <Typography>Quantity:</Typography>
+            <IconButton
               size="small"
-              // onClick={() => handleQuantityChange(parseFloat(item.quantity) - 1)}
+              onClick={() => handleQuantityUpdate(parseFloat(item.quantity) - 1)}
               disabled={parseFloat(item.quantity) <= 1}
             >
               <RemoveIcon fontSize="small" />
-            </IconButton> */}
-            <Typography>Quantity: {parseFloat(item.quantity)}</Typography>
-            {/* <IconButton
+            </IconButton>
+            <Typography> {parseFloat(item.quantity)}</Typography>
+            <IconButton
               size="small"
-              // onClick={() => handleQuantityChange(parseFloat(item.quantity) + 1)}
+              onClick={() => handleQuantityUpdate(parseFloat(item.quantity) + 1)}
               disabled={parseFloat(item.quantity) >= item.stock}
             >
               <AddIcon fontSize="small" />
-            </IconButton> */}
+            </IconButton>
           </Box>
           <IconButton size="small" onClick={handleDelete} disabled={loading}>
             <DeleteOutline />

@@ -105,14 +105,24 @@ const CartPage = () => {
   const handleQuantityChange = async (item, newQuantity) => {
     try {
       setLoadingItems((prev) => ({ ...prev, [item.card_id]: true }));
-
+  
       await updateCartItem({
         card_id: item.card_id,
         quantity: newQuantity.toString(),
         discount: item.discount,
       });
-
-      await fetchCartItems();
+  
+      setCartItems((prevItems) =>
+        prevItems.map((cartItem) =>
+          cartItem.card_id === item.card_id
+            ? { ...cartItem, quantity: newQuantity }
+            : cartItem
+        )
+      );
+  
+      setSnackbarMessage("Quantity updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (error) {
       console.error("Failed to update quantity:", error);
       setSnackbarMessage("Failed to update quantity");
@@ -122,6 +132,7 @@ const CartPage = () => {
       setLoadingItems((prev) => ({ ...prev, [item.card_id]: false }));
     }
   };
+  
 
   if (loading) {
     return (

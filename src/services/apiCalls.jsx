@@ -670,15 +670,11 @@ export const updateCartItem = async (cartItem) => {
     const cartResponse = await getCartDetails();
     const currentCartItems = cartResponse.data || [];
 
-    console.log("Current Cart Details:", currentCartItems);
-
     const updatedProducts = currentCartItems.map((item) =>
       item.card_id === cartItem.card_id
         ? { line_id: item.card_id, quantity: cartItem.quantity, discount: cartItem.discount || "" }
         : { line_id: item.card_id, quantity: item.quantity, discount: item.discount || "" }
     );
-
-    console.log("Updated Products Payload:", updatedProducts);
 
     let response;
     if (userStr) {
@@ -709,9 +705,6 @@ export const updateCartItem = async (cartItem) => {
       );
     }
 
-    console.log("Update API Response:", response.data);
-
-    // Return the updated cart details
     return response.data;
   } catch (error) {
     console.error("Update cart item error:", error);

@@ -14,7 +14,7 @@ import { Close } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CartSliderItem from "./CartSlider/cartSliderItem";
 import CartSliderNotes from "./CartSlider/cartSliderNotes";
-import { getCartDetails, clearCart } from "../services/apiCalls";
+import { getCartDetails, clearCart,updateCartItem } from "../services/apiCalls";
 
 const CartDrawer = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -52,6 +52,28 @@ const CartDrawer = ({ open, onClose }) => {
       setSnackbarOpen(true);
     } finally {
       setClearingCart(false);
+    }
+  };
+
+  const handleQuantityChange = async (item, newQuantity) => {
+    try {
+      setLoading(true);
+      await updateCartItem({
+        card_id: item.card_id,
+        quantity: newQuantity.toString(),
+        discount: item.discount,
+      });
+      setCartItems((prevItems) =>
+        prevItems.map((cartItem) =>
+          cartItem.card_id === item.card_id
+            ? { ...cartItem, quantity: newQuantity }
+            : cartItem
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update quantity:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,7 +123,7 @@ const CartDrawer = ({ open, onClose }) => {
             <CartSliderItem
               key={item.card_id}
               item={item}
-              onUpdate={fetchCart}
+              onQuantityChange={handleQuantityChange}
             />
           ))}
         </>
