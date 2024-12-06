@@ -644,9 +644,10 @@ export const clearCart = async (token, ipAddress) => {
         }
       );
     } else if (ipAddress) {
+      const ip = await getIPAddress();
       response = await axios.post(
         `${baseUrl}/card/clear`,
-        { ip_address: ipAddress },
+        { ip_address: ip },
         {
           headers: {
             "Content-Type": "application/json",

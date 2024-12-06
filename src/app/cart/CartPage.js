@@ -39,8 +39,20 @@ const CartPage = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [loadingItems, setLoadingItems] = useState({});
   const [clearingCart, setClearingCart] = useState(false);
+  const [ipAddress, setIpAddress] = useState(null);
+
 
   useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const ip = await getIPAddress();
+        setIpAddress(ip);
+      } catch (error) {
+        console.error("Failed to fetch IP address:", error);
+      }
+    };
+
+    fetchIp();
     fetchCartItems();
   }, []);
 
@@ -84,23 +96,31 @@ const CartPage = () => {
     try {
       setClearingCart(true);
       const savedData = localStorage.getItem("user");
-      const { token } = JSON.parse(savedData);
-      console.log("ddsfsdfsdfv", token);
+      const user = savedData ? JSON.parse(savedData) : null;
+      const token = user?.token;
 
       if (token) {
         await clearCart(token, null);
-      } else {
-        const ipAddress = await getIPAddress();
+      } else if (ipAddress) {
         await clearCart(null, ipAddress);
+      } else {
+        throw new Error("Unable to clear cart without token or IP address.");
       }
 
       fetchCartItems();
+      setSnackbarMessage("Cart cleared successfully.");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (err) {
       setError("Failed to clear cart. Please try again.");
+      setSnackbarMessage("Failed to clear cart.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     } finally {
       setClearingCart(false);
     }
   };
+
 
   const handleQuantityChange = async (item, newQuantity) => {
     try {

@@ -53,6 +53,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
+import { getCartDetails } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -75,8 +76,25 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
   let closeMenuTimer;
+
+  useEffect(() => {
+    fetchCart(); 
+  }, []);
+
+  const fetchCart = async () => {
+    try {
+      const response = await getCartDetails();
+      console.log('dwdqewedwedwedwedw',response)
+      setCartItems(response.data);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    } finally {
+    }
+  };
+
 
   const handleProfileClick = () => {
     console.log("user:", user);
@@ -279,7 +297,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <BottomNavigationAction
           onTouchStart={toggleCart}
           icon={
-            <Badge badgeContent={4} color="primary">
+            <Badge badgeContent={cartItems.length} color="primary">
               <ShoppingCart />
             </Badge>
           }
@@ -393,9 +411,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 <FavoriteBorderRounded />
               </IconButton>
               <IconButton onClick={toggleCart}>
-                <RouterLink>
-                  <ShoppingCartOutlined />
-                </RouterLink>
+                <Badge badgeContent={cartItems.length} color="primary">
+                  <RouterLink>
+                    <ShoppingCartOutlined />
+                  </RouterLink>
+                </Badge>
               </IconButton>
             </Box>
           </Grid>
