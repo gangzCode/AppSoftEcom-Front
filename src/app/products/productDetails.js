@@ -35,6 +35,7 @@ import {
   addToCartGuest,
   fetchProductById,
   getCartDetails,
+  updateCartItem,
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -267,34 +268,45 @@ const ProductDetailsPage = () => {
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
 
-      const isDuplicate = cartItems.some(
+      const existingItem = cartItems.find(
         (item) =>
           item.product.id === product.id &&
           item.variant_id === selectedCombination.id
       );
 
-      if (isDuplicate) {
-        setSnackbarSeverity("warning");
-        setSnackbarMessage("This item is already in your cart");
-        setSnackbarOpen(true);
-        return;
-      }
+      if (existingItem) {
+        const newQuantity = parseFloat(existingItem.quantity) + quantity;
+        
+        if (newQuantity > existingItem.stock) {
+          setSnackbarSeverity("warning");
+          setSnackbarMessage("Cannot exceed available stock");
+          setSnackbarOpen(true);
+          setIsAddingToCart(false);
+          return;
+        }
 
-      const userStr = localStorage.getItem("user");
-      const cartItem = {
-        product_id: product.id,
-        discount: product.discount || "",
-        quantity: quantity.toString(),
-        line_discount_type: "percentage",
-        variant_id: selectedCombination.id,
-        unit_price: selectedCombination.price.toString(),
-      };
+        await updateCartItem({
+          card_id: existingItem.card_id,
+          quantity: newQuantity.toString(),
+          disconnect: existingItem.discount,
+        });
 
-      if (userStr) {
-        const token = getAuthToken();
-        await addToCart(token, cartItem);
       } else {
-        await addToCartGuest(cartItem);
+        const cartItem = {
+          product_id: product.id,
+          discount: product.discount || "",
+          quantity: quantity.toString(),
+          line_discount_type: "percentage",
+          variant_id: selectedCombination.id,
+          unit_price: selectedCombination.price.toString()
+        };
+
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          await addToCart(getAuthToken(), cartItem);
+        } else {
+          await addToCartGuest(cartItem);
+        }
       }
 
       setSnackbarSeverity("success");
