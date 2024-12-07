@@ -53,7 +53,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
-import { getCartDetails } from "../services/apiCalls";
+import { getCartDetails,getWishListofUser } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -77,11 +77,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
 
   let closeMenuTimer;
 
   useEffect(() => {
     fetchCart(); 
+    fetchWishlist();
   }, []);
 
   const fetchCart = async () => {
@@ -92,6 +94,15 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     } finally {
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      const response = await getWishListofUser();
+      setWishlistItems(response.data || []);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
     }
   };
 
@@ -293,7 +304,14 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           icon={<Person />}
         />
 
-        <BottomNavigationAction icon={<FavoriteBorderRounded />} />
+        <BottomNavigationAction
+          onTouchStart={toggleWishlist}
+          icon={
+            <Badge badgeContent={wishlistItems.length} color="primary">
+              <FavoriteBorderRounded />
+            </Badge>
+          }
+        />
         <BottomNavigationAction
           onTouchStart={toggleCart}
           icon={
@@ -408,13 +426,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 <AccountCircleOutlined />
               </IconButton>
               <IconButton onClick={toggleWishlist}>
-                <FavoriteBorderRounded />
+                <Badge badgeContent={wishlistItems.length} color="primary">
+                  <FavoriteBorderRounded />
+                </Badge>  
               </IconButton>
               <IconButton onClick={toggleCart}>
                 <Badge badgeContent={cartItems.length} color="primary">
-                  <RouterLink>
                     <ShoppingCartOutlined />
-                  </RouterLink>
                 </Badge>
               </IconButton>
             </Box>

@@ -36,6 +36,8 @@ import {
   fetchProductById,
   getCartDetails,
   updateCartItem,
+  addToWishlist,
+  getWishListofUser
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -54,6 +56,8 @@ const ProductDetailsPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [wishlistMessage, setWishlistMessage] = useState("");
+  const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
     const fetchGetProductDetails = async () => {
@@ -122,6 +126,54 @@ const ProductDetailsPage = () => {
 
     fetchGetProductDetails();
   }, [productId]);
+
+  useEffect(() => {
+    const checkIfInWishlist = async () => {
+      if (!product || !product.id) {
+        return;
+      }
+  
+      try {
+        const response = await getWishListofUser();
+    
+        if (response && response.data) {
+          const isProductInWishlist = response.data.some(
+            (item) => item.id === product.id
+          );
+          setIsInWishlist(isProductInWishlist);
+        } else {
+          console.error("Wishlist response does not contain data:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    };
+  
+    checkIfInWishlist();
+  }, [product]);
+  
+
+
+  const handleAddToWishlist = async () => {
+    if (isInWishlist) {
+      setWishlistMessage("This product is already in your wishlist!");
+      return;
+    }
+
+    setLoading(true);
+    setWishlistMessage("");
+
+    try {
+      const response = await addToWishlist(product.id);
+      setWishlistMessage("Product added to your wishlist successfully!");
+      setIsInWishlist(true); // Mark as added to wishlist
+    } catch (error) {
+      const errorMessage = error?.message || "Failed to add product to wishlist";
+      setWishlistMessage(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const calculateTotalPrice = useCallback(() => {
     if (!product || !selectedVariations) return 0;
@@ -670,6 +722,8 @@ const ProductDetailsPage = () => {
                   variant="contained"
                   color="bluebutton"
                   startIcon={<FavoriteBorderIcon />}
+                  onClick={handleAddToWishlist} 
+                  disabled={isInWishlist}
                   fullWidth
                   sx={{ flexGrow: 1 }}
                 >

@@ -124,6 +124,7 @@ const CartDrawer = ({ open, onClose }) => {
               key={item.card_id}
               item={item}
               onQuantityChange={handleQuantityChange}
+              onUpdate={fetchCart}
             />
           ))}
         </>

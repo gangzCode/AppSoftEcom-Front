@@ -713,4 +713,80 @@ export const updateCartItem = async (cartItem) => {
   }
 };
 
+export const addToWishlist = async (productId) => {
+  try {
+    const userStr = localStorage.getItem("user");
+    let response;
+
+    if (userStr) {
+      const token = JSON.parse(userStr).token;
+      response = await axios.post(`${baseUrl}/wishlists/add`, 
+        { product_id: productId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } else {
+      throw new Error('User is not authenticated');
+    }
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error.response.data;
+    }
+    throw error;
+  }
+};
+
+export const getWishListofUser = async () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      throw new Error("User is not authenticated");
+    }
+
+    const token = JSON.parse(userStr).token;
+    const response = await axios.get(`${baseUrl}/wishlists/view`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.data) {
+      return response.data;
+    } else {
+      console.error("Expected an array but got:", response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    throw error;
+  }
+};
+
+export const deleteWishlistItem = async (wishlist_id) => {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) {
+    throw new Error("User is not authenticated");
+  }
+  const token = JSON.parse(userStr).token;
+
+  try {
+    const response = await axios.delete(`${baseUrl}/wishlists/remove/${wishlist_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
