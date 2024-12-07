@@ -167,7 +167,7 @@ const CartDrawer = ({ open, onClose }) => {
         </Button>
       </Box>
 
-      <Box display="flex" justifyContent="space-between" marginTop={2}>
+      {/* <Box display="flex" justifyContent="space-between" marginTop={2}>
         <LoadingButton
           loading={clearingCart}
           variant="contained"
@@ -180,7 +180,7 @@ const CartDrawer = ({ open, onClose }) => {
         <Button variant="contained" onClick={onClose}>
           Close
         </Button>
-      </Box>
+      </Box> */}
 
       <Snackbar
         open={snackbarOpen}
