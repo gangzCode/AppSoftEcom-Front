@@ -167,26 +167,7 @@ const BestCategory = () => {
                     transition: "opacity 0.3s ease, visibility 0.3s ease",
                   }}
                 >
-                  {[
-                    { icon: <ShoppingCart />, id: "cart" },
-                    { icon: <Favorite />, id: "favorite" },
-                  ].map((item) => (
-                    <IconButton
-                      key={item.id}
-                      sx={{
-                        backgroundColor: "#2189ff",
-                        color: "#fff",
-                        borderRadius: "10px",
-                        width: "40px",
-                        height: "40px",
-                        "&:hover": {
-                          backgroundColor: "#000",
-                        },
-                      }}
-                    >
-                      {item.icon}
-                    </IconButton>
-                  ))}
+                  
                 </Box>
                 <Typography
                   variant="caption"

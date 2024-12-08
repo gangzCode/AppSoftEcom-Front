@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import {
+  Avatar,
   Box,
-  Button,
-  Drawer,
-  Typography,
+  Grid,
   IconButton,
+  Stack,
+  Typography,
   Divider,
   CircularProgress,
   Snackbar,
   Alert,
+  Drawer
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
-import axios from "axios"; // Import axios for making API calls
-import { getWishListofUser, deleteWishlistItem } from '../services/apiCalls'; // Import the API function for fetching wishlist
+import { Close, DeleteOutline } from "@mui/icons-material"; // Import Delete icon
+import { getWishListofUser, deleteWishlistItem } from "../services/apiCalls"; // Import the API function for fetching wishlist
 
 const WishlistDrawer = ({ open, onClose }) => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -43,15 +44,20 @@ const WishlistDrawer = ({ open, onClose }) => {
     setLoading(true);
     try {
       const response = await deleteWishlistItem(wishlist_id);
-  
+
       if (response.status === 200) {
         fetchWishlist();
+        setSnackbarSeverity("success");
+        setSnackbarMessage("Item removed from wishlist");
+        setSnackbarOpen(true);
       }
     } catch (error) {
       console.error("Error deleting wishlist item:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Failed to remove item");
+      setSnackbarOpen(true);
     }
   };
-  
 
   return (
     <Drawer
@@ -84,35 +90,49 @@ const WishlistDrawer = ({ open, onClose }) => {
       ) : (
         <>
           {wishlistItems.map((item) => (
-            <Box
-              key={item.id}
+            <Grid
+              container
+              key={item.wishlist_id}
               sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
             >
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <img
-                  src={item.images[0]} // Use the images from the API response
+              <Grid item xs={3}>
+                <Avatar
+                  variant="rounded"
+                  src={item.images[0]}
                   alt={item.name}
-                  style={{ width: 80, height: 80, objectFit: "cover" }}
+                  sx={{ width: 70, height: 70 }}
                 />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle1">{item.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+              </Grid>
+              <Grid item xs={9} px={1}>
+                <Box
+                  sx={{ flexGrow: 1 }}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={0.5}
+                >
+                  <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
+                    {item.name}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={400} fontSize={12}>
                     {item.variant}
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 1 }}>
-                    ${item.sales_price} {/* Use the sales price from the API */}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ mt: 1 }}
-                    onClick={() => handleDeleteWishlistItem(item.wishlist_id)} // Bind the delete function
-                  >
-                    Remove
-                  </Button>
+                  <Grid container alignItems="center" justifyContent="space-between">
+                    <Typography variant="body1" sx={{ mt: 0.5 }}>
+                      ${parseFloat(item.sales_price).toFixed(2)}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeleteWishlistItem(item.wishlist_id)}
+                      disabled={loading}
+                      sx={{ position: 'relative', left: -25 }}
+                      color="error"
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </Grid>
                 </Box>
-              </Box>
-            </Box>
+              </Grid>
+            </Grid>
           ))}
 
           {wishlistItems.length === 0 && (
