@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Avatar, Badge } from "@mui/material";
 
-function CheckoutItem() {
+function CheckoutItem({ item }) {
   return (
     <Box
       sx={{
@@ -13,7 +13,7 @@ function CheckoutItem() {
       }}
     >
       <Badge
-        badgeContent={1}
+        badgeContent={parseFloat(item.quantity)}
         color="primary"
         anchorOrigin={{
           vertical: "top",
@@ -23,23 +23,23 @@ function CheckoutItem() {
       >
         <Avatar
           variant="rounded"
-          src="https://via.placeholder.com/50" // Replace with actual image URL
-          alt="On Ear Bluetooth Headphones"
+          src={item.product.images[0]}
+          alt={item.product.name}
           sx={{ width: 50, height: 50 }}
         />
       </Badge>
 
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="body1" fontWeight="bold">
-          On Ear Bluetooth Headphones
+          {item.product.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Orange / On Ear / Wireless
+          {item.variant}
         </Typography>
       </Box>
 
       <Typography variant="body1" fontWeight="bold">
-        $1,850.00
+        ${(parseFloat(item.unit_price) * parseFloat(item.quantity)).toFixed(2)}
       </Typography>
     </Box>
   );

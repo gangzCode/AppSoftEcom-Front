@@ -21,6 +21,8 @@ import {
   DialogActions,
   Switch,
   FormControlLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import {
   Email,
@@ -34,9 +36,25 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { updateUserProfile,createUserAddress,getUserAddress,deleteUserAddress,updateUserAddress } from "../../services/apiCalls";
-import { Chip } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'; 
+import {
+  updateUserProfile,
+  createUserAddress,
+  getUserAddress,
+  deleteUserAddress,
+  updateUserAddress,
+  getCountries,
+  getCities,
+} from "../../services/apiCalls";
+import { Chip } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -66,12 +84,43 @@ function AddressBook() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState("");
 
   useEffect(() => {
     fetchAddresses();
-  }, []); 
-  
+  }, []);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await getCountries();
+        setCountries(response.data || []);
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (selectedCountryId) {
+        try {
+          const response = await getCities(selectedCountryId);
+          setCities(response.data || []);
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+          setCities([]);
+        }
+      } else {
+        setCities([]);
+      }
+    };
+    fetchCities();
+  }, [selectedCountryId]);
+
   const fetchAddresses = async () => {
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
@@ -80,7 +129,7 @@ function AddressBook() {
       const response = await getUserAddress(token);
       const fetchedAddresses = response.data || [];
 
-      console.log('Fetched Addresses:', fetchedAddresses);
+      console.log("Fetched Addresses:", fetchedAddresses);
       setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
     } catch (err) {
       console.error("Error fetching addresses:", err);
@@ -88,7 +137,6 @@ function AddressBook() {
       setAddresses([]);
     }
   };
-  
 
   const handleOpenDialog = (address = null) => {
     if (address) {
@@ -116,10 +164,10 @@ function AddressBook() {
   const handleDeleteAddress = async (addressId) => {
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
-  
+
     try {
       await deleteUserAddress(addressId, token);
-  
+
       setAddresses(addresses.filter((addr) => addr.id !== addressId));
     } catch (err) {
       console.error("Error deleting address:", err);
@@ -132,13 +180,13 @@ function AddressBook() {
     setError(null);
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
-  
+
     const addressData = {
       ...formData,
       userId: user?.id,
       is_default: formData.is_default === 1 ? 1 : 0,
     };
-  
+
     try {
       // If setting a new address as default, reset all other addresses' is_default to 0
       if (addressData.is_default === 1) {
@@ -147,19 +195,22 @@ function AddressBook() {
           ...addr,
           is_default: addr.id === selectedAddress?.id ? 1 : 0, // set the selected address as default
         }));
-  
+
         // Update the address list locally
         setAddresses(updatedAddresses);
-  
+
         // Update the backend with the new state
         await Promise.all(
           updatedAddresses.map(async (address) => {
             // If this address is being updated or created, set it as the default
-            await updateUserAddress(token, address.id, { ...address, is_default: address.is_default });
+            await updateUserAddress(token, address.id, {
+              ...address,
+              is_default: address.is_default,
+            });
           })
         );
       }
-  
+
       // If updating an existing address
       if (selectedAddress) {
         const updatedAddress = await updateUserAddress(
@@ -168,18 +219,18 @@ function AddressBook() {
           addressData
         );
         console.log("Address updated:", updatedAddress);
-  
+
         // Refetch the updated list of addresses from the backend
-        await fetchAddresses();  // Correct function name here
+        await fetchAddresses(); // Correct function name here
       } else {
         // Create a new address
         const newAddress = await createUserAddress(addressData, token);
         console.log("Address saved:", newAddress);
-  
+
         // Refetch the updated list of addresses from the backend
-        await fetchAddresses();  // Correct function name here
+        await fetchAddresses(); // Correct function name here
       }
-  
+
       handleCloseDialog();
     } catch (err) {
       console.error("Error saving address:", err);
@@ -187,8 +238,8 @@ function AddressBook() {
     } finally {
       setLoading(false);
     }
-  };  
-  
+  };
+
   return (
     <Box>
       <Button
@@ -219,16 +270,21 @@ function AddressBook() {
                 <TableRow key={address.id}>
                   <TableCell>{address.address}</TableCell>
                   <TableCell>{address.city}</TableCell>
-                  <TableCell>{address.state || ''}</TableCell>
-                  <TableCell>{address.postal_code || ''}</TableCell>
-                  <TableCell>{address.is_default === 1 && (
-                      <Chip label="DEFAULT" sx={{
-                        mr: 1,
-                        backgroundColor: 'darkgreen', 
-                        color: 'white',
-                        fontWeight: 'bold',
-                      }}  />
-                    )}</TableCell>
+                  <TableCell>{address.state || ""}</TableCell>
+                  <TableCell>{address.postal_code || ""}</TableCell>
+                  <TableCell>
+                    {address.is_default === 1 && (
+                      <Chip
+                        label="DEFAULT"
+                        sx={{
+                          mr: 1,
+                          backgroundColor: "darkgreen",
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
+                      />
+                    )}
+                  </TableCell>
                   <TableCell>{address.country}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpenDialog(address)}>
@@ -257,6 +313,55 @@ function AddressBook() {
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }} component="form">
+            <Select
+              fullWidth
+              value={formData.country}
+              onChange={(e) => {
+                const country = countries.find(
+                  (c) => c.name === e.target.value
+                );
+                setSelectedCountryId(country?.id || "");
+                setFormData({
+                  ...formData,
+                  country: e.target.value,
+                  city: "",
+                });
+              }}
+              displayEmpty
+              label="Country"
+              margin="dense"
+            >
+              <MenuItem value="" disabled>
+                Select Country
+              </MenuItem>
+              {countries.map((country) => (
+                <MenuItem key={country.id} value={country.name}>
+                  {country.name}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <Select
+              fullWidth
+              value={formData.city}
+              onChange={(e) =>
+                setFormData({ ...formData, city: e.target.value })
+              }
+              displayEmpty
+              label="City"
+              margin="dense"
+              disabled={!selectedCountryId || cities.length === 0}
+            >
+              <MenuItem value="" disabled>
+                Select City
+              </MenuItem>
+              {cities.map((city) => (
+                <MenuItem key={city.id} value={city.name_en}>
+                  {city.name_en}
+                </MenuItem>
+              ))}
+            </Select>
+
             <TextField
               fullWidth
               label="Street Address"
@@ -266,15 +371,7 @@ function AddressBook() {
               }
               margin="dense"
             />
-            <TextField
-              fullWidth
-              label="City"
-              value={formData.city}
-              onChange={(e) =>
-                setFormData({ ...formData, city: e.target.value })
-              }
-              margin="dense"
-            />
+
             <TextField
               fullWidth
               label="State"
@@ -293,15 +390,7 @@ function AddressBook() {
               }
               margin="dense"
             />
-            <TextField
-              fullWidth
-              label="Country"
-              value={formData.country}
-              onChange={(e) =>
-                setFormData({ ...formData, country: e.target.value })
-              }
-              margin="dense"
-            />
+
             <FormControlLabel
               control={
                 <Switch

@@ -30,6 +30,8 @@ import {
   CircularProgress,
   Radio,
   RadioGroup,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -53,6 +55,8 @@ import {
   fetchProducts,
   getTopSellingProducts,
   getTrendingProduct,
+  addToCart,
+  addToCartGuest,
 } from "../../services/apiCalls";
 
 const ProductsPage = () => {
@@ -77,6 +81,10 @@ const ProductsPage = () => {
 
   const previousUrl = location.state?.from || "/";
   const { subcategoryId, subcategoryName } = location.state || {};
+  const [addingToCartId, setAddingToCartId] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     if (subcategoryName) {
@@ -108,12 +116,7 @@ const ProductsPage = () => {
   useEffect(() => {
     if (products.length > 0) {
       const allPrices = products.flatMap((product) => {
-        const basePrice = product.price || 0;
-        const variationPrices =
-          product.product_variations?.map((v) =>
-            parseFloat(v.variation_decimal)
-          ) || [];
-        return [basePrice, ...variationPrices];
+        return product.sales_price || 0;
       });
 
       const minPrice = Math.min(...allPrices);
@@ -123,8 +126,6 @@ const ProductsPage = () => {
   }, [products]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-
     const fetchTrendingProducts = async () => {
       const response = await getTrendingProduct();
       setTrendingProducts(response.data);
@@ -159,9 +160,9 @@ const ProductsPage = () => {
     const sortedProducts = [...products];
     switch (sortType) {
       case "priceAsc":
-        return sortedProducts.sort((a, b) => a.price - b.price);
+        return sortedProducts.sort((a, b) => a.sales_price - b.sales_price);
       case "priceDesc":
-        return sortedProducts.sort((a, b) => b.price - a.price);
+        return sortedProducts.sort((a, b) => b.sales_price - a.sales_price);
       default:
         return sortedProducts;
     }
@@ -237,21 +238,17 @@ const ProductsPage = () => {
     if (availability !== "all") {
       filtered = filtered.filter((product) => {
         if (availability === "in_stock") {
-          return product.available_stock > 0;
+          return product.total_stock > 0;
         } else {
-          return product.available_stock <= 0;
+          return product.total_stock <= 0;
         }
       });
     }
 
     filtered = filtered.filter((product) => {
-      const basePrice = product.price || 0;
-      const variationPrices =
-        product.product_variations?.map((v) =>
-          parseFloat(v.variation_decimal)
-        ) || [];
-      const allPrices = [basePrice, ...variationPrices];
-      const lowestPrice = Math.min(...allPrices);
+      const basePrice = product.sales_price || 0;
+
+      const lowestPrice = Math.min(basePrice);
 
       return lowestPrice >= priceRange[0] && lowestPrice <= priceRange[1];
     });
@@ -304,6 +301,46 @@ const ProductsPage = () => {
     }
 
     return options;
+  };
+
+  // Add handleAddToCart function
+  const handleAddToCart = async (product) => {
+    try {
+      setAddingToCartId(product.id);
+
+      const cartItem = {
+        product_id: product.id,
+        discount: product.discount || "",
+        quantity: "1",
+        line_discount_type: "percentage",
+        unit_price: product.sales_price.toString(),
+      };
+
+      // If product has variations, use first variation
+      if (product.product_variation_combination?.length > 0) {
+        const firstVariation = product.product_variation_combination[0];
+        cartItem.variant_id = firstVariation.attribute_id;
+      }
+
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const token = JSON.parse(userStr).token;
+        await addToCart(token, cartItem);
+      } else {
+        await addToCartGuest(cartItem);
+      }
+
+      setSnackbarMessage("Added to cart successfully");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      setSnackbarMessage("Failed to add to cart");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setAddingToCartId(null);
+    }
   };
 
   if (loading) {
@@ -826,7 +863,7 @@ const ProductsPage = () => {
                       <Box
                         component="img"
                         src={
-                          product.thumbnail ||
+                          product.thumbnailz ||
                           "https://placehold.co/360x340?text=Image+Not+Found"
                         }
                         alt={product.description}
@@ -881,6 +918,10 @@ const ProductsPage = () => {
                       ].map((item) => (
                         <IconButton
                           key={item.id}
+                          onClick={() =>
+                            item.id === "cart" && handleAddToCart(product)
+                          }
+                          disabled={addingToCartId === product.id}
                           sx={{
                             backgroundColor: "#2189ff",
                             color: "#fff",
@@ -892,7 +933,11 @@ const ProductsPage = () => {
                             },
                           }}
                         >
-                          {item.icon}
+                          {addingToCartId === product.id ? (
+                            <CircularProgress size={20} color="inherit" />
+                          ) : (
+                            item.icon
+                          )}
                         </IconButton>
                       ))}
                     </Box>
@@ -947,10 +992,10 @@ const ProductsPage = () => {
                           {product.currency}{" "}
                           {product.discount
                             ? (
-                                product.price -
-                                (product.price * product.discount) / 100
+                                product.sales_price -
+                                (product.sales_price * product.discount) / 100
                               ).toFixed(2)
-                            : product.price}
+                            : product.sales_price}
                         </Typography>
                         {product.discount && (
                           <Typography
@@ -960,7 +1005,7 @@ const ProductsPage = () => {
                               color: "#bebebe",
                             }}
                           >
-                            {product.currency} {product.price}
+                            {product.currency} {product.sales_price}
                           </Typography>
                         )}
                       </Box>
@@ -974,6 +1019,19 @@ const ProductsPage = () => {
           </Grid>
         </Box>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

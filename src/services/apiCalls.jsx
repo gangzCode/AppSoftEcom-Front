@@ -673,8 +673,16 @@ export const updateCartItem = async (cartItem) => {
 
     const updatedProducts = currentCartItems.map((item) =>
       item.card_id === cartItem.card_id
-        ? { line_id: item.card_id, quantity: cartItem.quantity, discount: cartItem.discount || "" }
-        : { line_id: item.card_id, quantity: item.quantity, discount: item.discount || "" }
+        ? {
+            line_id: item.card_id,
+            quantity: cartItem.quantity,
+            discount: cartItem.discount || "",
+          }
+        : {
+            line_id: item.card_id,
+            quantity: item.quantity,
+            discount: item.discount || "",
+          }
     );
 
     let response;
@@ -713,4 +721,45 @@ export const updateCartItem = async (cartItem) => {
   }
 };
 
+export const getCountries = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/countries`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
 
+export const getCities = async (countryId) => {
+  try {
+    const response = await axios.get(`${baseUrl}/cities`, {
+      params: { country_id: countryId },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(JSON.stringify(response.data) + "API cities");
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getShippingCharge = async (cityId) => {
+  try {
+    const response = await axios.get(`${baseUrl}/get-shiping-charge`, {
+      params: { city_id: cityId },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
