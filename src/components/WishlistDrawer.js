@@ -1,58 +1,63 @@
 import React, { useState, useEffect } from "react";
 import {
+  Avatar,
   Box,
-  Button,
-  Drawer,
-  Typography,
+  Grid,
   IconButton,
+  Stack,
+  Typography,
   Divider,
   CircularProgress,
   Snackbar,
   Alert,
+  Drawer
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
-
-const dummyWishlistItems = [
-  {
-    id: 1,
-    product: {
-      id: 1,
-      name: "KINGSTON LAPTOP RAM DDR4 3200",
-      images: ["https://ecom-test2.yalpos.com/img/default.png"],
-      unit_price: "700.00",
-      variant: "4GB/124GB",
-      stock: 6,
-    },
-  },
-  {
-    id: 2,
-    product: {
-      id: 2,
-      name: "HP Laptop 15s",
-      images: ["https://ecom-test2.yalpos.com/img/default.png"],
-      unit_price: "1200.00",
-      variant: "i5/512GB",
-      stock: 4,
-    },
-  },
-];
+import { Close, DeleteOutline } from "@mui/icons-material"; // Import Delete icon
+import { getWishListofUser, deleteWishlistItem } from "../services/apiCalls"; // Import the API function for fetching wishlist
 
 const WishlistDrawer = ({ open, onClose }) => {
-  const [wishlistItems, setWishlistItems] = useState(dummyWishlistItems);
+  const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const handleRemoveFromWishlist = (itemId) => {
-    setWishlistItems((items) => items.filter((item) => item.id !== itemId));
-  };
-
   useEffect(() => {
     if (open) {
-      // fetchWishlist();
+      fetchWishlist();
     }
   }, [open]);
+
+  const fetchWishlist = async () => {
+    setLoading(true);
+    try {
+      const response = await getWishListofUser();
+      setWishlistItems(response.data || []);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+
+  const handleDeleteWishlistItem = async (wishlist_id) => {
+    setLoading(true);
+    try {
+      const response = await deleteWishlistItem(wishlist_id);
+
+      if (response.status === 200) {
+        fetchWishlist();
+        setSnackbarSeverity("success");
+        setSnackbarMessage("Item removed from wishlist");
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error("Error deleting wishlist item:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Failed to remove item");
+      setSnackbarOpen(true);
+    }
+  };
 
   return (
     <Drawer
@@ -85,37 +90,49 @@ const WishlistDrawer = ({ open, onClose }) => {
       ) : (
         <>
           {wishlistItems.map((item) => (
-            <Box
-              key={item.id}
+            <Grid
+              container
+              key={item.wishlist_id}
               sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
             >
-              <Box sx={{ display: "flex", gap: 2 }}>
-                <img
-                  src={item.product.images[0]}
-                  alt={item.product.name}
-                  style={{ width: 80, height: 80, objectFit: "cover" }}
+              <Grid item xs={3}>
+                <Avatar
+                  variant="rounded"
+                  src={item.images[0]}
+                  alt={item.name}
+                  sx={{ width: 70, height: 70 }}
                 />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle1">
-                    {item.product.name}
+              </Grid>
+              <Grid item xs={9} px={1}>
+                <Box
+                  sx={{ flexGrow: 1 }}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={0.5}
+                >
+                  <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
+                    {item.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {item.product.variant}
+                  <Typography variant="body2" fontWeight={400} fontSize={12}>
+                    {item.variant}
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 1 }}>
-                    ${item.product.unit_price}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ mt: 1 }}
-                    onClick={() => handleRemoveFromWishlist(item.id)}
-                  >
-                    Remove
-                  </Button>
+                  <Grid container alignItems="center" justifyContent="space-between">
+                    <Typography variant="body1" sx={{ mt: 0.5 }}>
+                      ${parseFloat(item.sales_price).toFixed(2)}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeleteWishlistItem(item.wishlist_id)}
+                      disabled={loading}
+                      sx={{ position: 'relative', left: -25 }}
+                      color="error"
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </Grid>
                 </Box>
-              </Box>
-            </Box>
+              </Grid>
+            </Grid>
           ))}
 
           {wishlistItems.length === 0 && (

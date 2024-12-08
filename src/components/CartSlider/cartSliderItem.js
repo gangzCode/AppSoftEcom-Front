@@ -79,7 +79,7 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
               <AddIcon fontSize="small" />
             </IconButton>
           </Box>
-          <IconButton size="small" onClick={handleDelete} disabled={loading}>
+          <IconButton size="small" onClick={handleDelete} disabled={loading} color="error">
             <DeleteOutline />
           </IconButton>
         </Stack>
