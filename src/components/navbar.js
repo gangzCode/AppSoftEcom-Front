@@ -53,7 +53,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
-import { getCartDetails,getWishListofUser } from "../services/apiCalls";
+import { getCartDetails, getWishListofUser } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -82,14 +82,14 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   let closeMenuTimer;
 
   useEffect(() => {
-    fetchCart(); 
+    fetchCart();
     fetchWishlist();
   }, []);
 
   const fetchCart = async () => {
     try {
       const response = await getCartDetails();
-      console.log('dwdqewedwedwedwedw',response)
+      console.log("dwdqewedwedwedwedw", response);
       setCartItems(response.data);
     } catch (error) {
       console.error("Failed to fetch cart:", error);
@@ -105,7 +105,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       console.error("Failed to fetch cart:", error);
     }
   };
-
 
   const handleProfileClick = () => {
     console.log("user:", user);
@@ -245,7 +244,12 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   };
 
   const toggleWishlist = () => {
-    setWishlistOpen(!wishlistOpen);
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      navigate("/signin");
+    } else {
+      setWishlistOpen(!wishlistOpen);
+    }
   };
 
   // console.log([...Array(5 - 3)]);
@@ -428,11 +432,11 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               <IconButton onClick={toggleWishlist}>
                 <Badge badgeContent={wishlistItems.length} color="primary">
                   <FavoriteBorderRounded />
-                </Badge>  
+                </Badge>
               </IconButton>
               <IconButton onClick={toggleCart}>
                 <Badge badgeContent={cartItems.length} color="primary">
-                    <ShoppingCartOutlined />
+                  <ShoppingCartOutlined />
                 </Badge>
               </IconButton>
             </Box>
