@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Grid } from "@mui/material";
-import swal from "sweetalert2"; // Import SweetAlert2
+import { Box, Typography, TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
 import { subscribeToNewsApi } from "../services/apiCalls"; // Assuming your API function is in services/apiCalls
 import { Container } from "../common/Spacing";
 
 const Newsletter = () => {
   const [email, setEmail] = useState(""); // State for email input
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for snackbar visibility
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // State for snackbar message
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // State for snackbar type
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value); // Update email state
@@ -13,30 +15,27 @@ const Newsletter = () => {
 
   const handleSubscribe = async () => {
     if (!email) {
-      swal.fire({
-        icon: "warning",
-        title: "Oops...",
-        text: "Please enter a valid email address!",
-      });
+      setSnackbarMessage("Please enter a valid email address!");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
       return;
     }
 
     try {
-      // Call the subscribe API with the email entered
-      const response = await subscribeToNewsApi(email);
-      swal.fire({
-        icon: "success",
-        title: "Subscribed!",
-        text: "You have successfully subscribed to our newsletter.",
-      });
-      setEmail(""); // Clear email input after successful submission
+      await subscribeToNewsApi(email);
+      setSnackbarMessage("You have successfully subscribed to our newsletter.");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setEmail("");
     } catch (error) {
-      swal.fire({
-        icon: "error",
-        title: "Subscription Failed!",
-        text: "There was an issue with the subscription. Please try again.",
-      });
+      setSnackbarMessage("Subscription failed! Please try again.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -127,6 +126,21 @@ const Newsletter = () => {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

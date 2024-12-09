@@ -75,10 +75,12 @@ const CartPage = () => {
 
   const handleDeleteItem = async (cardId) => {
     try {
-      setLoading(true);
+      setLoadingItems((prev) => ({ ...prev, [cardId]: true }));
+  
       await deleteCartItem(cardId);
-      fetchCartItems();
-
+  
+      setCartItems((prevItems) => prevItems.filter((item) => item.card_id !== cardId));
+  
       setSnackbarMessage("Item removed from cart");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -88,9 +90,10 @@ const CartPage = () => {
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
-      setLoading(false);
+      setLoadingItems((prev) => ({ ...prev, [cardId]: false }));
     }
   };
+  
 
   const handleClearCart = async () => {
     try {
@@ -295,9 +298,9 @@ const CartPage = () => {
                   <TableCell align="center">
                     <IconButton
                       onClick={() => handleDeleteItem(item.card_id)}
-                      disabled={loading}
+                      disabled={loadingItems[item.card_id]}
                     >
-                      <DeleteOutline />
+                      {loadingItems[item.card_id] ? <CircularProgress size={20} /> : <DeleteOutline />}
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -308,7 +311,7 @@ const CartPage = () => {
 
         <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
           <Grid item>
-            <Button variant="contained" href="/products">
+            <Button variant="contained" href="/">
               Continue Shopping
             </Button>
           </Grid>
@@ -348,7 +351,7 @@ const CartPage = () => {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
