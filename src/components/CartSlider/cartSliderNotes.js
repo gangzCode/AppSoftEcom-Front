@@ -1,9 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
-function CartSliderNotes() {
+const CartSliderNotes = ({ onNoteChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [note, setNote] = useState(() => {
+    return localStorage.getItem("cartNote") || "";
+  });
+
+  const handleNoteChange = (e) => {
+    const newNote = e.target.value;
+    setNote(newNote);
+    localStorage.setItem("cartNote", newNote);
+    onNoteChange?.(newNote);
+  };
+
+  useEffect(() => {
+    const savedNote = localStorage.getItem("cartNote");
+    if (savedNote) {
+      setNote(savedNote);
+      onNoteChange?.(savedNote);
+    }
+  }, []);
 
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -18,7 +36,8 @@ function CartSliderNotes() {
           fontWeight="bold"
           sx={{
             mb: isExpanded ? 1 : 0,
-            transition: "margin-bottom 0.2s ease-in-out, color 0.2s ease-in-out",
+            transition:
+              "margin-bottom 0.2s ease-in-out, color 0.2s ease-in-out",
             display: "inline-block",
             "&:hover": {
               color: "primary.main",
@@ -47,10 +66,12 @@ function CartSliderNotes() {
           <TextField
             fullWidth
             multiline
+            value={note}
+            onChange={handleNoteChange}
+            placeholder="Notes..."
             minRows={4}
             maxRows={7}
             variant="outlined"
-            // placeholder="Special instructions for seller"
             sx={{
               bgcolor: "#f3f3f3",
               borderRadius: 1,
@@ -61,6 +82,6 @@ function CartSliderNotes() {
       </Box>
     </Box>
   );
-}
+};
 
 export default CartSliderNotes;

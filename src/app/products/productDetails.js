@@ -37,7 +37,7 @@ import {
   getCartDetails,
   updateCartItem,
   addToWishlist,
-  getWishListofUser
+  getWishListofUser,
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -87,16 +87,6 @@ const ProductDetailsPage = () => {
                     combination.attributes[variation.name] === firstOption.name
                 );
 
-              console.log(
-                JSON.stringify(matchingCombination) + "matchingCombination"
-              );
-              console.log(JSON.stringify(firstOption) + "firstOption");
-
-              console.log(
-                "matmatchingCombinationchingCombination",
-                matchingCombination
-              );
-
               if (matchingCombination && matchingCombination.stock > 0) {
                 initialVariations[variation.name] = firstOption.name;
               }
@@ -132,10 +122,8 @@ const ProductDetailsPage = () => {
       if (!product || !product.id) {
         return;
       }
-  
       try {
         const response = await getWishListofUser();
-    
         if (response && response.data) {
           const isProductInWishlist = response.data.some(
             (item) => item.id === product.id
@@ -148,11 +136,8 @@ const ProductDetailsPage = () => {
         console.error("Error fetching wishlist:", error);
       }
     };
-  
     checkIfInWishlist();
   }, [product]);
-  
-
 
   const handleAddToWishlist = async () => {
     if (isInWishlist) {
@@ -168,7 +153,8 @@ const ProductDetailsPage = () => {
       setWishlistMessage("Product added to your wishlist successfully!");
       setIsInWishlist(true); // Mark as added to wishlist
     } catch (error) {
-      const errorMessage = error?.message || "Failed to add product to wishlist";
+      const errorMessage =
+        error?.message || "Failed to add product to wishlist";
       setWishlistMessage(errorMessage);
     } finally {
       setLoading(false);
@@ -253,14 +239,12 @@ const ProductDetailsPage = () => {
       ...prev,
       [variationName]: selectedOption.name,
     }));
-  
     const allVariations = product.product_variation_tempalte.reduce(
       (acc, variation) => {
         const optionForVariation =
           variation.name === variationName
             ? selectedOption.name
             : selectedVariations[variation.name];
-  
         return {
           ...acc,
           [variation.name]: optionForVariation,
@@ -268,7 +252,6 @@ const ProductDetailsPage = () => {
       },
       {}
     );
-  
     const matchingCombination = product.product_variation_combination.find(
       (combination) => {
         const isMatching = Object.entries(allVariations).every(
@@ -277,9 +260,7 @@ const ProductDetailsPage = () => {
         return isMatching;
       }
     );
-  
     if (matchingCombination) {
-  
       setSelectedCombination({
         id: matchingCombination.attribute_id,
         price: matchingCombination.price || product?.sales_price,
@@ -325,19 +306,19 @@ const ProductDetailsPage = () => {
   const handleAddToCart = async () => {
     try {
       setIsAddingToCart(true);
-  
+
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
-  
+
       const existingItem = cartItems.find(
         (item) =>
           item.product.id === product.id &&
           item.variant_id === selectedCombination.id
       );
-  
+
       if (existingItem) {
         const newQuantity = parseFloat(existingItem.quantity) + quantity;
-  
+
         if (newQuantity > existingItem.stock) {
           setSnackbarSeverity("warning");
           setSnackbarMessage("Cannot exceed available stock");
@@ -345,13 +326,13 @@ const ProductDetailsPage = () => {
           setIsAddingToCart(false);
           return;
         }
-  
+
         await updateCartItem({
           card_id: existingItem.card_id,
           quantity: newQuantity.toString(),
           discount: existingItem.discount,
         });
-  
+
         setSnackbarSeverity("success");
         setSnackbarMessage("Quantity updated for the selected combination.");
         setSnackbarOpen(true);
@@ -364,14 +345,14 @@ const ProductDetailsPage = () => {
           variant_id: selectedCombination.id,
           unit_price: selectedCombination.price.toString(),
         };
-  
+
         const userStr = localStorage.getItem("user");
         if (userStr) {
           await addToCart(getAuthToken(), cartItem);
         } else {
-          await addToCartGuest(cartItem); 
+          await addToCartGuest(cartItem);
         }
-  
+
         setSnackbarSeverity("success");
         setSnackbarMessage("Added to cart successfully");
         setSnackbarOpen(true);
@@ -385,7 +366,6 @@ const ProductDetailsPage = () => {
       setIsAddingToCart(false);
     }
   };
-   
 
   if (loading) {
     return (
@@ -735,7 +715,7 @@ const ProductDetailsPage = () => {
                   variant="contained"
                   color="bluebutton"
                   startIcon={<FavoriteBorderIcon />}
-                  onClick={handleAddToWishlist} 
+                  onClick={handleAddToWishlist}
                   disabled={isInWishlist}
                   fullWidth
                   sx={{ flexGrow: 1 }}

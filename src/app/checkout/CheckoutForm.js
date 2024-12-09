@@ -33,7 +33,7 @@ import {
   getIPAddress,
 } from "../../services/apiCalls";
 
-function CheckoutForm({ onShippingChargeUpdate }) {
+function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -134,6 +134,12 @@ function CheckoutForm({ onShippingChargeUpdate }) {
 
     fetchUserDataAndAddresses();
   }, []);
+
+  useEffect(() => {
+    console.log(orderNote + "orderNote");
+
+    return () => {};
+  }, [orderNote]);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -311,7 +317,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
       const orderData = {
         final_total: total,
         shipping_charge: shippingCharge,
-        note: "",
+        note: orderNote || "",
         products: cartItems.map((item) => ({
           line_id: item.card_id,
           quantity: item.quantity,
@@ -319,7 +325,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         })),
       };
 
-      const response = await placeOrder(orderData);
+      await placeOrder(orderData);
 
       const userStr = localStorage.getItem("user");
       if (userStr) {
@@ -329,6 +335,8 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         const ipAddress = await getIPAddress();
         await clearCart(null, ipAddress);
       }
+
+      localStorage.removeItem("cartNote");
 
       setSnackbar({
         open: true,
@@ -500,15 +508,6 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         </FormControl>
 
         <TextField
-          label="State"
-          variant="outlined"
-          fullWidth
-          sx={{ mb: 2 }}
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-        />
-        <TextField
           label="Postal Code"
           variant="outlined"
           fullWidth
@@ -548,6 +547,23 @@ function CheckoutForm({ onShippingChargeUpdate }) {
             label={type.name}
           />
         ))}
+      </Box>
+
+      <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
+        Order Notes
+      </Typography>
+      <Box sx={{ p: 2, bgcolor: "#f5faff", borderRadius: 1 }}>
+        <TextField
+          fullWidth
+          value={orderNote}
+          onChange={(e) => {
+            localStorage.setItem("cartNote", e.target.value);
+          }}
+          placeholder="Add a note to your order..."
+          minRows={4}
+          maxRows={7}
+          variant="outlined"
+        />
       </Box>
 
       {/* Add Address Dialog */}
@@ -604,7 +620,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
               ))}
             </Select>
           </FormControl>
-          <TextField
+          {/* <TextField
             fullWidth
             margin="dense"
             label="State"
@@ -615,7 +631,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
                 state: e.target.value,
               }))
             }
-          />
+          /> */}
           <TextField
             fullWidth
             margin="dense"

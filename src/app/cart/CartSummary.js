@@ -4,10 +4,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import VoucherInput from "./VoucherInput";
 import ShippingEstimate from "./ShippingEstimate";
 
-function CartSummary({ total = 0, shipping = 0, tax = 0 }) {
+const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems }) => {
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
   const [isShippingExpanded, setIsShippingExpanded] = useState(false);
-  const [orderNote, setOrderNote] = useState("");
+  const [orderNote, setOrderNote] = useState(() => {
+    return localStorage.getItem('cartNote') || '';
+  });
 
   const handleNotesExpand = () => {
     setIsNotesExpanded(!isNotesExpanded);
@@ -15,6 +17,12 @@ function CartSummary({ total = 0, shipping = 0, tax = 0 }) {
 
   const handleShippingExpand = () => {
     setIsShippingExpanded(!isShippingExpanded);
+  };
+
+  const handleNoteChange = (e) => {
+    const newNote = e.target.value;
+    setOrderNote(newNote);
+    localStorage.setItem('cartNote', newNote);
   };
 
   const finalTotal = total + shipping + tax;
@@ -80,7 +88,7 @@ function CartSummary({ total = 0, shipping = 0, tax = 0 }) {
             maxRows={7}
             variant="outlined"
             value={orderNote}
-            onChange={(e) => setOrderNote(e.target.value)}
+            onChange={handleNoteChange}
             sx={{
               bgcolor: "#fff",
               borderRadius: 1,

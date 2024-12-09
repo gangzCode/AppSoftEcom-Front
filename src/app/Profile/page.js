@@ -313,54 +313,56 @@ function AddressBook() {
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }} component="form">
-            <Select
-              fullWidth
-              value={formData.country}
-              onChange={(e) => {
-                const country = countries.find(
-                  (c) => c.name === e.target.value
-                );
-                setSelectedCountryId(country?.id || "");
-                setFormData({
-                  ...formData,
-                  country: e.target.value,
-                  city: "",
-                });
-              }}
-              displayEmpty
-              label="Country"
-              margin="dense"
-            >
-              <MenuItem value="" disabled>
-                Select Country
-              </MenuItem>
-              {countries.map((country) => (
-                <MenuItem key={country.id} value={country.name}>
-                  {country.name}
+            <Box display={"flex"} flexDirection={"column"} gap={1}>
+              <Select
+                fullWidth
+                value={formData.country}
+                onChange={(e) => {
+                  const country = countries.find(
+                    (c) => c.name === e.target.value
+                  );
+                  setSelectedCountryId(country?.id || "");
+                  setFormData({
+                    ...formData,
+                    country: e.target.value,
+                    city: "",
+                  });
+                }}
+                displayEmpty
+                // label="Country"
+                margin="dense"
+              >
+                <MenuItem value="" disabled>
+                  Select Country
                 </MenuItem>
-              ))}
-            </Select>
+                {countries.map((country) => (
+                  <MenuItem key={country.id} value={country.name}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </Select>
 
-            <Select
-              fullWidth
-              value={formData.city}
-              onChange={(e) =>
-                setFormData({ ...formData, city: e.target.value })
-              }
-              displayEmpty
-              label="City"
-              margin="dense"
-              disabled={!selectedCountryId || cities.length === 0}
-            >
-              <MenuItem value="" disabled>
-                Select City
-              </MenuItem>
-              {cities.map((city) => (
-                <MenuItem key={city.id} value={city.name_en}>
-                  {city.name_en}
+              <Select
+                fullWidth
+                value={formData.city}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
+                displayEmpty
+                // label="City"
+                margin="dense"
+                disabled={!selectedCountryId || cities.length === 0}
+              >
+                <MenuItem value="" disabled>
+                  Select City
                 </MenuItem>
-              ))}
-            </Select>
+                {cities.map((city) => (
+                  <MenuItem key={city.id} value={city.name_en}>
+                    {city.name_en}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
 
             <TextField
               fullWidth
@@ -372,7 +374,7 @@ function AddressBook() {
               margin="dense"
             />
 
-            <TextField
+            {/* <TextField
               fullWidth
               label="State"
               value={formData.state}
@@ -380,7 +382,8 @@ function AddressBook() {
                 setFormData({ ...formData, state: e.target.value })
               }
               margin="dense"
-            />
+            /> */}
+
             <TextField
               fullWidth
               label="Postal Code"
