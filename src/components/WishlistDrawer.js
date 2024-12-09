@@ -124,7 +124,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                       size="small"
                       onClick={() => handleDeleteWishlistItem(item.wishlist_id)}
                       disabled={loading}
-                      sx={{ position: 'relative', left: -25 }}
+                      sx={{ position: 'relative', left: -50 }}
                       color="error"
                     >
                       <DeleteOutline />

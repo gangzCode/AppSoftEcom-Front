@@ -125,8 +125,8 @@ const SpecialDayOfferSale = () => {
                 >
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.description}
+                    src={product.thumbnailz}
+                    alt={product.name}
                     sx={{
                       width: "100%",
                       height: "200px",
@@ -137,8 +137,8 @@ const SpecialDayOfferSale = () => {
                   />
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.description}
+                    src={product.images[0]}
+                    alt={product.name}
                     sx={{
                       position: "absolute",
                       top: 0,
@@ -209,7 +209,7 @@ const SpecialDayOfferSale = () => {
                   sx={{ marginTop: "auto" }}
                 >
                   <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    ${product.price}
+                    ${product.sales_price}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>

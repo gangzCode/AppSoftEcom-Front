@@ -125,8 +125,8 @@ const DayFlashSale = () => {
                 >
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.description}
+                    src={product.thumbnailz}
+                    alt={product.name}
                     sx={{
                       width: "100%",
                       height: "200px",
@@ -137,7 +137,7 @@ const DayFlashSale = () => {
                   />
                   <Box
                     component="img"
-                    src={product.image}
+                    src={product.images[0]}
                     alt={product.description}
                     sx={{
                       position: "absolute",

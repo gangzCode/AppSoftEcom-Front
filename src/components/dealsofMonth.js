@@ -6,11 +6,27 @@ import {
   ShoppingCart,
 } from "@mui/icons-material";
 import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { Container } from "../common/Spacing";
+import React, { useState,useEffect } from "react";
+import { getDealsofMonthProducts } from "../services/apiCalls"; // Adjust import as needed
 
-const DealsofMonth = () => {
+const DealsofDay = () => {
+  const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
+
+  useEffect(() => {
+    const fetchGetProducts = async () => {
+      try {
+        const response = await getDealsofMonthProducts();
+        setProducts(response.data);
+        
+        console.log("Products deal of the month", response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchGetProducts();
+  }, []);
 
   const cards = [
     {
@@ -60,7 +76,7 @@ const DealsofMonth = () => {
   ];
 
   return (
-    <Container>
+    <Box sx={{ padding: "40px 0", margin: "4em 0 1em" }}>
       <Typography
         variant="p"
         fontSize={"12px"}
@@ -106,8 +122,8 @@ const DealsofMonth = () => {
             >
               <Box
                 component="img"
-                src={cards[0].image}
-                alt={cards[0].description}
+                src={products[0]?.thumbnailz}
+                alt={products[0]?.name}
                 sx={{
                   width: "100%",
                   height: "70%",
@@ -121,7 +137,7 @@ const DealsofMonth = () => {
                   fontSize={"36px"}
                   fontWeight={"600"}
                 >
-                  {cards[0].price}
+                  ${products[0]?.sales_price}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -131,7 +147,7 @@ const DealsofMonth = () => {
                   letterSpacing={"2px"}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  Laptops
+                  {products[0]?.category?.name}
                 </Typography>
 
                 <Box
@@ -146,7 +162,7 @@ const DealsofMonth = () => {
                     fontSize={"16px"}
                     fontWeight={"500"}
                   >
-                    {cards[0].description}
+                    {products[0]?.name}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
@@ -156,7 +172,7 @@ const DealsofMonth = () => {
 
           <Grid item xs={12} md={7}>
             <Grid container spacing={4}>
-              {cards.slice(1, 4).map((card) => (
+              {products.slice(1, 4).map((card) => (
                 <Grid item xs={12} sm={4} key={card.id}>
                   <Box
                     sx={{
@@ -187,8 +203,8 @@ const DealsofMonth = () => {
                     >
                       <Box
                         component="img"
-                        src={card.image}
-                        alt={card.description}
+                        src={card.thumbnailz}
+                        alt={card.name}
                         sx={{
                           width: "100%",
                           height: "320px",
@@ -199,8 +215,8 @@ const DealsofMonth = () => {
                       />
                       <Box
                         component="img"
-                        src={card.hoverImage}
-                        alt={card.description}
+                        src={card.images[0]}
+                        alt={card.name}
                         sx={{
                           position: "absolute",
                           top: 0,
@@ -258,7 +274,7 @@ const DealsofMonth = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        PRODUCTS-VIBE
+                        {card.category.name}
                       </Typography>
                       <Typography
                         variant="body1"
@@ -266,7 +282,7 @@ const DealsofMonth = () => {
                         fontWeight={"500"}
                         sx={{ marginBottom: "8px" }}
                       >
-                        {card.description}
+                        {card.name.length > 20 ? card.name.slice(0, 20) + "..." : card.name}
                       </Typography>
                       <Box
                         display={"flex"}
@@ -282,7 +298,7 @@ const DealsofMonth = () => {
                           fontWeight={"600"}
                           sx={{ marginBottom: "8px" }}
                         >
-                          {card.price}
+                          ${card.sales_price}
                         </Typography>
                         <ChevronRight
                           sx={{ color: "#2189ff", marginLeft: "8px" }}
@@ -293,13 +309,13 @@ const DealsofMonth = () => {
                 </Grid>
               ))}
 
-              {cards.slice(4, 6).map((card) => (
+              {products.slice(4, 6).map((card) => (
                 <Grid item xs={12} sm={6} key={card.id}>
                   <Box
                     sx={{
                       display: "flex",
                       flexDirection: "row",
-                      position: "relative", // Ensure parent box is relative
+                      position: "relative",
                       height: "100%",
                       boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                       borderRadius: "20px",
@@ -316,7 +332,7 @@ const DealsofMonth = () => {
                   >
                     <Box
                       sx={{
-                        position: "relative", // Relative positioning for hover-icons to align with the image
+                        position: "relative",
                         width: "50%",
                         borderRadius: "10px",
                         overflow: "hidden",
@@ -324,8 +340,8 @@ const DealsofMonth = () => {
                     >
                       <Box
                         component="img"
-                        src={card.image}
-                        alt={card.description}
+                        src={card.thumbnailz}
+                        alt={card.name}
                         sx={{
                           width: "100%",
                           height: "180px",
@@ -336,8 +352,8 @@ const DealsofMonth = () => {
                       />
                       <Box
                         component="img"
-                        src={card.hoverImage}
-                        alt={card.description}
+                        src={card.images[0]}
+                        alt={card.name}
                         sx={{
                           position: "absolute",
                           top: 0,
@@ -397,14 +413,14 @@ const DealsofMonth = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        PRODUCTS-VIBE
+                        {card.category.name}
                       </Typography>
                       <Typography
                         variant="body1"
                         fontWeight={"500"}
                         sx={{ marginBottom: "8px" }}
                       >
-                        {card.description}
+                        {card.name.length > 20 ? card.name.slice(0, 20) + "..." : card.name}
                       </Typography>
                       <Box
                         display={"flex"}
@@ -417,7 +433,7 @@ const DealsofMonth = () => {
                           fontWeight={"600"}
                           sx={{ marginBottom: "8px" }}
                         >
-                          {card.price}
+                          ${card.sales_price}
                         </Typography>
                         <ChevronRight
                           sx={{ color: "#2189ff", marginLeft: "8px" }}
@@ -431,8 +447,8 @@ const DealsofMonth = () => {
           </Grid>
         </Grid>
       </Box>
-    </Container>
+    </Box>
   );
 };
 
-export default DealsofMonth;
+export default DealsofDay;
