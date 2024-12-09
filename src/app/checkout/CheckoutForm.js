@@ -117,12 +117,18 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           }
         } catch (error) {
           console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
-      } else if (isGuest) {
-        const countriesResponse = await getCountries();
-        setCountries(countriesResponse.data || []);
-        setLoading(false);
+      } else {
+        try {
+          const countriesResponse = await getCountries();
+          setCountries(countriesResponse.data || []);
+        } catch (error) {
+          console.error("Error loading countries:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
@@ -375,11 +381,9 @@ function CheckoutForm({ onShippingChargeUpdate }) {
               onChange={handleAddressSelect}
               label="Select Address"
             >
-              {addresses.map((address, index) => (
+              {addresses.map((address) => (
                 <MenuItem key={address.id} value={address.id}>
-                  {`Address ${index + 1}${
-                    address.is_default === 1 ? " (Default)" : ""
-                  }`}
+                  {address.address}, {address.city}, {address.country}
                 </MenuItem>
               ))}
             </Select>
