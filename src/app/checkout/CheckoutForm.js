@@ -15,16 +15,26 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Radio,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import {
   getUserAddress,
   getCountries,
   getCities,
   createUserAddress,
   getShippingCharge,
+  getPaymentTypes,
+  placeOrder,
+  getCartDetails,
+  clearCart,
+  getIPAddress,
 } from "../../services/apiCalls";
 
 function CheckoutForm({ onShippingChargeUpdate }) {
+  const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [addresses, setAddresses] = useState([]);
@@ -51,47 +61,51 @@ function CheckoutForm({ onShippingChargeUpdate }) {
     postal_code: "",
   });
   const [shippingCharge, setShippingCharge] = useState(0);
+  const [paymentTypes, setPaymentTypes] = useState([]);
+  const [selectedPaymentType, setSelectedPaymentType] = useState("");
+  const [orderProcessing, setOrderProcessing] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    setIsGuest(!userStr);
+
     const fetchUserDataAndAddresses = async () => {
-      const userStr = localStorage.getItem("user");
       if (userStr) {
         try {
           const userData = JSON.parse(userStr);
           const { token } = userData;
 
-          // First load countries
           const countriesResponse = await getCountries();
           setCountries(countriesResponse.data || []);
 
-          // Then fetch addresses
           const addressResponse = await getUserAddress(token);
           const addressList = addressResponse.data || [];
           setAddresses(addressList);
 
-          // Find default address
           const defaultAddress = addressList.find(
             (addr) => addr.is_default === 1
           );
           if (defaultAddress) {
             setSelectedAddressId(defaultAddress.id);
 
-            // Find country object
             const countryObj = countriesResponse.data.find(
               (c) => c.name === defaultAddress.country
             );
 
             if (countryObj) {
-              // Load cities for the selected country
               const citiesResponse = await getCities(countryObj.id);
               setCities(citiesResponse.data || []);
 
-              // Find city object
               const cityObj = citiesResponse.data.find(
                 (c) => c.name_en === defaultAddress.city
               );
 
-              // Update form with all data
               setFormData((prev) => ({
                 ...prev,
                 address: defaultAddress.address || "",
@@ -104,6 +118,10 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         } catch (error) {
           console.error("Error fetching data:", error);
         }
+        setLoading(false);
+      } else if (isGuest) {
+        const countriesResponse = await getCountries();
+        setCountries(countriesResponse.data || []);
         setLoading(false);
       }
     };
@@ -184,6 +202,21 @@ function CheckoutForm({ onShippingChargeUpdate }) {
     }
   }, [shippingCharge, onShippingChargeUpdate]);
 
+  useEffect(() => {
+    const fetchPaymentTypes = async () => {
+      try {
+        const response = await getPaymentTypes();
+        setPaymentTypes(response.data || []);
+        if (response.data?.length > 0) {
+          setSelectedPaymentType(response.data[0].id.toString());
+        }
+      } catch (error) {
+        console.error("Error fetching payment types:", error);
+      }
+    };
+    fetchPaymentTypes();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
     setFormData((prev) => ({
@@ -199,27 +232,23 @@ function CheckoutForm({ onShippingChargeUpdate }) {
 
     const selectedAddress = addresses.find((addr) => addr.id === addressId);
     if (selectedAddress) {
-      // First set country
       const countryObj = countries.find(
         (c) => c.name === selectedAddress.country
       );
 
-      // Update form with country first
       setFormData((prev) => ({
         ...prev,
         address: selectedAddress.address || "",
         country: countryObj?.id || "",
-        city: "", // Reset city temporarily
+        city: "",
       }));
 
-      // Wait for cities to load
       if (countryObj?.id) {
         const citiesResponse = await getCities(countryObj.id);
         const cityObj = citiesResponse.data.find(
           (c) => c.name_en === selectedAddress.city
         );
 
-        // Update city after cities are loaded
         setFormData((prev) => ({
           ...prev,
           city: cityObj?.id || "",
@@ -251,7 +280,6 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         const { token } = JSON.parse(userStr);
         await createUserAddress(newAddressData, token);
 
-        // Refresh addresses list
         const response = await getUserAddress(token);
         setAddresses(response.data || []);
 
@@ -260,6 +288,68 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         console.error("Error creating address:", error);
       }
     }
+  };
+
+  const handleOrderSubmit = async () => {
+    setOrderProcessing(true);
+    try {
+      const cartResponse = await getCartDetails();
+      const cartItems = cartResponse.data || [];
+
+      const total = cartItems.reduce(
+        (sum, item) =>
+          sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
+        0
+      );
+
+      const orderData = {
+        final_total: total,
+        shipping_charge: shippingCharge,
+        note: "",
+        products: cartItems.map((item) => ({
+          line_id: item.card_id,
+          quantity: item.quantity,
+          discount: item.discount || "",
+        })),
+      };
+
+      const response = await placeOrder(orderData);
+
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const { token } = JSON.parse(userStr);
+        await clearCart(token);
+      } else {
+        const ipAddress = await getIPAddress();
+        await clearCart(null, ipAddress);
+      }
+
+      setSnackbar({
+        open: true,
+        message: "Order placed successfully!",
+        severity: "success",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      console.error("Order submission failed:", error);
+      setSnackbar({
+        open: true,
+        message: error.message || "Failed to place order",
+        severity: "error",
+      });
+    } finally {
+      setOrderProcessing(false);
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({
+      ...prev,
+      open: false,
+    }));
   };
 
   if (loading) {
@@ -276,7 +366,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         borderRadius: 2,
       }}
     >
-      {addresses.length > 0 && (
+      {!isGuest && addresses.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
           <FormControl sx={{ flexGrow: 1 }}>
             <InputLabel>Select Address</InputLabel>
@@ -285,9 +375,11 @@ function CheckoutForm({ onShippingChargeUpdate }) {
               onChange={handleAddressSelect}
               label="Select Address"
             >
-              {addresses.map((address) => (
+              {addresses.map((address, index) => (
                 <MenuItem key={address.id} value={address.id}>
-                  {address.address}, {address.city}, {address.country}
+                  {`Address ${index + 1}${
+                    address.is_default === 1 ? " (Default)" : ""
+                  }`}
                 </MenuItem>
               ))}
             </Select>
@@ -331,6 +423,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           name="country"
           value={formData.country}
           onChange={handleChange}
+          disabled={!isGuest && selectedAddressId}
         >
           {countries.map((country) => (
             <MenuItem key={country.id} value={country.id}>
@@ -348,6 +441,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
+          disabled={!isGuest && selectedAddressId}
         />
         <TextField
           label="Last name"
@@ -356,6 +450,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
+          disabled={!isGuest && selectedAddressId}
         />
       </Box>
 
@@ -367,6 +462,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         name="address"
         value={formData.address}
         onChange={handleChange}
+        disabled={!isGuest && selectedAddressId}
       />
       <TextField
         label="Apartment, suite, etc. (optional)"
@@ -383,7 +479,7 @@ function CheckoutForm({ onShippingChargeUpdate }) {
             name="city"
             value={formData.city}
             onChange={handleChange}
-            disabled={!formData.country || cityLoading}
+            disabled={(!isGuest && selectedAddressId) || !formData.country}
           >
             {cities.map((city) => (
               <MenuItem key={city.id} value={city.id}>
@@ -416,10 +512,39 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           name="postal_code"
           value={formData.postal_code}
           onChange={handleChange}
+          disabled={!isGuest && selectedAddressId}
         />
       </Box>
-      {/* 
-      <FormControlLabel control={<Checkbox />} label="Save this information for next time" /> */}
+      {/* Shipping Method Section */}
+      {/* <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
+        Shipping method
+      </Typography>
+      <Box sx={{ p: 2, bgcolor: "#f0f0f0", borderRadius: 1, mb: 2 }}>
+        <Typography variant="body2" color="text.secondary">
+          Enter your shipping address to view available shipping methods.
+        </Typography>
+      </Box> */}
+
+      {/* Payment Section */}
+      <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
+        Payment Method
+      </Typography>
+      <Box sx={{ p: 2, bgcolor: "#f5faff", borderRadius: 1 }}>
+        {paymentTypes.map((type) => (
+          <FormControlLabel
+            key={type.id}
+            control={
+              <Radio
+                checked={selectedPaymentType === type.id.toString()}
+                onChange={(e) => setSelectedPaymentType(e.target.value)}
+                value={type.id}
+                name="payment-type"
+              />
+            }
+            label={type.name}
+          />
+        ))}
+      </Box>
 
       {/* Add Address Dialog */}
       <Dialog open={openAddressDialog} onClose={handleCloseAddressDialog}>
@@ -507,6 +632,43 @@ function CheckoutForm({ onShippingChargeUpdate }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleOrderSubmit}
+          disabled={
+            orderProcessing || !selectedPaymentType || !selectedAddressId
+          }
+          sx={{
+            minWidth: 200,
+            py: 1.5,
+          }}
+        >
+          {orderProcessing ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Order Now"
+          )}
+        </Button>
+      </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

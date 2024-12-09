@@ -843,3 +843,50 @@ export const getShippingCharge = async (cityId) => {
     throw error.response?.data || error;
   }
 };
+
+export const getPaymentTypes = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/payment-types`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const placeOrder = async (orderData) => {
+  try {
+    const userStr = localStorage.getItem("user");
+    let response;
+
+    if (userStr) {
+      const { token } = JSON.parse(userStr);
+      response = await axios.post(`${baseUrl}/user/place-order`, orderData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      const ip_address = await getIPAddress();
+      response = await axios.post(
+        `${baseUrl}/guest/place-order`,
+        {
+          ...orderData,
+          ip_address,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
