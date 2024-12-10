@@ -125,8 +125,8 @@ const MonthlyFlashSale = () => {
                 >
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.description}
+                    src={product.thumbnailz}
+                    alt={product.name}
                     sx={{
                       width: "100%",
                       height: "200px",
@@ -137,8 +137,8 @@ const MonthlyFlashSale = () => {
                   />
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.description}
+                    src={product.images[0]}
+                    alt={product.name}
                     sx={{
                       position: "absolute",
                       top: 0,
