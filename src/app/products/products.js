@@ -741,7 +741,7 @@ const ProductsPage = () => {
               mb: 2,
             }}
           >
-            <ToggleButtonGroup
+            {/* <ToggleButtonGroup
               value={displayMode}
               exclusive
               onChange={handleDisplayModeChange}
@@ -788,7 +788,7 @@ const ProductsPage = () => {
               >
                 <ViewListIcon />
               </ToggleButton>
-            </ToggleButtonGroup>
+            </ToggleButtonGroup> */}
 
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <Select

@@ -53,7 +53,7 @@ const HomePage = () => {
       {settings.is_show_best_category === 1 && <BestCategory />}
       {settings.is_show_best_brand_product === 1 && <BestBrand />}
       {settings.is_show_category_promotion === 1 && <CategoryBetweenBanner />}
-      {settings.is_show_best_sales === 1 && <TabSection />}
+      { <TabSection />}
       {<Brands />}
       <InfoSection />
       <Newsletter />

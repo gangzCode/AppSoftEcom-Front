@@ -79,7 +79,7 @@ const DealsBetweenBanner = () => {
                     fontWeight={"500"}
                     color="textSecondary"
                   >
-                    {JSON.parse(product.brand.name).En || 0}
+                    {product?.brand?.name ? JSON.parse(product.brand.name).En : "N/A"}
                   </Typography>
                   <Typography
                     variant="body1"
