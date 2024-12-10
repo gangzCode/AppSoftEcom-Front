@@ -29,8 +29,8 @@ const DealsBetweenBanner = () => {
         {promotions
           .filter((promo) => promo.type === "Deal")
           .slice(0, 5)
-          .map((product) => (
-            <Grid key={product.id} item xs={12} md={6}>
+          .map((product, index) => (
+            <Grid key={`deal-${product.id || index}`} item xs={12} md={6}>
               <Box
                 sx={{
                   display: "flex",
@@ -79,7 +79,15 @@ const DealsBetweenBanner = () => {
                     fontWeight={"500"}
                     color="textSecondary"
                   >
-                    {JSON.parse(product.brand.name).En || 0}
+                    {(() => {
+                      try {
+                        return product.brand && product.brand.name
+                          ? JSON.parse(product.brand.name).En
+                          : "Brand Unavailable";
+                      } catch (error) {
+                        return "Brand Unavailable";
+                      }
+                    })()}
                   </Typography>
                   <Typography
                     variant="body1"

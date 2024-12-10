@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -63,6 +63,7 @@ const ProductDetailsPage = () => {
     message: "",
     severity: "success",
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log(JSON.stringify(selectedCombination) + "selectedCombination");
@@ -380,6 +381,60 @@ const ProductDetailsPage = () => {
       console.error("Failed to add to cart:", error);
       setSnackbarSeverity("error");
       setSnackbarMessage("Failed to add to cart");
+      setSnackbarOpen(true);
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      setIsAddingToCart(true);
+
+      // Check stock
+      if (availableStock <= 0) {
+        setSnackbarMessage("Sorry, this item is out of stock");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // Check required variations are selected
+      if (product.product_variation_tempalte?.length > 0) {
+        const allVariationsSelected =
+          Object.keys(selectedVariations).length ===
+          product.product_variation_tempalte.length;
+
+        if (!allVariationsSelected) {
+          setSnackbarMessage("Please select all variations");
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
+          return;
+        }
+      }
+
+      const cartItem = {
+        product_id: product.id,
+        discount: product.discount || "",
+        quantity: quantity.toString(),
+        line_discount_type: "percentage",
+        unit_price:
+          selectedCombination?.price || product.sales_price.toString(),
+        variant_id: selectedCombination?.id || "",
+      };
+
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        await addToCart(getAuthToken(), cartItem);
+      } else {
+        await addToCartGuest(cartItem);
+      }
+
+      // Navigate to checkout
+      navigate("/checkout");
+    } catch (error) {
+      setSnackbarMessage("Failed to process your order");
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
       setIsAddingToCart(false);
@@ -747,9 +802,14 @@ const ProductDetailsPage = () => {
                   color="blackbutton"
                   fullWidth
                   sx={{ py: 1, mb: 2 }}
-                  disabled={availableStock === 0}
+                  disabled={availableStock === 0 || isAddingToCart}
+                  onClick={handleBuyNow}
                 >
-                  Buy It Now
+                  {isAddingToCart ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Buy It Now"
+                  )}
                 </Button>
               </Grid>
             </Grid>
