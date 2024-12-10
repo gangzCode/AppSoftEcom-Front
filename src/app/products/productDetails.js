@@ -399,7 +399,6 @@ const ProductDetailsPage = () => {
         return;
       }
 
-      // Check required variations are selected
       if (product.product_variation_tempalte?.length > 0) {
         const allVariationsSelected =
           Object.keys(selectedVariations).length ===
@@ -413,21 +412,43 @@ const ProductDetailsPage = () => {
         }
       }
 
-      const cartItem = {
-        product_id: product.id,
-        discount: product.discount || "",
-        quantity: quantity?.toString(),
-        line_discount_type: "percentage",
-        unit_price:
-          selectedCombination?.price || product?.sales_price?.toString(),
-        variant_id: selectedCombination?.id || "",
-      };
+      const cartResponse = await getCartDetails();
+      const cartItems = cartResponse.data || [];
+      const existingItem = cartItems.find(
+        (item) => item.product.id === product.id
+      );
 
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        await addToCart(getAuthToken(), cartItem);
+      if (existingItem) {
+        const newQuantity = parseFloat(existingItem.quantity) + quantity;
+        if (newQuantity > availableStock) {
+          setSnackbarMessage("Cannot exceed available stock");
+          setSnackbarSeverity("warning");
+          setSnackbarOpen(true);
+          return;
+        }
+
+        await updateCartItem({
+          card_id: existingItem.card_id,
+          quantity: newQuantity.toString(),
+          discount: existingItem.discount,
+        });
       } else {
-        await addToCartGuest(cartItem);
+        const cartItem = {
+          product_id: product.id,
+          discount: product.discount || "",
+          quantity: quantity.toString(),
+          line_discount_type: "percentage",
+          unit_price:
+            selectedCombination?.price || product.sales_price.toString(),
+          variant_id: selectedCombination?.id || "",
+        };
+
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          await addToCart(getAuthToken(), cartItem);
+        } else {
+          await addToCartGuest(cartItem);
+        }
       }
 
       // Navigate to checkout

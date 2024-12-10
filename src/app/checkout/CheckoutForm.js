@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -70,6 +70,17 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
     severity: "success",
   });
   const [isGuest, setIsGuest] = useState(false);
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    address: "",
+    country: "",
+    city: "",
+    postal_code: "",
+  });
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [dialogCities, setDialogCities] = useState([]);
+  const [dialogCityLoading, setDialogCityLoading] = useState(false);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -229,6 +240,26 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
     fetchPaymentTypes();
   }, []);
 
+  useEffect(() => {
+    const loadDialogCities = async () => {
+      if (newAddressData.country) {
+        setDialogCityLoading(true);
+        try {
+          const response = await getCities(newAddressData.country);
+          setDialogCities(response.data || []);
+        } catch (error) {
+          console.error("Error loading cities:", error);
+        } finally {
+          setDialogCityLoading(false);
+        }
+      } else {
+        setDialogCities([]);
+      }
+    };
+
+    loadDialogCities();
+  }, [newAddressData.country]);
+
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
     setFormData((prev) => ({
@@ -290,17 +321,77 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
     if (userStr) {
       try {
         const { token } = JSON.parse(userStr);
-        await createUserAddress(newAddressData, token);
+
+        const countryObj = countries.find(
+          (c) => c.id === newAddressData.country
+        );
+        const cityObj = dialogCities.find((c) => c.id === newAddressData.city);
+
+        const addressData = {
+          ...newAddressData,
+          country: countryObj?.name || "",
+          city: cityObj?.name_en || "",
+        };
+
+        await createUserAddress(addressData, token);
 
         const response = await getUserAddress(token);
         setAddresses(response.data || []);
 
+        setSnackbar({
+          open: true,
+          message: "Address added successfully",
+          severity: "success",
+        });
+
         handleCloseAddressDialog();
       } catch (error) {
-        console.error("Error creating address:", error);
+        setSnackbar({
+          open: true,
+          message: error.message || "Failed to add address",
+          severity: "error",
+        });
       }
     }
   };
+
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+
+    if (!formData.firstName) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName) {
+      newErrors.lastName = "Last name is required";
+    }
+
+    if (!formData.address) {
+      newErrors.address = "Address is required";
+    }
+
+    if (!formData.country) {
+      newErrors.country = "Country is required";
+    }
+
+    if (!formData.city) {
+      newErrors.city = "City is required";
+    }
+
+    if (!formData.postal_code) {
+      newErrors.postal_code = "Postal code is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData]);
+
+  useEffect(() => {
+    if (isGuest) {
+      const isValid = validateForm();
+      setIsFormValid(isValid);
+    }
+  }, [formData, isGuest, validateForm]);
 
   const handleOrderSubmit = async () => {
     setOrderProcessing(true);
@@ -380,7 +471,7 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
         borderRadius: 2,
       }}
     >
-      {!isGuest && addresses.length > 0 && (
+      {(!isGuest && addresses.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
           <FormControl sx={{ flexGrow: 1 }}>
             <InputLabel>Select Address</InputLabel>
@@ -401,9 +492,18 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
             onClick={handleOpenAddressDialog}
             sx={{ minWidth: "auto", px: 3 }}
           >
-            Add New
+            Add New Address
           </Button>
         </Box>
+      )) || (
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleOpenAddressDialog}
+          sx={{ minWidth: "auto", px: 3 }}
+        >
+          Add New Address
+        </Button>
       )}
 
       {/* Contact Section */}
@@ -436,6 +536,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
           value={formData.country}
           onChange={handleChange}
           disabled={!isGuest && selectedAddressId}
+          error={!!errors.country}
+          helperText={errors.country}
         >
           {countries.map((country) => (
             <MenuItem key={country.id} value={country.id}>
@@ -453,6 +555,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
           name="firstName"
           value={formData.firstName}
           onChange={handleChange}
+          error={!!errors.firstName}
+          helperText={errors.firstName}
           disabled={!isGuest && selectedAddressId}
         />
         <TextField
@@ -462,6 +566,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
           name="lastName"
           value={formData.lastName}
           onChange={handleChange}
+          error={!!errors.lastName}
+          helperText={errors.lastName}
           disabled={!isGuest && selectedAddressId}
         />
       </Box>
@@ -474,6 +580,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
         name="address"
         value={formData.address}
         onChange={handleChange}
+        error={!!errors.address}
+        helperText={errors.address}
         disabled={!isGuest && selectedAddressId}
       />
       <TextField
@@ -492,6 +600,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
             value={formData.city}
             onChange={handleChange}
             disabled={(!isGuest && selectedAddressId) || !formData.country}
+            error={!!errors.city}
+            helperText={errors.city}
           >
             {cities.map((city) => (
               <MenuItem key={city.id} value={city.id}>
@@ -515,6 +625,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
           name="postal_code"
           value={formData.postal_code}
           onChange={handleChange}
+          error={!!errors.postal_code}
+          helperText={errors.postal_code}
           disabled={!isGuest && selectedAddressId}
         />
       </Box>
@@ -611,14 +723,25 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
                   city: e.target.value,
                 }))
               }
-              disabled={!newAddressData.country}
+              disabled={!newAddressData.country || dialogCityLoading}
             >
-              {cities.map((city) => (
+              {dialogCities.map((city) => (
                 <MenuItem key={city.id} value={city.id}>
                   {city.name_en}
                 </MenuItem>
               ))}
             </Select>
+            {dialogCityLoading && (
+              <CircularProgress
+                size={20}
+                sx={{
+                  position: "absolute",
+                  right: 25,
+                  top: "50%",
+                  mt: -1,
+                }}
+              />
+            )}
           </FormControl>
           {/* <TextField
             fullWidth
@@ -658,9 +781,13 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
           variant="contained"
           color="primary"
           size="large"
+          fullWidth
           onClick={handleOrderSubmit}
           disabled={
-            orderProcessing || !selectedPaymentType || !selectedAddressId
+            orderProcessing ||
+            !selectedPaymentType ||
+            (!isGuest && !selectedAddressId) ||
+            (isGuest && !isFormValid)
           }
           sx={{
             minWidth: 200,
