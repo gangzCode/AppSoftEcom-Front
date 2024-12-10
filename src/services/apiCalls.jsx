@@ -13,6 +13,24 @@ export const getIPAddress = async () => {
   }
 };
 
+export const getAuthToken = () => {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    const userData = JSON.parse(userStr);
+    if (!userData.token) {
+      throw new Error("Invalid authentication token");
+    }
+    return userData.token;
+  } catch (error) {
+    console.error("Error parsing user data:", error);
+    throw new Error("Authentication failed");
+  }
+};
+
 export const getCategoriesForAllCategoriesDrop = async () => {
   try {
     const res = await axios.get(baseUrl + "/all-categories?items=", {

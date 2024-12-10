@@ -58,6 +58,17 @@ const ProductDetailsPage = () => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  useEffect(() => {
+    console.log(JSON.stringify(selectedCombination) + "selectedCombination");
+
+    return () => {};
+  }, [selectedCombination]);
 
   useEffect(() => {
     const fetchGetProductDetails = async () => {
@@ -141,21 +152,29 @@ const ProductDetailsPage = () => {
 
   const handleAddToWishlist = async () => {
     if (isInWishlist) {
-      setWishlistMessage("This product is already in your wishlist!");
+      setSnackbar({
+        open: true,
+        message: "This product is already in your wishlist!",
+        severity: "warning",
+      });
       return;
     }
 
     setLoading(true);
-    setWishlistMessage("");
-
     try {
-      const response = await addToWishlist(product.id);
-      setWishlistMessage("Product added to your wishlist successfully!");
-      setIsInWishlist(true); // Mark as added to wishlist
+      await addToWishlist(product.id);
+      setIsInWishlist(true);
+      setSnackbar({
+        open: true,
+        message: "Product added to wishlist successfully!",
+        severity: "success",
+      });
     } catch (error) {
-      const errorMessage =
-        error?.message || "Failed to add product to wishlist";
-      setWishlistMessage(errorMessage);
+      setSnackbar({
+        open: true,
+        message: error?.message || "Failed to add product to wishlist",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -701,7 +720,7 @@ const ProductDetailsPage = () => {
               <Grid item xs={12} md={6}>
                 <LoadingButton
                   loading={isAddingToCart}
-                  disabled={isAddingToCart}
+                  disabled={isAddingToCart || availableStock === 0}
                   variant="contained"
                   onClick={handleAddToCart}
                   sx={{ width: "100%" }}
@@ -716,7 +735,6 @@ const ProductDetailsPage = () => {
                   color="bluebutton"
                   startIcon={<FavoriteBorderIcon />}
                   onClick={handleAddToWishlist}
-                  disabled={isInWishlist}
                   fullWidth
                   sx={{ flexGrow: 1 }}
                 >
@@ -871,6 +889,19 @@ const ProductDetailsPage = () => {
           variant="filled"
         >
           {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        >
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </Box>
