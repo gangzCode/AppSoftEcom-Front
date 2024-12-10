@@ -349,7 +349,7 @@ const ProductDetailsPage = () => {
 
         await updateCartItem({
           card_id: existingItem.card_id,
-          quantity: newQuantity.toString(),
+          quantity: newQuantity?.toString(),
           discount: existingItem.discount,
         });
 
@@ -360,10 +360,10 @@ const ProductDetailsPage = () => {
         const cartItem = {
           product_id: product.id,
           discount: product.discount || "",
-          quantity: quantity.toString(),
+          quantity: quantity?.toString(),
           line_discount_type: "percentage",
           variant_id: selectedCombination.id,
-          unit_price: selectedCombination.price.toString(),
+          unit_price: selectedCombination?.price?.toString(),
         };
 
         const userStr = localStorage.getItem("user");
@@ -416,10 +416,10 @@ const ProductDetailsPage = () => {
       const cartItem = {
         product_id: product.id,
         discount: product.discount || "",
-        quantity: quantity.toString(),
+        quantity: quantity?.toString(),
         line_discount_type: "percentage",
         unit_price:
-          selectedCombination?.price || product.sales_price.toString(),
+          selectedCombination?.price || product?.sales_price?.toString(),
         variant_id: selectedCombination?.id || "",
       };
 
