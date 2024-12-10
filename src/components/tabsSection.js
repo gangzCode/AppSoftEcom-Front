@@ -13,105 +13,39 @@ import {
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Container } from "../common/Spacing";
-
-const products = {
-  BestSellers: [
-    {
-      id: 1,
-      category: "Television-Sky",
-      title: "Ultra HD Android Smart LED TV X43 ultrs plus hd",
-      price: 25990,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 2,
-      category: "Products-Vibe",
-      title: "Newly launched Bluetooth Calling Smartwatch",
-      price: 2999,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 3,
-      category: "Electro",
-      title: "Isolated Black Desktop computer",
-      price: 2897,
-      originalPrice: 4599,
-      image: "https://via.placeholder.com/200",
-      discount: "35%",
-      soldOut: false,
-    },
-    {
-      id: 4,
-      category: "Products-Vibe",
-      title: "Wireless Earbud Bluetooth Headphone",
-      price: 1290,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: true,
-    },
-  ],
-  NewArrivals: [
-    {
-      id: 5,
-      category: "Television-Sky",
-      title: "4K Ultra HD Smart LED Fire TV",
-      price: 54999,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 6,
-      category: "Mobile Veritas",
-      title: "Wireless Gaming Controller Joystick",
-      price: 790,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-    {
-      id: 7,
-      category: "Electro",
-      title: "Inverter Split AC",
-      price: 34980,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: false,
-    },
-  ],
-  TopSellings: [
-    {
-      id: 8,
-      category: "Mobile Veritas",
-      title: "G21 Android Smartphone Dual SIM",
-      price: 25990,
-      originalPrice: 30000,
-      image: "https://via.placeholder.com/200",
-      discount: "13%",
-      soldOut: false,
-    },
-    {
-      id: 9,
-      category: "Products-Vibe",
-      title: "Cozy Padded Earcups Headphones",
-      price: 1544,
-      image: "https://via.placeholder.com/200",
-      discount: null,
-      soldOut: true,
-    },
-  ],
-};
+import { getBestTopNewArrivalTabProducts } from "../services/apiCalls";
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
+  const [products, setProducts] = useState({
+    BestSellers: [],
+    NewArrivals: [],
+    TopSellings: [],
+  });
+
   useEffect(() => {
-    return () => {};
+    const fetchGetProducts = async () => {
+      try {
+        const response = await getBestTopNewArrivalTabProducts();
+        const { best = [], new_arrives = [], top_selling = [] } = response?.data || {};
+
+        setProducts({
+          BestSellers: best || [],
+          NewArrivals: new_arrives || [],
+          TopSellings: top_selling || [],
+        });
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchGetProducts();
   }, []);
+
+  useEffect(() => {
+    console.log("Updated products:", products);
+  }, [products]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -121,6 +55,7 @@ const TabSection = () => {
 
   return (
     <Container>
+      {/* Tabs Section */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -146,6 +81,10 @@ const TabSection = () => {
           "& .MuiTab-root:hover": {
             backgroundColor: "#d3e5ff",
           },
+          "& .MuiTab-root:hover": {
+            backgroundColor: "#000", 
+            color: "#fff",
+          }
         }}
       >
         {tabKeys.map((tab, index) => (
@@ -164,7 +103,7 @@ const TabSection = () => {
           >
             {selectedTab === index && (
               <Grid container spacing={3}>
-                {products[tab].map((product) => (
+                {products[tab]?.map((product) => (
                   <Grid item xs={12} sm={6} md={4} key={product.id}>
                     <Card
                       elevation={0}
@@ -175,8 +114,6 @@ const TabSection = () => {
                         padding: 4,
                         borderRadius: "20px",
                         position: "relative",
-                        // boxShadow: 3,
-
                         transition: "transform 0.3s, box-shadow 0.3s",
                         cursor: "pointer",
                         "&:hover": {
@@ -185,20 +122,35 @@ const TabSection = () => {
                         },
                       }}
                     >
-                      {product.soldOut && (
+                      {/* Sold Out Chip */}
+                      {product?.soldOut && (
                         <Chip
                           label="Sold Out"
                           color="error"
                           sx={{ position: "absolute", top: 16, left: 16 }}
                         />
                       )}
+                      {/* Discount Chip */}
                       {product.discount && (
                         <Chip
-                          label={product.discount}
+                          label={'-'+product.discount+'%'}
                           color="primary"
-                          sx={{ position: "absolute", top: 16, right: 16 }}
+                          sx={{
+                            position: "absolute",
+                            top: 10,
+                            right: 10,
+                            backgroundColor: "#ff4646",
+                            color: "white",
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            fontWeight: "bold",
+                            zIndex: 1,
+                            fontSize: "14px",
+                          }}
                         />
                       )}
+
+                      {/* Product Image */}
                       <CardMedia
                         component="img"
                         image={product.image}
@@ -210,6 +162,8 @@ const TabSection = () => {
                           borderRadius: 1,
                         }}
                       />
+
+                      {/* Product Details */}
                       <CardContent sx={{ flex: 1, paddingLeft: 0 }}>
                         <Typography
                           variant="caption"
@@ -219,7 +173,7 @@ const TabSection = () => {
                           {product.category}
                         </Typography>
                         <Typography variant="h6" gutterBottom>
-                          {product.title}
+                        {product?.name.length > 30 ? product?.name.slice(0, 30) + "..." : product?.name}
                         </Typography>
                         <Typography
                           variant="h5"
@@ -238,6 +192,7 @@ const TabSection = () => {
                           </Typography>
                         )}
                       </CardContent>
+                      {/* Icon Button */}
                       <IconButton>
                         <ChevronRightIcon />
                       </IconButton>

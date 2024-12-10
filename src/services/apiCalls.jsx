@@ -216,6 +216,19 @@ export const getBestBrandedProducts = async () => {
   }
 };
 
+export const getBestTopNewArrivalTabProducts = async () => {
+  try {
+    const res = await axios.get(baseUrl + "/product-tops", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error.response ? error.response.status : error;
+  }
+};
+
 export const getBestCategoryProducts = async () => {
   try {
     const res = await axios.get(baseUrl + "/best-category", {

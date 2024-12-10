@@ -42,7 +42,7 @@ const HomePage = () => {
     <>
       {settings.is_show_home_slider === 1 && <CarouselComp />}
       {settings.is_show_home_promotion === 1 && <HomeBetweenBanner />}
-      {settings.is_show_deal_promotion === 1 && <SpecialDayOfferSale/>}
+      {settings.is_show_offer_sale === 1 && <SpecialDayOfferSale/>}
       {/* {settings.is_show_best_sales === 1 && <BestSeller />} */}
       {settings.is_show_day_flash_sale === 1 && <DayFlashSale/>}
       {settings.is_show_deal_day_sale === 1 &&<DealsofDay />}
@@ -53,7 +53,7 @@ const HomePage = () => {
       {settings.is_show_best_category === 1 && <BestCategory />}
       {settings.is_show_best_brand_product === 1 && <BestBrand />}
       {settings.is_show_category_promotion === 1 && <CategoryBetweenBanner />}
-      {settings.is_show_best_sales === 1 && <TabSection />}
+      { <TabSection />}
       {<Brands />}
       <InfoSection />
       <Newsletter />
