@@ -24,8 +24,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const data = await fetchSystemData(); // Call the API function
-        setSettings(data); // Store the settings data
+        const data = await fetchSystemData();
+        setSettings(data);
       } catch (error) {
         console.error("Error fetching settings:", error);
       }
@@ -35,8 +35,9 @@ const HomePage = () => {
   }, []);
 
   if (!settings) {
-    return <div>Loading...</div>; // Show a loading state while fetching data
+    return <div>Loading...</div>;
   }
+
 
   return (
     <>

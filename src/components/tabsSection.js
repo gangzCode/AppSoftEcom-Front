@@ -14,9 +14,12 @@ import {
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Container } from "../common/Spacing";
 import { getBestTopNewArrivalTabProducts } from "../services/apiCalls";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const navigate = useNavigate();
+
 
   const [products, setProducts] = useState({
     BestSellers: [],
@@ -50,6 +53,11 @@ const TabSection = () => {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
 
   const tabKeys = Object.keys(products);
 
@@ -121,6 +129,7 @@ const TabSection = () => {
                           boxShadow: 4,
                         },
                       }}
+                      onClick={() => handleCardClick(product.id)}
                     >
                       {/* Sold Out Chip */}
                       {product?.soldOut && (

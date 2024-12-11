@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = async () => {
     try {
-      if (product.available_stock <= 0) {
+      if (product.total_stock <= 0) {
         setSnackbar({
           open: true,
           message: "Sorry, this item is out of stock",

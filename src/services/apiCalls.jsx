@@ -141,6 +141,20 @@ export const getUserAddress = async (token) => {
   }
 };
 
+export const getUserOrders = async (token) => {
+  try {
+    const response = await axios.get(baseUrl + "/my-orders", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.status || error.message;
+  }
+};
+
 export const deleteUserAddress = async (id, token) => {
   try {
     const response = await axios.delete(`${baseUrl}/address/delete/${id}`, {

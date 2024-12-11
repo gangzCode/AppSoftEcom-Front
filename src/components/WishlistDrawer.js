@@ -111,7 +111,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                   gap={0.5}
                 >
                   <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
-                    {item.name}
+                    {item?.name.length > 70 ? item?.name.slice(0, 70) + "..." : item?.name}
                   </Typography>
                   <Typography variant="body2" fontWeight={400} fontSize={12}>
                     {item.variant}
@@ -149,7 +149,7 @@ const WishlistDrawer = ({ open, onClose }) => {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}

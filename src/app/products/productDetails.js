@@ -38,6 +38,7 @@ import {
   updateCartItem,
   addToWishlist,
   getWishListofUser,
+  fetchSystemData
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -64,6 +65,37 @@ const ProductDetailsPage = () => {
     severity: "success",
   });
   const navigate = useNavigate();
+  const [systemData, setSystemData] = useState({
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
+    logo: "",
+    fbLink: "",
+    instaLink: "",
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchSystemData();
+        setSystemData({
+          name: data?.name || "Company Name",
+          address: data.address,
+          phone: data?.phone || "+1 (234) 567-890",
+          email: data?.email || "info@example.com",
+          logo: data?.logo,
+          fbLink: data?.fb_link,
+          instaLink: data?.inst_link,
+        });
+      } catch (error) {
+        console.error("Failed to fetch system data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   useEffect(() => {
     console.log(JSON.stringify(selectedCombination) + "selectedCombination");
@@ -498,7 +530,7 @@ const ProductDetailsPage = () => {
             Products
           </Link>
           <Link underline="none" color="inherit">
-            {product.name}
+            {product?.name.length > 70 ? product?.name.slice(0, 70) + "..." : product?.name}
           </Link>
         </Breadcrumbs>
       </Box>
@@ -842,15 +874,26 @@ const ProductDetailsPage = () => {
 
             <Box display="flex" gap={1} alignItems={"center"}>
               <Typography color="text.secondary">Share with us:</Typography>
-              <IconButton color="primary">
-                <FacebookIcon />
-              </IconButton>
-              <IconButton color="primary">
-                <TwitterIcon />
-              </IconButton>
-              <IconButton color="primary">
-                <InstagramIcon />
-              </IconButton>
+              {systemData.fbLink && (
+                <IconButton
+                  color="primary"
+                  aria-label="Facebook"
+                  href={systemData.fbLink}
+                  target="_blank"
+                >
+                  <FacebookIcon />
+                </IconButton>
+              )}
+              {systemData.instaLink && (
+                <IconButton
+                  color="primary"
+                  aria-label="Facebook"
+                  href={systemData.fbLink}
+                  target="_blank"
+                >
+                  <InstagramIcon />
+                </IconButton>
+              )}
             </Box>
           </Grid>
         </Grid>

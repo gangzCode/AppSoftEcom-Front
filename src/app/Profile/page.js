@@ -44,6 +44,7 @@ import {
   updateUserAddress,
   getCountries,
   getCities,
+  getUserOrders
 } from "../../services/apiCalls";
 import { Chip } from "@mui/material";
 import {
@@ -77,7 +78,6 @@ function AddressBook() {
   const [formData, setFormData] = useState({
     address: "",
     city: "",
-    state: "",
     postal_code: "",
     country: "",
     is_default: 0,
@@ -146,7 +146,6 @@ function AddressBook() {
       setFormData({
         address: "",
         city: "",
-        state: "",
         postal_code: "",
         country: "",
         is_default: 0,
@@ -188,21 +187,16 @@ function AddressBook() {
     };
 
     try {
-      // If setting a new address as default, reset all other addresses' is_default to 0
       if (addressData.is_default === 1) {
-        // Update all other addresses to have is_default = 0
         const updatedAddresses = addresses.map((addr) => ({
           ...addr,
           is_default: addr.id === selectedAddress?.id ? 1 : 0, // set the selected address as default
         }));
 
-        // Update the address list locally
         setAddresses(updatedAddresses);
 
-        // Update the backend with the new state
         await Promise.all(
           updatedAddresses.map(async (address) => {
-            // If this address is being updated or created, set it as the default
             await updateUserAddress(token, address.id, {
               ...address,
               is_default: address.is_default,
@@ -211,7 +205,6 @@ function AddressBook() {
         );
       }
 
-      // If updating an existing address
       if (selectedAddress) {
         const updatedAddress = await updateUserAddress(
           token,
@@ -220,15 +213,12 @@ function AddressBook() {
         );
         console.log("Address updated:", updatedAddress);
 
-        // Refetch the updated list of addresses from the backend
-        await fetchAddresses(); // Correct function name here
+        await fetchAddresses(); 
       } else {
-        // Create a new address
         const newAddress = await createUserAddress(addressData, token);
         console.log("Address saved:", newAddress);
 
-        // Refetch the updated list of addresses from the backend
-        await fetchAddresses(); // Correct function name here
+        await fetchAddresses(); 
       }
 
       handleCloseDialog();
@@ -257,7 +247,6 @@ function AddressBook() {
             <TableRow>
               <TableCell>Street Address</TableCell>
               <TableCell>City</TableCell>
-              <TableCell>State</TableCell>
               <TableCell>Postal Code</TableCell>
               <TableCell>Default Address</TableCell>
               <TableCell>Country</TableCell>
@@ -270,7 +259,6 @@ function AddressBook() {
                 <TableRow key={address.id}>
                   <TableCell>{address.address}</TableCell>
                   <TableCell>{address.city}</TableCell>
-                  <TableCell>{address.state || ""}</TableCell>
                   <TableCell>{address.postal_code || ""}</TableCell>
                   <TableCell>
                     {address.is_default === 1 && (
@@ -423,6 +411,32 @@ function AddressBook() {
 }
 
 const OrdersHistory = () => {
+  const { user } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+
+  const fetchOrders = async () => {
+    const savedData = localStorage.getItem("user");
+    const { token } = JSON.parse(savedData);
+
+    try {
+      const response = await getUserOrders(token);
+      const fetchOrders = response.data || [];
+
+      console.log("Fetched Addresses:", fetchOrders);
+      setOrders(fetchOrders ? fetchOrders : []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to load orders. Please try again.");
+      setOrders([]);
+    }
+  };
+
   const mockOrders = [
     {
       id: "ORD001",
@@ -454,7 +468,7 @@ const OrdersHistory = () => {
     switch (status) {
       case "Delivered":
         return "success";
-      case "Processing":
+      case "Ordered":
         return "warning";
       case "Shipped":
         return "info";
@@ -465,61 +479,54 @@ const OrdersHistory = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Recent Orders
-      </Typography>
-      <Grid container spacing={2}>
-        {mockOrders.map((order) => (
-          <Grid item xs={12} key={order.id}>
-            <Card>
-              <CardContent>
-                <Box display="flex" justifyContent="space-between" mb={2}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Order #{order.id}
-                  </Typography>
-                  <Alert severity={getStatusColor(order.status)} sx={{ py: 0 }}>
-                    {order.status}
+    <Typography variant="h6" gutterBottom>
+      Order History
+    </Typography>
+    {error && <Alert severity="error">{error}</Alert>}
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Order #</TableCell>
+            <TableCell>Date</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Total Items</TableCell>
+            <TableCell>Total Amount</TableCell>
+            <TableCell>Details</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {orders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>{order.order_no}</TableCell>
+              <TableCell>
+                {order.order_at
+                  ? new Date(order.order_at).toLocaleDateString()
+                  : "N/A"}
+              </TableCell>
+              <TableCell>
+                <Alert severity={getStatusColor(order.order_status)}>
+                    {order.order_status}
                   </Alert>
-                </Box>
-
-                <Typography color="text.secondary" gutterBottom>
-                  Ordered on: {new Date(order.date).toLocaleDateString()}
-                </Typography>
-
-                <Divider sx={{ my: 2 }} />
-
-                {order.items.map((item, index) => (
-                  <Box
-                    key={index}
-                    display="flex"
-                    justifyContent="space-between"
-                    mb={1}
-                  >
-                    <Typography>
-                      {item.quantity}x {item.name}
+                </TableCell>
+              <TableCell>{order.total_qty}</TableCell>
+              <TableCell>${parseFloat(order.final_total).toFixed(2)}</TableCell>
+              <TableCell>
+                <Box>
+                  {order.sell_lines.map((line, index) => (
+                    <Typography key={index} variant="body2">
+                      {line.quantity}x {JSON.parse(line.product_name).En} - $
+                      {parseFloat(line.line_total).toFixed(2)}
                     </Typography>
-                    <Typography>
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </Typography>
-                  </Box>
-                ))}
-
-                <Divider sx={{ my: 2 }} />
-
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Total
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    ${order.total.toFixed(2)}
-                  </Typography>
+                  ))}
                 </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </Box>
   );
 };
 

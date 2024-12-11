@@ -336,7 +336,7 @@ const ProductsPage = () => {
   const handleAddToCart = async (product) => {
     try {
       // Check stock
-      if (product.available_stock <= 0) {
+      if (product.total_stock <= 0) {
         setSnackbarMessage("Sorry, this item is out of stock");
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
@@ -909,25 +909,25 @@ const ProductsPage = () => {
                       -{product.discount}%
                     </Box>
                   )}
-                  {product.available_stock <= 0 && (
+                  {product.total_stock <= 0 && (
                     <Box
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        backgroundColor: "#7C8FAC",
-                        color: "white",
-                        width: "120px",
-                        height: "120px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        fontWeight: "bold",
-                        fontSize: "16px",
-                        zIndex: 999,
-                      }}
+                    sx={{
+                      position: "absolute",
+                      top: "40%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      backgroundColor: "rgba(124, 143, 172, 0.90)",
+                      color: "white",
+                      width: "120px",
+                      height: "120px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "50%",
+                      fontWeight: "bold",
+                      fontSize: "16px",
+                      zIndex: 999,
+                    }}
                     >
                       Out of Stock
                     </Box>
@@ -960,7 +960,7 @@ const ProductsPage = () => {
                       <Box
                         component="img"
                         src={
-                          product.image ||
+                          product.images[0] ||
                           "https://placehold.co/360x340?text=Image+Not+Found"
                         }
                         alt={product.description}

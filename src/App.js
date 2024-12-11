@@ -42,9 +42,9 @@ function Layout() {
   return (
     <>
       <DynamicFavicon />
-      <Box>
+      {/* <Box>
         <TopBar />
-      </Box>
+      </Box> */}
       <Box paddingX={{ xs: "1em", md: "8em" }}>
         {!isAuthPage && <Navbar />}
         <Routes>
