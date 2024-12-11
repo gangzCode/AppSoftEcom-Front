@@ -38,7 +38,7 @@ import {
   updateCartItem,
   addToWishlist,
   getWishListofUser,
-  fetchSystemData
+  fetchSystemData,
 } from "../../services/apiCalls";
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
@@ -59,6 +59,7 @@ const ProductDetailsPage = () => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -95,7 +96,6 @@ const ProductDetailsPage = () => {
 
     fetchData();
   }, []);
-
 
   useEffect(() => {
     console.log(JSON.stringify(selectedCombination) + "selectedCombination");
@@ -239,7 +239,6 @@ const ProductDetailsPage = () => {
 
   const getStockForSelection = useCallback(() => {
     if (!product) return 0;
-  
     if (product.product_variation_combination?.length) {
       const matchingCombination = product.product_variation_combination.find(
         (combination) =>
@@ -248,14 +247,11 @@ const ProductDetailsPage = () => {
       );
       return matchingCombination ? matchingCombination.stock : 0;
     }
-  
     if (product.is_single_product && product.total_stock) {
       return parseInt(product.total_stock, 10);
     }
-  
     return 0;
   }, [selectedVariations, product]);
-  
 
   const availableStock = getStockForSelection();
 
@@ -286,13 +282,51 @@ const ProductDetailsPage = () => {
     [product, selectedVariations]
   );
 
-  const areAllVariationsSelected = useCallback(() => {
-    if (!product?.product_variation_tempalte?.length) return true;
+  const findFirstAvailableOption = useCallback(
+    (variation) => {
+      const optionWithStock = variation.option.find((option) => {
+        return product.product_variation_combination.some(
+          (combination) =>
+            combination.stock > 0 &&
+            combination.attributes[variation.name] === option.name
+        );
+      });
 
-    return product.product_variation_tempalte.every(
-      (variation) => selectedVariations[variation.name]
-    );
-  }, [product, selectedVariations]);
+      return optionWithStock || variation.option[0];
+    },
+    [product]
+  );
+
+  useEffect(() => {
+    if (product?.product_variation_tempalte?.length > 0) {
+      const initialVariations = {};
+
+      product.product_variation_tempalte.forEach((variation) => {
+        const firstOption = findFirstAvailableOption(variation);
+        if (firstOption) {
+          initialVariations[variation.name] = firstOption.name;
+        }
+      });
+
+      const matchingCombination = product.product_variation_combination.find(
+        (combination) =>
+          Object.entries(initialVariations).every(
+            ([key, value]) => combination.attributes[key] === value
+          )
+      );
+
+      if (matchingCombination) {
+        setSelectedCombination({
+          id: matchingCombination.attribute_id,
+          price: matchingCombination.price || product?.sales_price,
+          stock: matchingCombination.stock,
+          sku: matchingCombination.sku,
+        });
+      }
+
+      setSelectedVariations(initialVariations);
+    }
+  }, [product, findFirstAvailableOption]);
 
   const handleSelectVariation = (variationName, selectedOption) => {
     setSelectedVariations((prev) => ({
@@ -366,12 +400,14 @@ const ProductDetailsPage = () => {
   const handleAddToCart = async () => {
     try {
       setIsAddingToCart(true);
-  
+
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
-  
-      const isSingleProduct = !product.product_variation_combination || product.product_variation_combination.length === 0;
-  
+
+      const isSingleProduct =
+        !product.product_variation_combination ||
+        product.product_variation_combination.length === 0;
+
       let existingItem;
       if (isSingleProduct) {
         existingItem = cartItems.find((item) => item.product.id === product.id);
@@ -382,10 +418,10 @@ const ProductDetailsPage = () => {
             item.variant_id === selectedCombination.id
         );
       }
-  
+
       if (existingItem) {
         const newQuantity = parseFloat(existingItem.quantity) + quantity;
-  
+
         if (newQuantity > existingItem.stock) {
           setSnackbarSeverity("warning");
           setSnackbarMessage("Cannot exceed available stock");
@@ -393,13 +429,13 @@ const ProductDetailsPage = () => {
           setIsAddingToCart(false);
           return;
         }
-  
+
         await updateCartItem({
           card_id: existingItem.card_id,
           quantity: newQuantity?.toString(),
           discount: existingItem.discount,
         });
-  
+
         setSnackbarSeverity("success");
         setSnackbarMessage(
           isSingleProduct
@@ -425,14 +461,14 @@ const ProductDetailsPage = () => {
               variant_id: selectedCombination.id,
               unit_price: selectedCombination?.price?.toString(),
             };
-  
+
         const userStr = localStorage.getItem("user");
         if (userStr) {
           await addToCart(getAuthToken(), cartItem);
         } else {
           await addToCartGuest(cartItem);
         }
-  
+
         setSnackbarSeverity("success");
         setSnackbarMessage("Added to cart successfully");
         setSnackbarOpen(true);
@@ -445,11 +481,11 @@ const ProductDetailsPage = () => {
     } finally {
       setIsAddingToCart(false);
     }
-  };  
+  };
 
   const handleBuyNow = async () => {
     try {
-      setIsAddingToCart(true);
+      setIsBuyingNow(true);
 
       // Check stock
       if (availableStock <= 0) {
@@ -518,7 +554,7 @@ const ProductDetailsPage = () => {
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
-      setIsAddingToCart(false);
+      setIsBuyingNow(false);
     }
   };
 
@@ -558,7 +594,9 @@ const ProductDetailsPage = () => {
             Products
           </Link>
           <Link underline="none" color="inherit">
-            {product?.name.length > 70 ? product?.name.slice(0, 70) + "..." : product?.name}
+            {product?.name.length > 70
+              ? product?.name.slice(0, 70) + "..."
+              : product?.name}
           </Link>
         </Breadcrumbs>
       </Box>
@@ -862,7 +900,11 @@ const ProductDetailsPage = () => {
                   sx={{ width: "100%" }}
                   startIcon={<ShoppingCartIcon />}
                 >
-                  Add to Cart
+                  {isAddingToCart ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Add to Cart"
+                  )}
                 </LoadingButton>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -883,10 +925,10 @@ const ProductDetailsPage = () => {
                   color="blackbutton"
                   fullWidth
                   sx={{ py: 1, mb: 2 }}
-                  disabled={availableStock === 0 || isAddingToCart}
+                  disabled={availableStock === 0 || isBuyingNow}
                   onClick={handleBuyNow}
                 >
-                  {isAddingToCart ? (
+                  {isBuyingNow ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
                     "Buy It Now"

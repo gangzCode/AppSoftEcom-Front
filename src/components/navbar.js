@@ -468,14 +468,14 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Box>
         <List sx={{ width: "100%", mt: 15 }}>
           <Typography variant="h4" fontWeight={"light"} gutterBottom>
-            All Categories
+            Categories
           </Typography>
-          {categories.map((category) => (
-            <div key={category.id}>
+          {menus.map((menu) => (
+            <div key={menu.id}>
               <ListItem
                 button
                 component={RouterLink}
-                to={`/products/${category.id}`}
+                to={`/products/${menu.id}`}
                 onClick={toggleMenu}
                 sx={{
                   py: 1.5,
@@ -484,13 +484,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   },
                 }}
               >
-                <img
-                  src={category.image}
-                  alt={category.name.En}
-                  style={{ width: 24, height: 24, marginRight: 12 }}
-                />
                 <ListItemText
-                  primary={category.name}
+                  primary={menu.name}
                   primaryTypographyProps={{
                     fontSize: "15px",
                     fontWeight: 500,
@@ -504,32 +499,31 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       </Drawer>
 
       <Grid display={"flex"} alignItems={"center"} py={2}>
-        {!isMobile && (
-          <Button
-            color="inherit"
-            sx={{
-              backgroundColor: "#2189ff",
-              boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
-              color: "white",
-              borderRadius: "20px",
-              height: "fit-content",
-              "&:hover": {
-                backgroundColor: "#1a76d2",
-              },
-              padding: ".7em 4em",
-            }}
-            endIcon={<ExpandMore />}
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleCatClick}
-          >
-            <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
-              All Categories
-            </Typography>
-          </Button>
-        )}
+        <Button
+          color="inherit"
+          sx={{
+            backgroundColor: "#2189ff",
+            boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
+            color: "white",
+            borderRadius: "20px",
+            height: "fit-content",
+            "&:hover": {
+              backgroundColor: "#1a76d2",
+            },
+            padding: ".7em 4em",
+          }}
+          endIcon={<ExpandMore />}
+          id="basic-button"
+          aria-controls={open ? "basic-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleCatClick}
+        >
+          <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
+            All Categories
+          </Typography>
+        </Button>
+
         <Menu
           sx={{
             width: "100%",
