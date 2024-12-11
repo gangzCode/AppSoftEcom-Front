@@ -17,6 +17,11 @@ import DayFlashSale from "../components/dayFlashSale";
 import SpecialDayOfferSale from "../components/specialDayOfferSale";
 import MonthlyFlashSale from "../components/monthlyFlashSale";
 import DealsofMonth from "../components/dealsofMonth";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
 const HomePage = () => {
   const [settings, setSettings] = useState(null);
@@ -35,7 +40,20 @@ const HomePage = () => {
   }, []);
 
   if (!settings) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+      >
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Loading Home Page...
+        </Typography>
+      </Box>
+    );
   }
 
 
