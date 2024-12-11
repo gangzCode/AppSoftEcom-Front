@@ -65,7 +65,7 @@ function CartItem({ item, onQuantityChange }) {
         alignItems={"flex-start"}
       >
         <Typography sx={{ fontSize: "1.5em", fontWeight: 400 }}>
-          {item.product.name}
+          {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
         </Typography>
         <Typography variant="body1" color="text.secondary">
           ${item.unit_price}

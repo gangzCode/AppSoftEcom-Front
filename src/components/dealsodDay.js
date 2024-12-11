@@ -12,11 +12,15 @@ import { getDealsofDayProducts } from "../services/apiCalls"; // Adjust import a
 const DealsofDay = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [title, setTitle] = useState("Default Title"); // Initialize with default
+  const [subTitle, setSubTitle] = useState("Default Subtitle");
 
   useEffect(() => {
     const fetchGetProducts = async () => {
       try {
         const response = await getDealsofDayProducts();
+        setTitle(response?.title || "Default Title");
+        setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response.data);
         
         console.log("Products deal of the day", response.data);
@@ -95,10 +99,10 @@ const DealsofDay = () => {
           },
         }}
       >
-        TRENDING DEALS
+        {subTitle}
       </Typography>
       <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
-        Deals on this Day
+        {title}
       </Typography>
       <Box sx={{ padding: "40px 0" }}>
         <Grid container spacing={4}>
