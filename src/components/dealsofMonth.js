@@ -7,13 +7,16 @@ import {
 } from "@mui/icons-material";
 import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
 import React, { useState,useEffect } from "react";
-import { getDealsofMonthProducts } from "../services/apiCalls"; // Adjust import as needed
+import { getDealsofMonthProducts } from "../services/apiCalls"; 
+import { useNavigate } from "react-router-dom";
 
 const DealsofDay = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [title, setTitle] = useState("Default Title"); // Initialize with default
+  const [title, setTitle] = useState("Default Title");
   const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchGetProducts = async () => {
@@ -31,6 +34,10 @@ const DealsofDay = () => {
 
     fetchGetProducts();
   }, []);
+
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   const cards = [
     {
@@ -123,6 +130,7 @@ const DealsofDay = () => {
                 backgroundColor: "#fff",
                 flexGrow: 1,
               }}
+              onClick={() => handleCardClick(products[0]?.id)}
             >
               <Box
                 component="img"
@@ -194,6 +202,7 @@ const DealsofDay = () => {
                         boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                       },
                     }}
+                    onClick={() => handleCardClick(card?.id)}
                     onMouseEnter={() => setHoveredProductId(card.id)}
                     onMouseLeave={() => setHoveredProductId(null)}
                   >
@@ -331,6 +340,7 @@ const DealsofDay = () => {
                         boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                       },
                     }}
+                    onClick={() => handleCardClick(card?.id)}
                     onMouseEnter={() => setHoveredProductId(card.id)}
                     onMouseLeave={() => setHoveredProductId(null)}
                   >
