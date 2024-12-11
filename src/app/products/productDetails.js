@@ -238,16 +238,24 @@ const ProductDetailsPage = () => {
   const totalPrice = calculateTotalPrice();
 
   const getStockForSelection = useCallback(() => {
-    if (!product?.product_variation_combination?.length) return 0;
-
-    const matchingCombination = product.product_variation_combination.find(
-      (combination) =>
-        JSON.stringify(combination.attributes) ===
-        JSON.stringify(selectedVariations)
-    );
-
-    return matchingCombination ? matchingCombination.stock : 0;
+    if (!product) return 0;
+  
+    if (product.product_variation_combination?.length) {
+      const matchingCombination = product.product_variation_combination.find(
+        (combination) =>
+          JSON.stringify(combination.attributes) ===
+          JSON.stringify(selectedVariations)
+      );
+      return matchingCombination ? matchingCombination.stock : 0;
+    }
+  
+    if (product.is_single_product && product.total_stock) {
+      return parseInt(product.total_stock, 10);
+    }
+  
+    return 0;
   }, [selectedVariations, product]);
+  
 
   const availableStock = getStockForSelection();
 
@@ -358,19 +366,26 @@ const ProductDetailsPage = () => {
   const handleAddToCart = async () => {
     try {
       setIsAddingToCart(true);
-
+  
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
-
-      const existingItem = cartItems.find(
-        (item) =>
-          item.product.id === product.id &&
-          item.variant_id === selectedCombination.id
-      );
-
+  
+      const isSingleProduct = !product.product_variation_combination || product.product_variation_combination.length === 0;
+  
+      let existingItem;
+      if (isSingleProduct) {
+        existingItem = cartItems.find((item) => item.product.id === product.id);
+      } else {
+        existingItem = cartItems.find(
+          (item) =>
+            item.product.id === product.id &&
+            item.variant_id === selectedCombination.id
+        );
+      }
+  
       if (existingItem) {
         const newQuantity = parseFloat(existingItem.quantity) + quantity;
-
+  
         if (newQuantity > existingItem.stock) {
           setSnackbarSeverity("warning");
           setSnackbarMessage("Cannot exceed available stock");
@@ -378,33 +393,46 @@ const ProductDetailsPage = () => {
           setIsAddingToCart(false);
           return;
         }
-
+  
         await updateCartItem({
           card_id: existingItem.card_id,
           quantity: newQuantity?.toString(),
           discount: existingItem.discount,
         });
-
+  
         setSnackbarSeverity("success");
-        setSnackbarMessage("Quantity updated for the selected combination.");
+        setSnackbarMessage(
+          isSingleProduct
+            ? "Quantity updated for the single product."
+            : "Quantity updated for the selected combination."
+        );
         setSnackbarOpen(true);
       } else {
-        const cartItem = {
-          product_id: product.id,
-          discount: product.discount || "",
-          quantity: quantity?.toString(),
-          line_discount_type: "percentage",
-          variant_id: selectedCombination.id,
-          unit_price: selectedCombination?.price?.toString(),
-        };
-
+        const cartItem = isSingleProduct
+          ? {
+              product_id: product.id,
+              discount: product.discount || "",
+              quantity: quantity?.toString(),
+              line_discount_type: "percentage",
+              variant_id: null, // No variant for single product
+              unit_price: product.sales_price?.toString(),
+            }
+          : {
+              product_id: product.id,
+              discount: product.discount || "",
+              quantity: quantity?.toString(),
+              line_discount_type: "percentage",
+              variant_id: selectedCombination.id,
+              unit_price: selectedCombination?.price?.toString(),
+            };
+  
         const userStr = localStorage.getItem("user");
         if (userStr) {
           await addToCart(getAuthToken(), cartItem);
         } else {
           await addToCartGuest(cartItem);
         }
-
+  
         setSnackbarSeverity("success");
         setSnackbarMessage("Added to cart successfully");
         setSnackbarOpen(true);
@@ -417,7 +445,7 @@ const ProductDetailsPage = () => {
     } finally {
       setIsAddingToCart(false);
     }
-  };
+  };  
 
   const handleBuyNow = async () => {
     try {
