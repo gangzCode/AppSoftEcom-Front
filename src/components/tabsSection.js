@@ -14,7 +14,7 @@ import {
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Container } from "../common/Spacing";
 import { getBestTopNewArrivalTabProducts } from "../services/apiCalls";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -63,7 +63,6 @@ const TabSection = () => {
 
   return (
     <Container>
-      {/* Tabs Section */}
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}

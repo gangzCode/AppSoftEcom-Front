@@ -7,16 +7,23 @@ import {
 } from "@mui/icons-material";
 import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
 import React, { useState,useEffect } from "react";
-import { getDealsofDayProducts } from "../services/apiCalls"; // Adjust import as needed
+import { getDealsofDayProducts } from "../services/apiCalls";
+import { useNavigate } from "react-router-dom";
 
 const DealsofDay = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [title, setTitle] = useState("Default Title");
+  const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchGetProducts = async () => {
       try {
         const response = await getDealsofDayProducts();
+        setTitle(response?.title || "Default Title");
+        setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response.data);
         
         console.log("Products deal of the day", response.data);
@@ -27,6 +34,10 @@ const DealsofDay = () => {
 
     fetchGetProducts();
   }, []);
+
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   const cards = [
     {
@@ -95,10 +106,10 @@ const DealsofDay = () => {
           },
         }}
       >
-        TRENDING DEALS
+        {subTitle}
       </Typography>
       <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
-        Deals on this Day
+        {title}
       </Typography>
       <Box sx={{ padding: "40px 0" }}>
         <Grid container spacing={4}>
@@ -119,6 +130,7 @@ const DealsofDay = () => {
                 backgroundColor: "#fff",
                 flexGrow: 1,
               }}
+              onClick={() => handleCardClick(products[0]?.id)}
             >
               <Box
                 component="img"
@@ -190,6 +202,7 @@ const DealsofDay = () => {
                         boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                       },
                     }}
+                    onClick={() => handleCardClick(card?.id)}
                     onMouseEnter={() => setHoveredProductId(card.id)}
                     onMouseLeave={() => setHoveredProductId(null)}
                   >
@@ -327,6 +340,7 @@ const DealsofDay = () => {
                         boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                       },
                     }}
+                    onClick={() => handleCardClick(card[0]?.id)}
                     onMouseEnter={() => setHoveredProductId(card.id)}
                     onMouseLeave={() => setHoveredProductId(null)}
                   >

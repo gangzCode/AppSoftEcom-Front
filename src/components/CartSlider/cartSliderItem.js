@@ -51,7 +51,7 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
           gap={0.5}
         >
           <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
-            {item.product.name}
+            {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
           </Typography>
           <Typography variant="body2" fontWeight={400} fontSize={12}>
             {item.variant}

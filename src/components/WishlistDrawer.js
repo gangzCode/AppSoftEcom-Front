@@ -12,8 +12,10 @@ import {
   Alert,
   Drawer
 } from "@mui/material";
-import { Close, DeleteOutline } from "@mui/icons-material"; // Import Delete icon
-import { getWishListofUser, deleteWishlistItem } from "../services/apiCalls"; // Import the API function for fetching wishlist
+import { Close, DeleteOutline } from "@mui/icons-material";
+import { getWishListofUser, deleteWishlistItem } from "../services/apiCalls";
+import { useNavigate } from "react-router-dom";
+
 
 const WishlistDrawer = ({ open, onClose }) => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -21,6 +23,7 @@ const WishlistDrawer = ({ open, onClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
@@ -59,6 +62,10 @@ const WishlistDrawer = ({ open, onClose }) => {
     }
   };
 
+  const handleNavigateToProductDetail = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -92,8 +99,9 @@ const WishlistDrawer = ({ open, onClose }) => {
           {wishlistItems.map((item) => (
             <Grid
               container
-              key={item.wishlist_id}
+              key={item.id}
               sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
+              onClick={() => handleNavigateToProductDetail(item.id)}
             >
               <Grid item xs={3}>
                 <Avatar

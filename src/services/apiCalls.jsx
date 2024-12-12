@@ -918,7 +918,7 @@ export const placeOrder = async (orderData) => {
     } else {
       const ip_address = await getIPAddress();
       response = await axios.post(
-        `${baseUrl}/guest/place-order`,
+        `${baseUrl}/guest/order`,
         {
           ...orderData,
           ip_address,
