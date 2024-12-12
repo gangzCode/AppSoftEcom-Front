@@ -52,7 +52,24 @@ const CartPage = () => {
     };
 
     fetchIp();
+    fetchCartItems();
   }, []);
+
+  const fetchCartItems = async () => {
+    try {
+      setLoading(true);
+      const response = await getCartDetails();
+      if (!response.data) {
+        setCartItems([]);
+      } else {
+        setCartItems(response.data);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDeleteItem = async (cardId) => {
     try {
@@ -187,7 +204,9 @@ const CartPage = () => {
                       />
                       <Box>
                         <Typography variant="subtitle1">
-                          {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
+                          {item?.product?.name.length > 70
+                            ? item?.product?.name.slice(0, 70) + "..."
+                            : item?.product?.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {item.variant}

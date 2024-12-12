@@ -17,11 +17,8 @@ import DayFlashSale from "../components/dayFlashSale";
 import SpecialDayOfferSale from "../components/specialDayOfferSale";
 import MonthlyFlashSale from "../components/monthlyFlashSale";
 import DealsofMonth from "../components/dealsofMonth";
-import {
-  Box,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import ScrollTransition from "../common/ScrollTransition";
 
 const HomePage = () => {
   const [settings, setSettings] = useState(null);
@@ -56,26 +53,72 @@ const HomePage = () => {
     );
   }
 
-
   return (
     <>
-      {settings.is_show_home_slider === 1 && <CarouselComp />}
-      {settings.is_show_home_promotion === 1 && <HomeBetweenBanner />}
-      {settings.is_show_offer_sale === 1 && <SpecialDayOfferSale/>}
-      {/* {settings.is_show_best_sales === 1 && <BestSeller />} */}
-      {settings.is_show_day_flash_sale === 1 && <DayFlashSale/>}
-      {settings.is_show_deal_day_sale === 1 &&<DealsofDay />}
-      {settings.is_show_deal_promotion === 1 && <DealsBetweenBanner />}
-      {settings.is_show_month_flash_sale === 1 && <MonthlyFlashSale/>}
-      {settings.is_show_deal_month_sale === 1 &&<DealsofMonth/>}
-      {settings.is_show_top_promotion === 1 && <TopSellingBetweenBanner />}
-      {settings.is_show_best_category === 1 && <BestCategory />}
-      {settings.is_show_best_brand_product === 1 && <BestBrand />}
-      {settings.is_show_category_promotion === 1 && <CategoryBetweenBanner />}
-      { <TabSection />}
-      {<Brands />}
-      <InfoSection />
-      <Newsletter />
+      <ScrollTransition>
+        {settings.is_show_home_slider === 1 && <CarouselComp />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_home_promotion === 1 && <HomeBetweenBanner />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_offer_sale === 1 && <SpecialDayOfferSale />}
+      </ScrollTransition>
+
+      {/* Apply ScrollTransition to remaining sections */}
+      <ScrollTransition>
+        {settings.is_show_day_flash_sale === 1 && <DayFlashSale />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_deal_day_sale === 1 && <DealsofDay />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_deal_promotion === 1 && <DealsBetweenBanner />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_month_flash_sale === 1 && <MonthlyFlashSale />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_deal_month_sale === 1 && <DealsofMonth />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_top_promotion === 1 && <TopSellingBetweenBanner />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_best_category === 1 && <BestCategory />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_best_brand_product === 1 && <BestBrand />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        {settings.is_show_category_promotion === 1 && <CategoryBetweenBanner />}
+      </ScrollTransition>
+
+      <ScrollTransition>
+        <TabSection />
+      </ScrollTransition>
+
+      <ScrollTransition>
+        <Brands />
+      </ScrollTransition>
+
+      <ScrollTransition>
+        <InfoSection />
+      </ScrollTransition>
+
+      <ScrollTransition>
+        <Newsletter />
+      </ScrollTransition>
     </>
   );
 };
