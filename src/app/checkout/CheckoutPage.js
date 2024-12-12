@@ -9,7 +9,6 @@ const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [shippingCharge, setShippingCharge] = useState(0);
-  const [note, setNote] = useState("");
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -23,9 +22,6 @@ const CheckoutPage = () => {
       }
     };
     fetchCart();
-
-    const savedNote = localStorage.getItem("cartNote");
-    if (savedNote) setNote(savedNote);
   }, []);
 
   const handleShippingChargeUpdate = (charge) => {
@@ -44,10 +40,7 @@ const CheckoutPage = () => {
       sx={{ width: { xs: "100%", md: "1300px" }, mx: "auto", my: 6 }}
     >
       <Grid item xs={12} md={6} mr={{ xs: 0, md: 4 }} mb={{ xs: 4, md: 0 }}>
-        <CheckoutForm
-          onShippingChargeUpdate={handleShippingChargeUpdate}
-          orderNote={note}
-        />
+        <CheckoutForm onShippingChargeUpdate={handleShippingChargeUpdate} />
       </Grid>
       <Grid item container rowGap={2} alignContent={"flex-start"} xs={12} md>
         <Grid item display={{ xs: "block", md: "none" }}>

@@ -42,14 +42,14 @@ const BestsellerSlider = () => {
           justifyContent: "center",
           position: "absolute",
           top: "50%",
-          right: "10px",
+          right: { xs: "5px", sm: "10px" },
           transform: "translateY(-50%)",
           backgroundColor: "#007bff",
           borderRadius: "8px",
-          width: "40px",
-          height: "40px",
+          width: { xs: "35px", sm: "40px" },
+          height: { xs: "35px", sm: "40px" },
           cursor: "pointer",
-          opacity: 0,
+          opacity: { xs: 1, sm: 0 },
           transition: "opacity 0.3s",
           "&:hover": {
             backgroundColor: "#0056b3",
@@ -58,7 +58,10 @@ const BestsellerSlider = () => {
         }}
         className="slick-arrow"
       >
-        <ArrowForwardIosIcon sx={{ color: "#fff", fontSize: "20px" }} />
+        <ArrowForwardIosIcon sx={{ 
+          color: "#fff", 
+          fontSize: { xs: "16px", sm: "20px" } 
+        }} />
       </Box>
     );
   }
@@ -74,14 +77,14 @@ const BestsellerSlider = () => {
           justifyContent: "center",
           position: "absolute",
           top: "50%",
-          left: "10px",
+          left: { xs: "5px", sm: "10px" },
           transform: "translateY(-50%)",
           backgroundColor: "#007bff",
           borderRadius: "8px",
-          width: "40px",
-          height: "40px",
+          width: { xs: "35px", sm: "40px" },
+          height: { xs: "35px", sm: "40px" },
           cursor: "pointer",
-          opacity: 0,
+          opacity: { xs: 1, sm: 0 },
           transition: "opacity 0.3s",
           "&:hover": {
             backgroundColor: "#0056b3",
@@ -90,7 +93,10 @@ const BestsellerSlider = () => {
         }}
         className="slick-arrow"
       >
-        <ArrowBackIosNewIcon sx={{ color: "#fff", fontSize: "20px" }} />
+        <ArrowBackIosNewIcon sx={{ 
+          color: "#fff", 
+          fontSize: { xs: "16px", sm: "20px" } 
+        }} />
       </Box>
     );
   }

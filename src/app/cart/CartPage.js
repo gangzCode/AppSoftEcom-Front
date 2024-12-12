@@ -41,7 +41,6 @@ const CartPage = () => {
   const [clearingCart, setClearingCart] = useState(false);
   const [ipAddress, setIpAddress] = useState(null);
 
-
   useEffect(() => {
     const fetchIp = async () => {
       try {
@@ -53,34 +52,18 @@ const CartPage = () => {
     };
 
     fetchIp();
-    fetchCartItems();
   }, []);
-
-  const fetchCartItems = async () => {
-    try {
-      setLoading(true);
-      const response = await getCartDetails();
-
-      if (!response.data) {
-        setCartItems([]);
-      } else {
-        setCartItems(response.data);
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteItem = async (cardId) => {
     try {
       setLoadingItems((prev) => ({ ...prev, [cardId]: true }));
-  
+
       await deleteCartItem(cardId);
-  
-      setCartItems((prevItems) => prevItems.filter((item) => item.card_id !== cardId));
-  
+
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.card_id !== cardId)
+      );
+
       setSnackbarMessage("Item removed from cart");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -93,7 +76,6 @@ const CartPage = () => {
       setLoadingItems((prev) => ({ ...prev, [cardId]: false }));
     }
   };
-  
 
   const handleClearCart = async () => {
     try {
@@ -110,7 +92,6 @@ const CartPage = () => {
         throw new Error("Unable to clear cart without token or IP address.");
       }
 
-      fetchCartItems();
       setSnackbarMessage("Cart cleared successfully.");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -124,17 +105,16 @@ const CartPage = () => {
     }
   };
 
-
   const handleQuantityChange = async (item, newQuantity) => {
     try {
       setLoadingItems((prev) => ({ ...prev, [item.card_id]: true }));
-  
+
       await updateCartItem({
         card_id: item.card_id,
         quantity: newQuantity.toString(),
         discount: item.discount,
       });
-  
+
       setCartItems((prevItems) =>
         prevItems.map((cartItem) =>
           cartItem.card_id === item.card_id
@@ -142,7 +122,7 @@ const CartPage = () => {
             : cartItem
         )
       );
-  
+
       setSnackbarMessage("Quantity updated successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -155,7 +135,6 @@ const CartPage = () => {
       setLoadingItems((prev) => ({ ...prev, [item.card_id]: false }));
     }
   };
-  
 
   if (loading) {
     return (
@@ -300,7 +279,11 @@ const CartPage = () => {
                       onClick={() => handleDeleteItem(item.card_id)}
                       disabled={loadingItems[item.card_id]}
                     >
-                      {loadingItems[item.card_id] ? <CircularProgress size={20} /> : <DeleteOutline />}
+                      {loadingItems[item.card_id] ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <DeleteOutline />
+                      )}
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -325,9 +308,6 @@ const CartPage = () => {
             >
               Clear Cart
             </LoadingButton>
-            <Button variant="contained" onClick={fetchCartItems}>
-              Update Cart
-            </Button>
           </Grid>
         </Grid>
       </Grid>

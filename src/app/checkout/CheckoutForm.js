@@ -18,6 +18,7 @@ import {
   Radio,
   Snackbar,
   Alert,
+  TextareaAutosize,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -33,7 +34,7 @@ import {
   getIPAddress,
 } from "../../services/apiCalls";
 
-function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
+function CheckoutForm({ onShippingChargeUpdate }) {
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -64,6 +65,8 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
   const [paymentTypes, setPaymentTypes] = useState([]);
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
   const [orderProcessing, setOrderProcessing] = useState(false);
+  const [orderNote, setorderNote] = useState("");
+  const [discountCode, setdiscountCode] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -145,12 +148,6 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
 
     fetchUserDataAndAddresses();
   }, []);
-
-  useEffect(() => {
-    console.log(orderNote + "orderNote");
-
-    return () => {};
-  }, [orderNote]);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -662,14 +659,47 @@ function CheckoutForm({ onShippingChargeUpdate, orderNote }) {
       </Box>
 
       <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
+        Discount Code
+      </Typography>
+      <Box
+        sx={{
+          p: 2,
+          bgcolor: "#f5faff",
+          borderRadius: 1,
+          display: "flex",
+          gap: 2,
+        }}
+      >
+        <TextField
+          fullWidth
+          value={discountCode}
+          onChange={(e) => {
+            setdiscountCode(e.target.value);
+          }}
+          placeholder="Enter discount code..."
+          minRows={4}
+          maxRows={7}
+          variant="outlined"
+        />
+        <Button
+          variant="contained"
+          onClick={handleOpenAddressDialog}
+          sx={{ minWidth: "auto", px: 3 }}
+        >
+          Apply
+        </Button>
+      </Box>
+
+      <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
         Order Notes
       </Typography>
       <Box sx={{ p: 2, bgcolor: "#f5faff", borderRadius: 1 }}>
         <TextField
           fullWidth
+          multiline
           value={orderNote}
           onChange={(e) => {
-            localStorage.setItem("cartNote", e.target.value);
+            setorderNote(e.target.value);
           }}
           placeholder="Add a note to your order..."
           minRows={4}

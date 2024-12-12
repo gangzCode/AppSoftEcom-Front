@@ -32,6 +32,8 @@ import {
   RadioGroup,
   Snackbar,
   Alert,
+  Fab,
+  Drawer,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
@@ -46,6 +48,8 @@ import {
   PlusOne,
   Search,
   ShoppingCart,
+  FilterList as FilterListIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import CarouselSection from "../../components/carousel";
 import BestsellerSlider from "../../components/bestsellerSlider";
@@ -81,6 +85,7 @@ const ProductsPage = () => {
   const { categoryId } = useParams();
   const [wishlistItems, setWishlistItems] = useState([]);
   const [isInWishlist, setIsInWishlist] = useState({});
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -471,7 +476,13 @@ const ProductsPage = () => {
         </Breadcrumbs>
       </Box>
       <Box sx={{ display: "flex", padding: "20px 0" }}>
-        <Box sx={{ width: "20%", paddingRight: "2.5em" }}>
+        <Box
+          sx={{
+            width: "20%",
+            paddingRight: "2.5em",
+            display: { xs: "none", md: "block" },
+          }}
+        >
           <Box>
             <Accordion
               expanded={subcategoryName?.length}
@@ -710,7 +721,7 @@ const ProductsPage = () => {
           </Box>
         </Box>
 
-        <Box sx={{ width: "80%" }}>
+        <Box sx={{ width: { md: "80%", xs: "100%" } }}>
           <Box
             sx={{
               marginBottom: "30px",
@@ -733,7 +744,7 @@ const ProductsPage = () => {
               {totalProductCount} Products available
             </Typography>
           </Box>
-          
+
           <Box
             sx={{
               display: "flex",
@@ -866,6 +877,7 @@ const ProductsPage = () => {
           <Grid
             container
             gap={"34px"}
+            justifyContent={{ md: "flex-start", xs: "center" }}
             direction={displayMode === "grid" ? "row" : "column"}
           >
             {getFilteredProducts()
@@ -878,7 +890,7 @@ const ProductsPage = () => {
                     display: "flex",
                     flexDirection: "column",
                     minWidth: "280px",
-                    width: "31%",
+                    width: { md: "31%", xs: "90%" },
                     padding: "20px",
                     borderRadius: "20px",
                     backgroundColor: "#f5f5f5",
@@ -1144,6 +1156,307 @@ const ProductsPage = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "fixed",
+          top: "50%",
+          left: 0,
+          transform: "translateY(-50%)",
+          zIndex: 1000,
+        }}
+      >
+        <Fab
+          color="primary"
+          onClick={() => setFilterDrawerOpen(true)}
+          sx={{
+            backgroundColor: "#2189ff",
+            borderRadius: "0 8px 8px 0",
+            width: "40px",
+            height: "50px",
+            "&:hover": {
+              backgroundColor: "#1976d2",
+            },
+          }}
+        >
+          <FilterListIcon sx={{ fontSize: "1.2rem" }} />
+        </Fab>
+      </Box>
+
+      <Drawer
+        anchor="left"
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            width: "85%",
+            maxWidth: "360px",
+            padding: 2,
+            paddingTop: 0,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            position: "sticky",
+            top: 0,
+            bgcolor: "background.paper",
+            zIndex: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              py: 2,
+            }}
+          >
+            <Typography variant="h6">Filters</Typography>
+            <IconButton onClick={() => setFilterDrawerOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Box sx={{}}>
+          <Accordion
+            expanded={subcategoryName?.length}
+            sx={{ boxShadow: "none" }}
+          >
+            <AccordionSummary expandIcon={<Add />}>
+              <Typography>Subcategories</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Subcategory</InputLabel>
+                  <Select
+                    value={selectedSubCategory}
+                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                    label="Subcategory"
+                  >
+                    <MenuItem value="">All Subcategories</MenuItem>
+                    {products[0]?.category &&
+                      getCategoriesAndSubcategories()[
+                        JSON.parse(products[0]?.category?.name)?.En
+                      ]?.map((subCategory) => (
+                        <MenuItem key={subCategory} value={subCategory}>
+                          {subCategory}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion sx={{ boxShadow: "none" }}>
+            <AccordionSummary expandIcon={<Add />}>
+              <Typography>Brands</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Brand</InputLabel>
+                  <Select
+                    value={selectedBrand}
+                    onChange={(e) => setSelectedBrand(e.target.value)}
+                    label="Brand"
+                  >
+                    <MenuItem value="">All Brands</MenuItem>
+                    {getBrands().map((brand) => (
+                      <MenuItem key={brand} value={brand}>
+                        {brand}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion sx={{ boxShadow: "none" }}>
+            <AccordionSummary expandIcon={<Add />}>
+              <Typography>Availability</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <FormControl component="fieldset">
+                  <RadioGroup
+                    value={availability}
+                    onChange={(e) => setAvailability(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="all"
+                      control={<Radio />}
+                      label="All Products"
+                    />
+                    <FormControlLabel
+                      value="in_stock"
+                      control={<Radio />}
+                      label="In Stock"
+                    />
+                    <FormControlLabel
+                      value="out_of_stock"
+                      control={<Radio />}
+                      label="Out of Stock"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion sx={{ boxShadow: "none" }}>
+            <AccordionSummary expandIcon={<Add />}>
+              <Typography>Price Range</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                fontSize={"16px"}
+                fontWeight={"400"}
+                color={"#1e1e1e"}
+                textAlign="left"
+                sx={{ marginBottom: "4px" }}
+              >
+                Price Range: ${priceRange[0]} - ${priceRange[1]}
+              </Typography>
+              <Slider
+                value={priceRange}
+                onChange={handlePriceRangeChange}
+                valueLabelDisplay="auto"
+                min={Math.min(...products.map((p) => p.price || 0))}
+                max={Math.max(...products.map((p) => p.price || 0))}
+              />
+              <Box display={"flex"} gap={3} flexDirection={"row"}>
+                <Box>
+                  <Typography
+                    fontSize={"16px"}
+                    fontWeight={"400"}
+                    color={"#1e1e1e"}
+                    textAlign="left"
+                    sx={{ marginBottom: "4px" }}
+                  >
+                    From $
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    type="number"
+                    value={priceRange[0]}
+                    onChange={handlePriceInputChange("min")}
+                    fullWidth
+                    sx={{
+                      border: "none",
+                      input: {
+                        padding: "13px 20px",
+                      },
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "20px",
+                        backgroundColor: "#f3f3f3",
+                      },
+                    }}
+                  />
+                </Box>
+
+                <Box>
+                  <Typography
+                    fontSize={"16px"}
+                    fontWeight={"400"}
+                    color={"#1e1e1e"}
+                    textAlign="left"
+                    sx={{ marginBottom: "4px" }}
+                  >
+                    To $
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    type="number"
+                    value={priceRange[1]}
+                    onChange={handlePriceInputChange("max")}
+                    fullWidth
+                    sx={{
+                      border: "none",
+                      input: {
+                        padding: "13px 20px",
+                      },
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "20px",
+                        backgroundColor: "#f3f3f3",
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        </Box>
+        <Box padding={"2em 0 0"}>
+          <BestsellerSlider />
+        </Box>
+        <Box
+          sx={{
+            backgroundColor: "#f5f5f5",
+            padding: "2em 1em",
+            borderRadius: "16px",
+          }}
+        >
+          <Typography
+            fontSize={"20px"}
+            fontWeight={"600"}
+            color={"#1e1e1e"}
+            textAlign="left"
+            sx={{ marginBottom: "8px", padding: "0 1em 1.5em" }}
+          >
+            Today's Trends
+          </Typography>
+
+          <Box
+            component="img"
+            src={trendingProducts.thumbnail}
+            sx={{
+              width: { xs: "100%", md: "300px" },
+              height: "auto",
+              margin: "2em 0",
+            }}
+          />
+
+          <Typography
+            fontSize={"12px"}
+            fontWeight={"600"}
+            color={"#1e1e1e"}
+            textAlign="left"
+            sx={{
+              marginBottom: "8px",
+              padding: "0 1em 1.5em",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+              height: "20px",
+            }}
+          >
+            {trendingProducts.name}
+          </Typography>
+          <RouterLink to={`/product/${trendingProducts.id}`}>
+            <Button
+              sx={{
+                backgroundColor: "#2189ff",
+                padding: ".4em 1.8em",
+                borderRadius: "8px",
+                textTransform: "unset",
+                fontSize: "16px",
+                fontWeight: "500",
+              }}
+              variant="contained"
+            >
+              Shop Now
+            </Button>
+          </RouterLink>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

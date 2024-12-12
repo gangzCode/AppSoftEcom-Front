@@ -13,8 +13,11 @@ import {
 import { Close } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CartSliderItem from "./CartSlider/cartSliderItem";
-import CartSliderNotes from "./CartSlider/cartSliderNotes";
-import { getCartDetails, clearCart, updateCartItem } from "../services/apiCalls";
+import {
+  getCartDetails,
+  clearCart,
+  updateCartItem,
+} from "../services/apiCalls";
 
 const CartDrawer = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -23,7 +26,7 @@ const CartDrawer = ({ open, onClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState("");
 
   const fetchCart = async () => {
     try {
@@ -80,7 +83,7 @@ const CartDrawer = ({ open, onClose }) => {
 
   const handleNoteChange = (newNote) => {
     setNote(newNote);
-    localStorage.setItem('cartNote', newNote);
+    localStorage.setItem("cartNote", newNote);
   };
 
   useEffect(() => {
@@ -135,8 +138,6 @@ const CartDrawer = ({ open, onClose }) => {
           ))}
         </>
       )}
-
-      <CartSliderNotes onNoteChange={handleNoteChange} />
 
       <Box
         sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}

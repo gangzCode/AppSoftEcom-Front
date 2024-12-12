@@ -20,7 +20,6 @@ const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const navigate = useNavigate();
 
-
   const [products, setProducts] = useState({
     BestSellers: [],
     NewArrivals: [],
@@ -31,7 +30,11 @@ const TabSection = () => {
     const fetchGetProducts = async () => {
       try {
         const response = await getBestTopNewArrivalTabProducts();
-        const { best = [], new_arrives = [], top_selling = [] } = response?.data || {};
+        const {
+          best = [],
+          new_arrives = [],
+          top_selling = [],
+        } = response?.data || {};
 
         setProducts({
           BestSellers: best || [],
@@ -58,7 +61,6 @@ const TabSection = () => {
     navigate(`/product/${productId}`);
   };
 
-
   const tabKeys = Object.keys(products);
 
   return (
@@ -74,7 +76,7 @@ const TabSection = () => {
           borderBottom: "1px solid #1e1e1e",
           "& .MuiTab-root": {
             textTransform: "none",
-            fontSize: 18,
+            fontSize: { xs: "0.8rem", sm: "1rem" },
             fontWeight: "bold",
             padding: "12px 24px",
             color: "#333",
@@ -89,9 +91,9 @@ const TabSection = () => {
             backgroundColor: "#d3e5ff",
           },
           "& .MuiTab-root:hover": {
-            backgroundColor: "#000", 
+            backgroundColor: "#000",
             color: "#fff",
-          }
+          },
         }}
       >
         {tabKeys.map((tab, index) => (
@@ -141,7 +143,7 @@ const TabSection = () => {
                       {/* Discount Chip */}
                       {product.discount && (
                         <Chip
-                          label={'-'+product.discount+'%'}
+                          label={"-" + product.discount + "%"}
                           color="primary"
                           sx={{
                             position: "absolute",
@@ -181,7 +183,9 @@ const TabSection = () => {
                           {product.category}
                         </Typography>
                         <Typography variant="h6" gutterBottom>
-                        {product?.name.length > 30 ? product?.name.slice(0, 30) + "..." : product?.name}
+                          {product?.name.length > 30
+                            ? product?.name.slice(0, 30) + "..."
+                            : product?.name}
                         </Typography>
                         <Typography
                           variant="h5"
