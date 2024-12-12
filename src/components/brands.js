@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
+import { Container, Grid, Box } from "@mui/material";
 import { getBrandLogos } from "../services/apiCalls";
-import { Container } from "../common/Spacing";
 
 const Brands = () => {
   const [brandImages, setBrandImages] = useState([]);
@@ -15,29 +14,62 @@ const Brands = () => {
         console.error("Error fetching brand logos:", error);
       }
     };
-
     fetchData();
   }, []);
 
   return (
-    <Container>
-      <Grid container spacing={2} justifyContent="space-between">
-        {brandImages.slice(0, 5).map((brand) => (
-          <Grid item key={brand.id} xs={2}>
-            <Box
-              component="img"
-              src={brand.image}
-              alt={brand.name?.En || `Brand ${brand.id}`}
-              sx={{
-                width: "100%",
-                height: "auto",
-                objectFit: "contain",
-                padding: "10px",
-              }}
-            />
-          </Grid>
+    <Container sx={{ overflow: "hidden" }}>
+      <Box
+        sx={{
+          display: "flex",
+          whiteSpace: "nowrap",
+          animation: "slide 10s linear infinite",
+          "&:hover": {
+            animationPlayState: "paused",
+          },
+        }}
+      >
+        {brandImages.map((brand) => (
+          <Box
+            key={`${brand.id}-1`}
+            component="img"
+            src={brand.image}
+            alt={brand.name?.En || `Brand ${brand.id}`}
+            sx={{
+              width: "auto",
+              height: "100px",
+              objectFit: "contain",
+              padding: "10px",
+              display: "inline-block",
+            }}
+          />
         ))}
-      </Grid>
+        {brandImages.map((brand) => (
+          <Box
+            key={`${brand.id}-2`}
+            component="img"
+            src={brand.image}
+            alt={brand.name?.En || `Brand ${brand.id}`}
+            sx={{
+              width: "auto",
+              height: "100px",
+              objectFit: "contain",
+              padding: "10px",
+              display: "inline-block",
+            }}
+          />
+        ))}
+      </Box>
+      <style jsx>{`
+        @keyframes slide {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </Container>
   );
 };

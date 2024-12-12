@@ -9,9 +9,26 @@ const CustomProducts = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 4 }}>
-        {title}
-      </Typography>
+      <Box
+        sx={{
+          marginBottom: "30px",
+          padding: "30px",
+          border: "1px solid #e9e9e9",
+        }}
+      >
+        <Typography variant="h3" fontWeight="500">
+          {title}
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#666",
+            marginTop: 1,
+          }}
+        >
+          {1} Products available
+        </Typography>
+      </Box>
 
       <Grid container spacing={3}>
         {products.map((product) => (

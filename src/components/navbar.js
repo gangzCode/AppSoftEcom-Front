@@ -345,7 +345,14 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       <Grid pt={"2em"} container alignItems={"center"}>
         <Grid md={2} xs={3}>
           <RouterLink to={"/"}>
-            <img src={systemData.logo} alt="Logo" />
+            <img
+              src={systemData.logo}
+              alt="Logo"
+              style={{
+                width: "120px",
+                height: "auto",
+              }}
+            />
           </RouterLink>
         </Grid>
         <Grid md={9} xs={9} sx={{ position: "relative" }}>

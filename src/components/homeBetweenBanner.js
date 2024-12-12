@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Typography, Link, Button } from "@mui/material";
-import { ChevronRight } from "@mui/icons-material";
+import { Grid, Box } from "@mui/material";
+import { Link } from "react-router-dom";
 import { getPromotions } from "../services/apiCalls";
 import { Container } from "../common/Spacing";
 
@@ -30,77 +30,43 @@ const HomeBetweenBanner = () => {
           .filter((promo) => promo.type === "Home")
           .map((promo, index) => (
             <Grid item xs={12} md={4} key={index}>
-              <Box
-                sx={{
-                  position: "relative",
-                  backgroundImage: `url(${
-                    promo.image ||
-                    "https://placehold.co/360x340?text=Image+Not+Found"
-                  })`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  height: "300px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: "10px",
-                  overflow: "hidden",
-                }}
-              >
+              {promo.url ? (
+                <Link
+                  to={promo.url}
+                  target="_blank"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Box
+                    sx={{
+                      position: "relative",
+                      backgroundImage: `url(${
+                        promo.image ||
+                        "https://placehold.co/360x340?text=Image+Not+Found"
+                      })`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      height: "300px",
+                      borderRadius: "10px",
+                      overflow: "hidden",
+                    }}
+                  />
+                </Link>
+              ) : (
                 <Box
                   sx={{
-                    position: "absolute",
-                    backgroundColor: "rgba(0, 0, 0, 0)",
-                    color: "white",
-                    padding: "5em",
+                    position: "relative",
+                    backgroundImage: `url(${
+                      promo.image ||
+                      "https://placehold.co/360x340?text=Image+Not+Found"
+                    })`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    height: "300px",
                     borderRadius: "10px",
-                    textAlign: "right",
+                    overflow: "hidden",
                   }}
-                >
-                  <Typography
-                    variant="h5"
-                    fontWeight={"700"}
-                    color={"#1e1e1e"}
-                    gutterBottom
-                  >
-                    {promo.title}
-                  </Typography>
-                  {promo.category && promo.category_status === 1 && (
-                    <Link to={`/products/${promo.category.id}`}>
-                      <Button
-                        sx={{
-                          backgroundColor: "#2189ff",
-                          padding: ".4em 1.8em",
-                          borderRadius: "8px",
-                          textTransform: "unset",
-                          fontSize: "16px",
-                          fontWeight: "500",
-                        }}
-                        variant="contained"
-                      >
-                        Shop Now <ChevronRight />
-                      </Button>
-                    </Link>
-                  )}
-                  {promo.brand && promo.brand_status === 1 && (
-                    <Link to={`/products/${promo.brand.id}`}>
-                      <Button
-                        sx={{
-                          backgroundColor: "#2189ff",
-                          padding: ".4em 1.8em",
-                          borderRadius: "8px",
-                          textTransform: "unset",
-                          fontSize: "16px",
-                          fontWeight: "500",
-                        }}
-                        variant="contained"
-                      >
-                        Shop Now <ChevronRight />
-                      </Button>
-                    </Link>
-                  )}
-                </Box>
-              </Box>
+                />
+              )}
             </Grid>
           ))}
       </Grid>

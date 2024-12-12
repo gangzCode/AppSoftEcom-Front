@@ -733,6 +733,7 @@ const ProductsPage = () => {
               {totalProductCount} Products available
             </Typography>
           </Box>
+          
           <Box
             sx={{
               display: "flex",
