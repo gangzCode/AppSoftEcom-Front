@@ -187,7 +187,7 @@ const CartPage = () => {
                       />
                       <Box>
                         <Typography variant="subtitle1">
-                          {item.product.name}
+                          {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {item.variant}

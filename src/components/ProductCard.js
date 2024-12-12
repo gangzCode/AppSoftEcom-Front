@@ -6,6 +6,7 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Chip
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Favorite, ShoppingCart } from "@mui/icons-material";
@@ -147,6 +148,33 @@ const ProductCard = ({ product }) => {
         onMouseEnter={() => setIsHovered(product.id)}
         onMouseLeave={() => setIsHovered(null)}
       >
+        {/* Sold Out Chip */}
+        {product?.soldOut && (
+                        <Chip
+                          label="Sold Out"
+                          color="error"
+                          sx={{ position: "absolute", top: 16, left: 16 }}
+                        />
+                      )}
+                {/* Discount Chip */}
+                {product.discount && (
+                  <Chip
+                    label={'-'+product.discount+'%'}
+                    color="primary"
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "#ff4646",
+                      color: "white",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontWeight: "bold",
+                      zIndex: 1,
+                      fontSize: "14px",
+                    }}
+                  />
+                )}
         <Box
           sx={{
             position: "relative",

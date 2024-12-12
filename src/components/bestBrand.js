@@ -1,34 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton,Chip } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
-import {
-  ChevronRight,
-  ShoppingCart,
-  Favorite,
-  Search,
-  Layers,
-} from "@mui/icons-material";
+import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
 import { getBestBrandedProducts } from "../services/apiCalls";
-import { Link } from "react-router-dom";
 import { Container } from "../common/Spacing";
 
 const BestBrand = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [products, setproducts] = useState("");
+  const [products, setProducts] = useState([]); 
+  const [title, setTitle] = useState("Default Title");
+  const [subTitle, setSubTitle] = useState("Default Subtitle");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGetProducts = async () => {
+    const fetchProducts = async () => {
       try {
         const response = await getBestBrandedProducts();
-        setproducts(response.data);
-        console.log("Products Best Branded", response.data);
+        setTitle(response?.title || "Default Title");
+        setSubTitle(response?.sub_title || "Default Subtitle");
+        setProducts(response?.data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setProducts([]);
       }
     };
 
-    fetchGetProducts();
+    fetchProducts();
   }, []);
 
   const handlers = useSwipeable({
@@ -47,10 +47,10 @@ const BestBrand = () => {
   });
 
   return (
-    <Container>
+    <Container sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
       <Typography
         variant="p"
-        fontSize={"12px"}
+        fontSize={{ xs: "10px", sm: "12px" }}
         color={"#1e1e1e"}
         sx={{
           position: "relative",
@@ -60,30 +60,50 @@ const BestBrand = () => {
             top: "50%",
             marginLeft: "1em",
             transform: "translateY(-50%)",
-            width: "150px",
+            width: { xs: "80px", sm: "120px", md: "150px" },
             height: "2px",
             backgroundColor: "#2189ff",
           },
         }}
       >
-        HOTDEALS
+        {subTitle}
       </Typography>
-      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
-        Best Branded Products
+      <Typography
+        onClick={() =>
+          navigate("/custom-products", {
+            state: { title, products: products },
+          })
+        }
+        variant="h4"
+        fontWeight={"600"}
+        component="h2"
+        gutterBottom
+        width={"fit-content"}
+        sx={{
+          cursor: "pointer",
+          transition: "color 0.3s ease",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
+          "&:hover": {
+            color: "#2189ff",
+          },
+        }}
+      >
+        {title}
       </Typography>
       <Box
         {...handlers}
         ref={scrollContainerRef}
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          overflowX: { xs: "hidden", md: "auto" },
-          gap: { xs: 2, md: 3 },
-          padding: { xs: 1, md: 2 },
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          gap: { xs: 2, sm: 3 },
+          padding: { xs: 1, sm: 2 },
           scrollBehavior: "smooth",
-          paddingBottom: { xs: "20px", md: "50px" },
+          paddingBottom: { xs: "30px", sm: "50px" },
+          WebkitOverflowScrolling: "touch",
           "&::-webkit-scrollbar": {
-            height: "8px",
+            height: { xs: "6px", sm: "8px" },
           },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#2189ff",
@@ -94,25 +114,17 @@ const BestBrand = () => {
           },
         }}
       >
-        {products !== undefined &&
-          products.length > 0 &&
-          products.slice(0, 8).map((product) => (
-            <Link
-              to={`/product/${product.id}`}
-              style={{
-                width: { xs: "100%", sm: "45%", md: "280px" },
-                textDecoration: "none",
-              }}
-            >
+        {products.length > 0 ? (
+          products.map((product) => (
+            <Link to={`/product/${product.id}`} key={product.id}>
               <Box
-                key={product.id}
                 sx={{
                   position: "relative",
                   display: "flex",
                   flexDirection: "column",
-                  minWidth: { xs: "100%", md: "280px" },
-                  padding: { xs: "15px", md: "20px" },
-                  borderRadius: { xs: "15px", md: "20px" },
+                  minWidth: "280px",
+                  padding: "20px",
+                  borderRadius: "20px",
                   backgroundColor: "#f5f5f5",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   transition: "all 0.3s ease",
@@ -124,22 +136,46 @@ const BestBrand = () => {
                 onMouseEnter={() => setHoveredProductId(product.id)}
                 onMouseLeave={() => setHoveredProductId(null)}
               >
+                {/* Sold Out Chip */}
+                {product?.soldOut && (
+                        <Chip
+                          label="Sold Out"
+                          color="error"
+                          sx={{ position: "absolute", top: 16, left: 16 }}
+                        />
+                      )}
+                {/* Discount Chip */}
+                {product.discount && (
+                  <Chip
+                    label={'-'+product.discount+'%'}
+                    color="primary"
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "#ff4646",
+                      color: "white",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontWeight: "bold",
+                      zIndex: 1,
+                      fontSize: "14px",
+                    }}
+                  />
+                )}
                 <Box
                   sx={{
                     position: "relative",
                     width: "100%",
-                    height: { xs: "200px", sm: "250px", md: "300px" },
-                    "& img": {
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    },
+                    maxWidth: "240px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
                   }}
                 >
                   <Box
                     component="img"
-                    src={product.image || "https://placehold.co/360x340"}
-                    alt={product.description}
+                    src={product.thumbnailz}
+                    alt={product.name}
                     sx={{
                       width: "100%",
                       height: "200px",
@@ -150,18 +186,15 @@ const BestBrand = () => {
                   />
                   <Box
                     component="img"
-                    src={
-                      product.image ||
-                      "https://placehold.co/360x340?text=Hover+Image"
-                    }
-                    alt={product.description}
+                    src={product.images}
+                    alt={product.name}
                     sx={{
                       position: "absolute",
                       top: 0,
                       left: 0,
                       width: "100%",
-                      objectFit: "contain",
                       height: "200px",
+                      objectFit: "contain",
                       transition: "opacity 0.5s ease",
                       opacity: hoveredProductId === product.id ? 1 : 0,
                     }}
@@ -208,7 +241,7 @@ const BestBrand = () => {
                   variant="caption"
                   fontSize={"12px"}
                   color={"#bebebe"}
-                  sx={{ letterSpacing: "1px", marginBottom: "3x" }}
+                  sx={{ letterSpacing: "1px", marginBottom: "3px" }}
                 >
                   {product.category_name}
                 </Typography>
@@ -225,14 +258,17 @@ const BestBrand = () => {
                   sx={{ marginTop: "auto" }}
                 >
                   <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    {product?.currency || "0"}
-                    {product.price || "0"}
+                    {product.currency}
+                    {product.sales_price}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
               </Box>
             </Link>
-          ))}
+          ))
+        ) : (
+          <Typography variant="body1">No products available.</Typography>
+        )}
       </Box>
     </Container>
   );

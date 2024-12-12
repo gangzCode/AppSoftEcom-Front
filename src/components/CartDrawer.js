@@ -98,6 +98,8 @@ const CartDrawer = ({ open, onClose }) => {
     0
   );
 
+  const currency = cartItems.length > 0 ? cartItems[0].product.currency : "";
+
   return (
     <Drawer
       anchor="right"
@@ -149,7 +151,7 @@ const CartDrawer = ({ open, onClose }) => {
           Total
         </Typography>
         <Typography variant="body1" fontWeight="bold">
-          ${total.toFixed(2)}
+          {currency}{total.toFixed(2)}
         </Typography>
       </Box>
       <Typography variant="body1" mt={2} fontSize={14}>

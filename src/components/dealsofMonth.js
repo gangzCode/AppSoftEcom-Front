@@ -5,7 +5,7 @@ import {
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
-import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Button, Grid, IconButton, Typography, Chip } from "@mui/material";
 import React, { useState,useEffect } from "react";
 import { getDealsofMonthProducts } from "../services/apiCalls"; 
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ const DealsofDay = () => {
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response.data);
+        console.log('punda',response?.data?.[0]?.discount);
         
         console.log("Products deal of the month", response.data);
       } catch (error) {
@@ -34,6 +35,16 @@ const DealsofDay = () => {
 
     fetchGetProducts();
   }, []);
+
+  const getCategoryName = (categoryName) => {
+    try {
+      const parsed = JSON.parse(categoryName);
+      return parsed.En || "Unknown Category";
+    } catch (error) {
+      console.error("Error parsing category name:", error);
+      return "Unknown Category";
+    }
+  };
 
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -142,6 +153,7 @@ const DealsofDay = () => {
                   objectFit: "cover",
                 }}
               />
+              
               <Box sx={{ padding: "20px", flex: 1 }}>
                 <Typography
                   variant="h5"
@@ -159,7 +171,7 @@ const DealsofDay = () => {
                   letterSpacing={"2px"}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  {products[0]?.category?.name}
+                  {getCategoryName(products[0]?.category.name)}
                 </Typography>
 
                 <Box
@@ -287,7 +299,7 @@ const DealsofDay = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        {card.category.name}
+                        {getCategoryName(card.category.name)}
                       </Typography>
                       <Typography
                         variant="body1"
@@ -427,7 +439,7 @@ const DealsofDay = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        {card.category.name}
+                        {getCategoryName(card.category.name)}
                       </Typography>
                       <Typography
                         variant="body1"

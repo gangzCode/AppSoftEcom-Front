@@ -180,7 +180,7 @@ const TabSection = () => {
                           color="textSecondary"
                           textTransform="uppercase"
                         >
-                          {product.category}
+                          {product.category_name}
                         </Typography>
                         <Typography variant="h6" gutterBottom>
                           {product?.name.length > 30
