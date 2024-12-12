@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { subscribeToNewsApi } from "../services/apiCalls"; // Assuming your API function is in services/apiCalls
 import { Container } from "../common/Spacing";
 
@@ -41,19 +49,24 @@ const Newsletter = () => {
   return (
     <Container
       sx={{
-        padding: "2em 9em",
+        padding: {
+          xs: "1.5em",
+          sm: "2em 3em",
+          md: "2em 9em",
+        },
         backgroundColor: "#f5f5f5",
-        borderRadius: "20px",
+        borderRadius: { xs: "15px", sm: "20px" },
+        margin: { xs: "1em", sm: "2em" },
       }}
     >
-      <Grid container spacing={4} alignItems="center">
+      <Grid container spacing={{ xs: 2, md: 4 }} alignItems="center">
         {/* Left Side: Title and Description */}
         <Grid item xs={12} md={6}>
           <Typography
-            fontSize={"10px"}
-            fontWeight={"500"}
-            letterSpacing={"2px"}
-            color={"#1e1e1e"}
+            fontSize={{ xs: "8px", sm: "10px" }}
+            fontWeight="500"
+            letterSpacing="2px"
+            color="#1e1e1e"
             sx={{
               position: "relative",
               "&::after": {
@@ -62,7 +75,7 @@ const Newsletter = () => {
                 top: "50%",
                 marginLeft: "1em",
                 transform: "translateY(-50%)",
-                width: "150px",
+                width: { xs: "80px", sm: "120px", md: "150px" },
                 height: "2px",
                 backgroundColor: "#2189ff",
               },
@@ -71,14 +84,14 @@ const Newsletter = () => {
             NEWSLETTER
           </Typography>
           <Typography
-            fontWeight={"700"}
+            fontWeight="700"
             variant="h4"
             component="h1"
-            fontSize={"36px"}
-            marginBottom={"0"}
+            fontSize={{ xs: "24px", sm: "30px", md: "36px" }}
+            marginBottom="0"
             gutterBottom
           >
-            Sign Up For Our Newsletter
+            Subscribe to our newsletter
           </Typography>
           <Typography variant="body1">
             Join our mailing list and get 25% off on your next purchase!

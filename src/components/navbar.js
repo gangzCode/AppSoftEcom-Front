@@ -314,7 +314,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         />
 
         <BottomNavigationAction
-          onTouchStart={toggleWishlist}
+          onClick={toggleWishlist}
           icon={
             <Badge badgeContent={wishlistItems.length} color="primary">
               <FavoriteBorderRounded />
@@ -322,7 +322,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           }
         />
         <BottomNavigationAction
-          onTouchStart={toggleCart}
+          onClick={toggleCart}
           icon={
             <Badge badgeContent={cartItems.length} color="primary">
               <ShoppingCart />
@@ -334,7 +334,14 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   );
 
   return (
-    <AppBar position="sticky" elevation={0} color="">
+    <AppBar
+      position="sticky"
+      sx={{
+        marginBottom: { xs: "56px", sm: "0" },
+      }}
+      elevation={0}
+      color=""
+    >
       <Grid pt={"2em"} container alignItems={"center"}>
         <Grid md={2} xs={3}>
           <RouterLink to={"/"}>
@@ -544,75 +551,75 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </List>
       </Drawer>
 
-      <Grid display={"flex"} alignItems={"center"} py={2}>
-        <Button
-          color="inherit"
-          sx={{
-            backgroundColor: "#2189ff",
-            boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
-            color: "white",
-            borderRadius: "20px",
-            height: "fit-content",
-            "&:hover": {
-              backgroundColor: "#1a76d2",
-            },
-            padding: ".7em 4em",
-          }}
-          endIcon={<ExpandMore />}
-          id="basic-button"
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleCatClick}
-        >
-          <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
-            All Categories
-          </Typography>
-        </Button>
-
-        <Menu
-          sx={{
-            width: "100%",
-            "& .MuiPaper-root": {
-              borderRadius: "0 0 20px 20px",
-              backgroundColor: "#f3f3f3",
-            },
-          }}
-          id="basic-menu"
-          anchorEl={anchorCat}
-          open={open}
-          onClose={handleClose}
-        >
-          <Grid
-            display={"flex"}
-            flexDirection={"column"}
-            padding={"1em"}
-            gap={"1em"}
+      {!isMobile && (
+        <Grid display={"flex"} alignItems={"center"} py={2}>
+          <Button
+            color="inherit"
+            sx={{
+              backgroundColor: "#2189ff",
+              boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
+              color: "white",
+              borderRadius: "20px",
+              height: "fit-content",
+              "&:hover": {
+                backgroundColor: "#1a76d2",
+              },
+              padding: ".7em 4em",
+            }}
+            endIcon={<ExpandMore />}
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleCatClick}
           >
-            {categories.map((category) => (
-              <RouterLink to={`/products/${category.id}`}>
-                <MenuItem key={category.id} onClick={handleClose}>
-                  <img
-                    src={category.image} // Use the category's image URL from the API
-                    alt={category.name.En} // Alt text using the category name
-                    style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
-                  />
-                  <Typography
-                    paddingLeft={"1em"}
-                    fontSize={"16px"}
-                    fontWeight={"500"}
-                  >
-                    {category.name}
-                  </Typography>
-                </MenuItem>
-              </RouterLink>
-            ))}
-          </Grid>
-        </Menu>
+            <Typography variant="h5" fontSize={"16px"} fontWeight={"500"}>
+              All Categories
+            </Typography>
+          </Button>
 
-        <Box sx={{ flexGrow: 1 }} />
+          <Menu
+            sx={{
+              width: "100%",
+              "& .MuiPaper-root": {
+                borderRadius: "0 0 20px 20px",
+                backgroundColor: "#f3f3f3",
+              },
+            }}
+            id="basic-menu"
+            anchorEl={anchorCat}
+            open={open}
+            onClose={handleClose}
+          >
+            <Grid
+              display={"flex"}
+              flexDirection={"column"}
+              padding={"1em"}
+              gap={"1em"}
+            >
+              {categories.map((category) => (
+                <RouterLink to={`/products/${category.id}`}>
+                  <MenuItem key={category.id} onClick={handleClose}>
+                    <img
+                      src={category.image} // Use the category's image URL from the API
+                      alt={category.name.En} // Alt text using the category name
+                      style={{ width: 24, height: 24, marginRight: 12 }} // Adjust image size and margin
+                    />
+                    <Typography
+                      paddingLeft={"1em"}
+                      fontSize={"16px"}
+                      fontWeight={"500"}
+                    >
+                      {category.name}
+                    </Typography>
+                  </MenuItem>
+                </RouterLink>
+              ))}
+            </Grid>
+          </Menu>
 
-        {!isMobile && (
+          <Box sx={{ flexGrow: 1 }} />
+
           <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
             {menus.slice(0, 4).map((menu, index) => (
               <RouterLink to={`/products/${menu.id}`}>
@@ -693,8 +700,9 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               </RouterLink>
             ))}
           </Box>
-        )}
-      </Grid>
+        </Grid>
+      )}
+
       <Box position={"relative"} width={"100%"}>
         {menus.map(
           (menu, index) =>
@@ -788,6 +796,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             )
         )}
       </Box>
+
       {isMobile && bottomNav}
     </AppBar>
   );
