@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getSpecialDayOfferSaleProducts } from "../services/apiCalls";
 import { Container } from "../common/Spacing";
 
@@ -12,6 +12,8 @@ const SpecialDayOfferSale = () => {
   const [products, setProducts] = useState([]); // Ensure products is an array
   const [title, setTitle] = useState("Default Title"); // Initialize with default
   const [subTitle, setSubTitle] = useState("Default Subtitle");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,10 +47,10 @@ const SpecialDayOfferSale = () => {
   });
 
   return (
-    <Container>
+    <Container sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
       <Typography
         variant="p"
-        fontSize={"12px"}
+        fontSize={{ xs: "10px", sm: "12px" }}
         color={"#1e1e1e"}
         sx={{
           position: "relative",
@@ -58,7 +60,7 @@ const SpecialDayOfferSale = () => {
             top: "50%",
             marginLeft: "1em",
             transform: "translateY(-50%)",
-            width: "150px",
+            width: { xs: "100px", sm: "150px" },
             height: "2px",
             backgroundColor: "#2189ff",
           },
@@ -66,7 +68,27 @@ const SpecialDayOfferSale = () => {
       >
         {subTitle}
       </Typography>
-      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
+
+      <Typography
+        onClick={() =>
+          navigate("/custom-products", {
+            state: { title, products: products },
+          })
+        }
+        variant="h4"
+        fontWeight={"600"}
+        component="h2"
+        gutterBottom
+        width={"fit-content"}
+        sx={{
+          cursor: "pointer",
+          transition: "color 0.3s ease",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
+          "&:hover": {
+            color: "#2189ff",
+          },
+        }}
+      >
         {title}
       </Typography>
       <Box
@@ -76,12 +98,13 @@ const SpecialDayOfferSale = () => {
           display: "flex",
           overflowX: "auto",
           whiteSpace: "nowrap",
-          gap: 3,
-          padding: 2,
+          gap: { xs: 2, sm: 3 },
+          padding: { xs: 1, sm: 2 },
           scrollBehavior: "smooth",
-          paddingBottom: "50px",
+          paddingBottom: { xs: "30px", sm: "50px" },
+          WebkitOverflowScrolling: "touch",
           "&::-webkit-scrollbar": {
-            height: "8px",
+            height: { xs: "6px", sm: "8px" },
           },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#2189ff",
@@ -209,7 +232,8 @@ const SpecialDayOfferSale = () => {
                   sx={{ marginTop: "auto" }}
                 >
                   <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    {product.currency}{product.sales_price}
+                    {product.currency}
+                    {product.sales_price}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>

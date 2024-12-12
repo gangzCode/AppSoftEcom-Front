@@ -76,12 +76,12 @@ const BestBrand = () => {
         ref={scrollContainerRef}
         sx={{
           display: "flex",
-          overflowX: "auto",
-          whiteSpace: "nowrap",
-          gap: 3,
-          padding: 2,
+          flexDirection: { xs: "column", md: "row" },
+          overflowX: { xs: "hidden", md: "auto" },
+          gap: { xs: 2, md: 3 },
+          padding: { xs: 1, md: 2 },
           scrollBehavior: "smooth",
-          paddingBottom: "50px",
+          paddingBottom: { xs: "20px", md: "50px" },
           "&::-webkit-scrollbar": {
             height: "8px",
           },
@@ -97,16 +97,22 @@ const BestBrand = () => {
         {products !== undefined &&
           products.length > 0 &&
           products.slice(0, 8).map((product) => (
-            <Link to={`/product/${product.id}`}>
+            <Link
+              to={`/product/${product.id}`}
+              style={{
+                width: { xs: "100%", sm: "45%", md: "280px" },
+                textDecoration: "none",
+              }}
+            >
               <Box
                 key={product.id}
                 sx={{
                   position: "relative",
                   display: "flex",
                   flexDirection: "column",
-                  minWidth: "280px",
-                  padding: "20px",
-                  borderRadius: "20px",
+                  minWidth: { xs: "100%", md: "280px" },
+                  padding: { xs: "15px", md: "20px" },
+                  borderRadius: { xs: "15px", md: "20px" },
                   backgroundColor: "#f5f5f5",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   transition: "all 0.3s ease",
@@ -122,9 +128,12 @@ const BestBrand = () => {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    maxWidth: "240px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
+                    height: { xs: "200px", sm: "250px", md: "300px" },
+                    "& img": {
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    },
                   }}
                 >
                   <Box
@@ -216,7 +225,8 @@ const BestBrand = () => {
                   sx={{ marginTop: "auto" }}
                 >
                   <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    {product?.currency || "0"}{product.price || "0"}
+                    {product?.currency || "0"}
+                    {product.price || "0"}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>

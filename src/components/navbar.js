@@ -24,6 +24,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Collapse,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -78,6 +79,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [expandedMenu, setExpandedMenu] = useState(null);
 
   let closeMenuTimer;
 
@@ -252,6 +254,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     }
   };
 
+  const handleMenuExpand = (menuId) => {
+    setExpandedMenu(expandedMenu === menuId ? null : menuId);
+  };
+
   // console.log([...Array(5 - 3)]);
 
   // const menus = [
@@ -303,7 +309,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <BottomNavigationAction onClick={toggleMenu} icon={<MenuIcon />} />
 
         <BottomNavigationAction
-          label="Profile"
           onClick={handleProfileClick}
           icon={<Person />}
         />
@@ -468,30 +473,71 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Box>
         <List sx={{ width: "100%", mt: 15 }}>
           <Typography variant="h4" fontWeight={"light"} gutterBottom>
-            Categories
+            Menus
           </Typography>
           {menus.map((menu) => (
             <div key={menu.id}>
-              <ListItem
-                button
-                component={RouterLink}
-                to={`/products/${menu.id}`}
-                onClick={toggleMenu}
-                sx={{
-                  py: 1.5,
-                  "&:hover": {
-                    bgcolor: "rgba(33, 137, 255, 0.08)",
-                  },
-                }}
-              >
-                <ListItemText
-                  primary={menu.name}
-                  primaryTypographyProps={{
-                    fontSize: "15px",
-                    fontWeight: 500,
+              <Box display={"flex"} alignItems={"center"}>
+                <ListItem
+                  button
+                  component={RouterLink}
+                  to={`/products/${menu.id}`}
+                  onClick={toggleMenu}
+                  sx={{
+                    py: 1.5,
+                    "&:hover": {
+                      bgcolor: "rgba(33, 137, 255, 0.08)",
+                    },
                   }}
-                />
-              </ListItem>
+                >
+                  <ListItemText
+                    primary={menu.name}
+                    primaryTypographyProps={{
+                      fontSize: "15px",
+                      fontWeight: 500,
+                    }}
+                  />
+                </ListItem>
+                {menu.sub_category?.length > 0 && (
+                  <ExpandMore
+                    onClick={() => handleMenuExpand(menu.id)}
+                    sx={{
+                      transform:
+                        expandedMenu === menu.id ? "rotate(180deg)" : "none",
+                      transition: "transform 0.3s",
+                    }}
+                  />
+                )}
+              </Box>
+
+              <Collapse in={expandedMenu === menu.id}>
+                <List component="div" disablePadding>
+                  {menu.sub_category?.map((subCat) => (
+                    <ListItem
+                      key={subCat.id}
+                      button
+                      component={RouterLink}
+                      to={`/products/${menu.id}?sub=${subCat.id}`}
+                      onClick={toggleMenu}
+                      sx={{
+                        pl: 4,
+                        py: 1,
+                        "&:hover": {
+                          bgcolor: "rgba(33, 137, 255, 0.04)",
+                        },
+                      }}
+                    >
+                      <ListItemText
+                        primary={subCat.name}
+                        primaryTypographyProps={{
+                          fontSize: "14px",
+                          color: "text.secondary",
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Collapse>
               <Divider variant="middle" />
             </div>
           ))}

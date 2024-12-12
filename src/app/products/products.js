@@ -911,23 +911,23 @@ const ProductsPage = () => {
                   )}
                   {product.total_stock <= 0 && (
                     <Box
-                    sx={{
-                      position: "absolute",
-                      top: "40%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      backgroundColor: "rgba(124, 143, 172, 0.90)",
-                      color: "white",
-                      width: "120px",
-                      height: "120px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "50%",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      zIndex: 999,
-                    }}
+                      sx={{
+                        position: "absolute",
+                        top: "40%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgba(124, 143, 172, 0.90)",
+                        color: "white",
+                        width: "120px",
+                        height: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        fontWeight: "bold",
+                        fontSize: "16px",
+                        zIndex: 999,
+                      }}
                     >
                       Out of Stock
                     </Box>

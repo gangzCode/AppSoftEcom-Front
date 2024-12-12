@@ -32,8 +32,8 @@ const TopSellingBetweenBanner = () => {
   }, []);
 
   return (
-    <Box sx={{ padding: "30px 0" }}>
-      <Grid container spacing={3} justifyContent="center">
+    <Box sx={{ padding: { xs: "15px 0", md: "30px 0" } }}>
+      <Grid container spacing={{ xs: 2, md: 3 }} justifyContent="center">
         {promotions.length > 0 && (
           <Grid item xs={12} sm={6} md={8} key={promotions[0].id}>
             <Card
@@ -42,17 +42,24 @@ const TopSellingBetweenBanner = () => {
                 display: "flex",
                 flexDirection: { xs: "column", sm: "row" },
                 alignItems: "center",
-                borderRadius: "30px",
+                borderRadius: { xs: "20px", md: "30px" },
                 overflow: "hidden",
                 backgroundColor: "#f8f9fa",
                 boxShadow: 2,
                 height: "100%",
               }}
             >
-              <CardContent sx={{ flex: 1, padding: 3, height: "160px" }}>
+              <CardContent
+                sx={{
+                  flex: 1,
+                  padding: { xs: 2, sm: 3 },
+                  height: { xs: "auto", sm: "160px" },
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
                 <Typography
                   variant="p"
-                  fontSize={"12px"}
+                  fontSize={{ xs: "10px", sm: "12px" }}
                   color={"#1e1e1e"}
                   sx={{
                     position: "relative",
@@ -62,7 +69,7 @@ const TopSellingBetweenBanner = () => {
                       top: "50%",
                       marginLeft: "1em",
                       transform: "translateY(-50%)",
-                      width: "150px",
+                      width: { xs: "100px", sm: "150px" },
                       height: "2px",
                       backgroundColor: "#2189ff",
                     },

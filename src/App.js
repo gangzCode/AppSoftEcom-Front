@@ -26,6 +26,7 @@ import ResetPasswordPage from "./app/auth/ResetPasswordPage";
 import DynamicFavicon from "./components/dynamicFavicon";
 import PrivateRoute from "./components/privateRoute";
 import { AuthProvider } from "./context/AuthContext";
+import CustomProducts from "./components/CustomProducts";
 
 // Define theme
 /* const theme = createTheme({
@@ -53,13 +54,13 @@ function Layout() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/products/:categoryId" element={<ProductsPage />} />
           <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <ProfilePage />
-            </PrivateRoute>
-          }
-        />
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/otp" element={<OTPPage />} />
@@ -68,6 +69,7 @@ function Layout() {
           {/* <Route path="/forgotpassword" element={< />} /> */}
           <Route path="/product/:productId" element={<ProductDetailsPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/custom-products" element={<CustomProducts />} />
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
 
@@ -82,9 +84,9 @@ function Layout() {
 const App = () => (
   <Provider store={store}>
     <AuthProvider>
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
     </AuthProvider>
   </Provider>
 );
