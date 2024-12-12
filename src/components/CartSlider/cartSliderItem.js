@@ -10,10 +10,11 @@ import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { DeleteOutline } from "@mui/icons-material";
-import { deleteCartItem } from "../../services/apiCalls";
+import { deleteCartItem,getCartDetails } from "../../services/apiCalls";
 
 const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
   const [loading, setLoading] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
   const handleDelete = async () => {
     try {
@@ -32,6 +33,20 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
     onQuantityChange(item, newQuantity);
     setLoading(false);
   };
+
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      const response = await getCartDetails();
+      setCartItems(response.data);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const currency = item?.product?.currency || "";
 
   return (
     <Grid container sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}>
@@ -57,7 +72,7 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
             {item.variant}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0.5 }}>
-            ${parseFloat(item.unit_price).toFixed(2)}
+            {currency}{parseFloat(item.unit_price).toFixed(2)}
           </Typography>
         </Box>
         <Stack direction={"row"} alignItems={"center"} mt={1} gap={4}>

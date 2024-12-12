@@ -5,7 +5,7 @@ import {
   Search,
   ShoppingCart,
 } from "@mui/icons-material";
-import { Box, Button, Grid, IconButton, Typography } from "@mui/material";
+import { Box, Button, Grid, IconButton, Typography,Chip } from "@mui/material";
 import React, { useState,useEffect } from "react";
 import { getDealsofDayProducts } from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +34,16 @@ const DealsofDay = () => {
 
     fetchGetProducts();
   }, []);
+
+  const getCategoryName = (categoryName) => {
+    try {
+      const parsed = JSON.parse(categoryName);
+      return parsed.En || "Unknown Category";
+    } catch (error) {
+      console.error("Error parsing category name:", error);
+      return "Unknown Category";
+    }
+  };
 
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -142,6 +152,33 @@ const DealsofDay = () => {
                   objectFit: "cover",
                 }}
               />
+
+                {products[0]?.soldOut && (
+                        <Chip
+                          label="Sold Out"
+                          color="error"
+                          sx={{ position: "absolute", top: 16, left: 16 }}
+                        />
+                      )}
+                {/* Discount Chip */}
+                {products[0]?.discount && (
+                  <Chip
+                    label={'-'+products[0]?.discount+'%'}
+                    color="primary"
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "#ff4646",
+                      color: "white",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontWeight: "bold",
+                      zIndex: 1,
+                      fontSize: "14px",
+                    }}
+                  />
+                )}
               <Box sx={{ padding: "20px", flex: 1 }}>
                 <Typography
                   variant="h5"
@@ -159,7 +196,7 @@ const DealsofDay = () => {
                   letterSpacing={"2px"}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  {products[0]?.category?.name}
+                  {getCategoryName(products[0]?.category.name)}
                 </Typography>
 
                 <Box
@@ -287,7 +324,7 @@ const DealsofDay = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        {card.category.name}
+                        {getCategoryName(card.category.name)}
                       </Typography>
                       <Typography
                         variant="body1"
@@ -384,13 +421,13 @@ const DealsofDay = () => {
                       <Box
                         className="hover-icons"
                         sx={{
-                          position: "absolute", // Positioned absolutely over the image
-                          top: "50%", // Vertically center over the image
-                          left: "50%", // Horizontally center over the image
-                          transform: "translate(-50%, -50%)", // Offset to center the icons
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
                           display: "flex",
                           gap: "8px",
-                          zIndex: 2, // Ensure icons appear above the image
+                          zIndex: 2,
                           opacity: hoveredProductId === card.id ? 1 : 0,
                           visibility:
                             hoveredProductId === card.id ? "visible" : "hidden",
@@ -427,7 +464,7 @@ const DealsofDay = () => {
                         color={"#bebebe"}
                         sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                       >
-                        {card.category.name}
+                        {getCategoryName(card.category.name)}
                       </Typography>
                       <Typography
                         variant="body1"

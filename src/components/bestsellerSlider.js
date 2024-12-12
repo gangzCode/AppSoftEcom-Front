@@ -11,11 +11,14 @@ import {
   ShoppingCart,
 } from "@mui/icons-material";
 import { getBestSellingProducts } from "../services/apiCalls";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const BestsellerSlider = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [products, setproducts] = useState([]);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchGetProducts = async () => {
@@ -30,6 +33,10 @@ const BestsellerSlider = () => {
 
     fetchGetProducts();
   }, []);
+
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   function SampleNextArrow(props) {
     const { onClick } = props;
@@ -159,6 +166,7 @@ const BestsellerSlider = () => {
                       // boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
                     },
                   }}
+                  onClick={() => handleCardClick(product?.id)}
                   onMouseEnter={() => setHoveredProductId(product.id)}
                   onMouseLeave={() => setHoveredProductId(null)}
                 >
@@ -184,7 +192,7 @@ const BestsellerSlider = () => {
                     />
                     <Box
                       component="img"
-                      src={product.hoverImage}
+                      src={product.images}
                       alt={product.description}
                       sx={{
                         position: "absolute",
