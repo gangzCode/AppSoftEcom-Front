@@ -9,6 +9,7 @@ const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [shippingCharge, setShippingCharge] = useState(0);
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -28,6 +29,10 @@ const CheckoutPage = () => {
     setShippingCharge(parseFloat(charge) || 0);
   };
 
+  const handleDiscountUpdate = (discountAmount) => {
+    setDiscount(parseFloat(discountAmount) || 0);
+  };
+
   const total = cartItems.reduce(
     (sum, item) =>
       sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
@@ -40,7 +45,10 @@ const CheckoutPage = () => {
       sx={{ width: { xs: "100%", md: "1300px" }, mx: "auto", my: 6 }}
     >
       <Grid item xs={12} md={6} mr={{ xs: 0, md: 4 }} mb={{ xs: 4, md: 0 }}>
-        <CheckoutForm onShippingChargeUpdate={handleShippingChargeUpdate} />
+        <CheckoutForm
+          onShippingChargeUpdate={handleShippingChargeUpdate}
+          onDiscountUpdate={handleDiscountUpdate}
+        />
       </Grid>
       <Grid item container rowGap={2} alignContent={"flex-start"} xs={12} md>
         <Grid item display={{ xs: "block", md: "none" }}>
@@ -56,10 +64,14 @@ const CheckoutPage = () => {
         >
           {cartItems.map((item) => (
             <Grid item xs={12} key={item.card_id}>
-              <CheckoutItem item={item} currency={cartItems.length > 0 ? cartItems[0].product.currency : "$"} />
+              <CheckoutItem
+                item={item}
+                currency={
+                  cartItems.length > 0 ? cartItems[0].product.currency : "$"
+                }
+              />
             </Grid>
           ))}
-          
         </Grid>
         <Grid
           item
@@ -67,7 +79,14 @@ const CheckoutPage = () => {
           alignItems={"flex-start"}
           alignContent={"flex-start"}
         >
-          <CheckoutSummary total={total} shippingCharge={shippingCharge} currency={cartItems.length > 0 ? cartItems[0].product.currency : "$"} />
+          <CheckoutSummary
+            total={total}
+            shippingCharge={shippingCharge}
+            discount={discount}
+            currency={
+              cartItems.length > 0 ? cartItems[0].product.currency : "$"
+            }
+          />
         </Grid>
       </Grid>
     </Grid>

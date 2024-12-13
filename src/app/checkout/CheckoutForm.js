@@ -32,9 +32,10 @@ import {
   getCartDetails,
   clearCart,
   getIPAddress,
+  validateCoupon,
 } from "../../services/apiCalls";
 
-function CheckoutForm({ onShippingChargeUpdate }) {
+function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -66,7 +67,10 @@ function CheckoutForm({ onShippingChargeUpdate }) {
   const [selectedPaymentType, setSelectedPaymentType] = useState("");
   const [orderProcessing, setOrderProcessing] = useState(false);
   const [orderNote, setorderNote] = useState("");
-  const [discountCode, setdiscountCode] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [discountError, setDiscountError] = useState("");
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -390,13 +394,15 @@ function CheckoutForm({ onShippingChargeUpdate }) {
     }
   }, [formData, isGuest, validateForm]);
 
+  let total;
+
   const handleOrderSubmit = async () => {
     setOrderProcessing(true);
     try {
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
 
-      const total = cartItems.reduce(
+      total = cartItems.reduce(
         (sum, item) =>
           sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
         0
@@ -454,6 +460,36 @@ function CheckoutForm({ onShippingChargeUpdate }) {
     }));
   };
 
+  const handleApplyDiscount = async () => {
+    if (!discountCode) return;
+
+    setIsApplyingDiscount(true);
+    setDiscountError("");
+
+    try {
+      const response = await validateCoupon(discountCode);
+      const couponData = response.data;
+
+      const isExpired = new Date(couponData.expired_at) < new Date();
+      if (isExpired) {
+        setDiscountError("This coupon has expired");
+        return;
+      }
+
+      const discountAmount =
+        couponData.type === "fixed"
+          ? parseFloat(couponData.value)
+          : (parseFloat(couponData.value) / 100) * total;
+
+      setDiscount(discountAmount);
+      onDiscountUpdate(discountAmount);
+    } catch (error) {
+      setDiscountError(error.message || "Invalid coupon code");
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -468,42 +504,42 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         borderRadius: 2,
       }}
     >
-     {!isGuest && addresses.length > 0 ? (
-  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-    <FormControl sx={{ flexGrow: 1 }}>
-      <InputLabel>Select Address</InputLabel>
-      <Select
-        value={selectedAddressId}
-        onChange={handleAddressSelect}
-        label="Select Address"
-      >
-        {addresses.map((address) => (
-          <MenuItem key={address.id} value={address.id}>
-            {address.address}, {address.city}, {address.country}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-    <Button
-      variant="contained"
-      onClick={handleOpenAddressDialog}
-      sx={{ minWidth: "auto", px: 3 }}
-    >
-      Add New Address
-    </Button>
-  </Box>
-) : (
-  !isGuest && (
-    <Button
-      variant="contained"
-      fullWidth
-      onClick={handleOpenAddressDialog}
-      sx={{ minWidth: "auto", px: 3 }}
-    >
-      Add New Address
-    </Button>
-  )
-)}
+      {!isGuest && addresses.length > 0 ? (
+        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+          <FormControl sx={{ flexGrow: 1 }}>
+            <InputLabel>Select Address</InputLabel>
+            <Select
+              value={selectedAddressId}
+              onChange={handleAddressSelect}
+              label="Select Address"
+            >
+              {addresses.map((address) => (
+                <MenuItem key={address.id} value={address.id}>
+                  {address.address}, {address.city}, {address.country}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            onClick={handleOpenAddressDialog}
+            sx={{ minWidth: "auto", px: 3 }}
+          >
+            Add New Address
+          </Button>
+        </Box>
+      ) : (
+        !isGuest && (
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleOpenAddressDialog}
+            sx={{ minWidth: "auto", px: 3 }}
+          >
+            Add New Address
+          </Button>
+        )
+      )}
 
       {/* Contact Section */}
       {/* <Typography variant="h5" sx={{ mb: 2 }}>
@@ -675,20 +711,19 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         <TextField
           fullWidth
           value={discountCode}
-          onChange={(e) => {
-            setdiscountCode(e.target.value);
-          }}
+          onChange={(e) => setDiscountCode(e.target.value)}
           placeholder="Enter discount code..."
-          minRows={4}
-          maxRows={7}
-          variant="outlined"
+          error={!!discountError}
+          helperText={discountError}
+          disabled={isApplyingDiscount}
         />
         <Button
           variant="contained"
-          onClick={handleOpenAddressDialog}
+          onClick={handleApplyDiscount}
+          disabled={!discountCode || isApplyingDiscount}
           sx={{ minWidth: "auto", px: 3 }}
         >
-          Apply
+          {isApplyingDiscount ? <CircularProgress size={24} /> : "Apply"}
         </Button>
       </Box>
 

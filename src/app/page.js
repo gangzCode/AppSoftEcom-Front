@@ -44,9 +44,44 @@ const HomePage = () => {
         alignItems="center"
         justifyContent="center"
         height="100vh"
+        sx={{
+          background: "linear-gradient(145deg, #ffffff 0%, #ffffff 100%)",
+          animation: "fadeIn 0.8s ease-in-out",
+          "@keyframes fadeIn": {
+            "0%": { opacity: 0 },
+            "100%": { opacity: 1 },
+          },
+        }}
       >
-        <CircularProgress />
-        <Typography variant="h6" mt={2}>
+        <CircularProgress
+          size={70}
+          thickness={4}
+          sx={{
+            color: "#2189ff",
+            animation: "pulse 1.5s ease-in-out infinite",
+            "@keyframes pulse": {
+              "0%": { transform: "scale(1)", opacity: 1 },
+              "50%": { transform: "scale(1.1)", opacity: 0.7 },
+              "100%": { transform: "scale(1)", opacity: 1 },
+            },
+          }}
+        />
+        <Typography
+          variant="h6"
+          sx={{
+            mt: 3,
+            fontWeight: 500,
+            background: "linear-gradient(45deg, #2189ff, #1976d2)",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "wave 2s ease-in-out infinite",
+            "@keyframes wave": {
+              "0%, 100%": { transform: "translateY(0)" },
+              "50%": { transform: "translateY(-5px)" },
+            },
+          }}
+        >
           Loading Home Page...
         </Typography>
       </Box>

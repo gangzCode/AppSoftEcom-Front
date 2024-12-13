@@ -935,3 +935,17 @@ export const placeOrder = async (orderData) => {
     throw error.response?.data || error;
   }
 };
+
+export const validateCoupon = async (code) => {
+  try {
+    const response = await axios.get(`${baseUrl}/get-coupon`, {
+      params: { code },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
