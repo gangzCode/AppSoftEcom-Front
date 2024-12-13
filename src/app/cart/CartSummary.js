@@ -3,8 +3,9 @@ import { Box, Typography, Button, Stack, TextField } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ShippingEstimate from "./ShippingEstimate";
 
-const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems }) => {
+const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems, currency = "$" }) => {
   const [isShippingExpanded, setIsShippingExpanded] = useState(false);
+
 
   const handleShippingExpand = () => {
     setIsShippingExpanded(!isShippingExpanded);
@@ -26,23 +27,23 @@ const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems }) => {
     >
       {/* Subtotal Display */}
       <Typography variant="body1" color="primary" sx={{ fontWeight: "bold" }}>
-        Subtotal: ${total.toFixed(2)}
+        Subtotal: {currency} {total.toFixed(2)}
       </Typography>
 
       {shipping > 0 && (
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Shipping: ${shipping.toFixed(2)}
+          Shipping: {currency} {shipping.toFixed(2)}
         </Typography>
       )}
 
       {tax > 0 && (
         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-          Tax: ${tax.toFixed(2)}
+          Tax: {currency} {tax.toFixed(2)}
         </Typography>
       )}
 
       <Typography variant="h6" color="primary" sx={{ fontWeight: "bold" }}>
-        Total: ${finalTotal.toFixed(2)}
+        Total: {currency} {finalTotal.toFixed(2)}
       </Typography>
 
       <Typography variant="body2" color="text.secondary">
@@ -59,7 +60,7 @@ const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems }) => {
         }}
         href="/checkout"
       >
-        Checkout (${finalTotal.toFixed(2)})
+        Checkout ({currency} {finalTotal.toFixed(2)})
       </Button>
 
       <Button

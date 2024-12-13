@@ -468,40 +468,42 @@ function CheckoutForm({ onShippingChargeUpdate }) {
         borderRadius: 2,
       }}
     >
-      {(!isGuest && addresses.length > 0 && (
-        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-          <FormControl sx={{ flexGrow: 1 }}>
-            <InputLabel>Select Address</InputLabel>
-            <Select
-              value={selectedAddressId}
-              onChange={handleAddressSelect}
-              label="Select Address"
-            >
-              {addresses.map((address) => (
-                <MenuItem key={address.id} value={address.id}>
-                  {address.address}, {address.city}, {address.country}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            variant="contained"
-            onClick={handleOpenAddressDialog}
-            sx={{ minWidth: "auto", px: 3 }}
-          >
-            Add New Address
-          </Button>
-        </Box>
-      )) || (
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleOpenAddressDialog}
-          sx={{ minWidth: "auto", px: 3 }}
-        >
-          Add New Address
-        </Button>
-      )}
+     {!isGuest && addresses.length > 0 ? (
+  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+    <FormControl sx={{ flexGrow: 1 }}>
+      <InputLabel>Select Address</InputLabel>
+      <Select
+        value={selectedAddressId}
+        onChange={handleAddressSelect}
+        label="Select Address"
+      >
+        {addresses.map((address) => (
+          <MenuItem key={address.id} value={address.id}>
+            {address.address}, {address.city}, {address.country}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+    <Button
+      variant="contained"
+      onClick={handleOpenAddressDialog}
+      sx={{ minWidth: "auto", px: 3 }}
+    >
+      Add New Address
+    </Button>
+  </Box>
+) : (
+  !isGuest && (
+    <Button
+      variant="contained"
+      fullWidth
+      onClick={handleOpenAddressDialog}
+      sx={{ minWidth: "auto", px: 3 }}
+    >
+      Add New Address
+    </Button>
+  )
+)}
 
       {/* Contact Section */}
       {/* <Typography variant="h5" sx={{ mb: 2 }}>

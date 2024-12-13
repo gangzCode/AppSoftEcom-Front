@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Avatar, Badge } from "@mui/material";
 
-function CheckoutItem({ item }) {
+function CheckoutItem({ item, currency = "$" }) {
   return (
     <Box
       sx={{
@@ -31,7 +31,7 @@ function CheckoutItem({ item }) {
 
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="body1" fontWeight="bold">
-          {item.product.name}
+          {item?.product?.name.length > 40 ? item?.product?.name.slice(0, 40) + "..." : item?.product?.name}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {item.variant}
@@ -39,7 +39,7 @@ function CheckoutItem({ item }) {
       </Box>
 
       <Typography variant="body1" fontWeight="bold">
-        ${(parseFloat(item.unit_price) * parseFloat(item.quantity)).toFixed(2)}
+        {currency} {(parseFloat(item.unit_price) * parseFloat(item.quantity)).toFixed(2)}
       </Typography>
     </Box>
   );

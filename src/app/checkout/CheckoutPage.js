@@ -56,9 +56,10 @@ const CheckoutPage = () => {
         >
           {cartItems.map((item) => (
             <Grid item xs={12} key={item.card_id}>
-              <CheckoutItem item={item} />
+              <CheckoutItem item={item} currency={cartItems.length > 0 ? cartItems[0].product.currency : "$"} />
             </Grid>
           ))}
+          
         </Grid>
         <Grid
           item
@@ -66,7 +67,7 @@ const CheckoutPage = () => {
           alignItems={"flex-start"}
           alignContent={"flex-start"}
         >
-          <CheckoutSummary total={total} shippingCharge={shippingCharge} />
+          <CheckoutSummary total={total} shippingCharge={shippingCharge} currency={cartItems.length > 0 ? cartItems[0].product.currency : "$"} />
         </Grid>
       </Grid>
     </Grid>

@@ -204,8 +204,8 @@ const CartPage = () => {
                       />
                       <Box>
                         <Typography variant="subtitle1">
-                          {item?.product?.name.length > 70
-                            ? item?.product?.name.slice(0, 70) + "..."
+                          {item?.product?.name.length > 20
+                            ? item?.product?.name.slice(0, 20) + "..."
                             : item?.product?.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -215,7 +215,7 @@ const CartPage = () => {
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    ${parseFloat(item.unit_price).toFixed(2)}
+                    {item.product.currency} {parseFloat(item.unit_price).toFixed(2)}
                   </TableCell>
                   <TableCell align="center">
                     <Box
@@ -288,8 +288,7 @@ const CartPage = () => {
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    $
-                    {(
+                    {item.product.currency} {(
                       parseFloat(item.unit_price) * parseFloat(item.quantity)
                     ).toFixed(2)}
                   </TableCell>
@@ -343,6 +342,7 @@ const CartPage = () => {
               sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
             0
           )}
+          currency={cartItems.length > 0 ? cartItems[0].product.currency : "$"}
         />
       </Grid>
 

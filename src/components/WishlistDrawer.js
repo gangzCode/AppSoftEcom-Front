@@ -126,7 +126,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                   </Typography>
                   <Grid container alignItems="center" justifyContent="space-between">
                     <Typography variant="body1" sx={{ mt: 0.5 }}>
-                      {item.currency}{parseFloat(item.sales_price).toFixed(2)}
+                      {item.currency} {parseFloat(item.sales_price).toFixed(2)}
                     </Typography>
                     <IconButton
                       size="small"

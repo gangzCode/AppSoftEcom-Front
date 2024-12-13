@@ -161,7 +161,7 @@ const DealsofDay = () => {
                   fontSize={"36px"}
                   fontWeight={"600"}
                 >
-                  {products[0]?.currency}{products[0]?.sales_price}
+                  {products[0]?.currency} {products[0]?.sales_price}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -323,7 +323,7 @@ const DealsofDay = () => {
                           fontWeight={"600"}
                           sx={{ marginBottom: "8px" }}
                         >
-                          {card.currency}{card.sales_price}
+                          {card.currency} {card.sales_price}
                         </Typography>
                         <ChevronRight
                           sx={{ color: "#2189ff", marginLeft: "8px" }}
@@ -459,7 +459,7 @@ const DealsofDay = () => {
                           fontWeight={"600"}
                           sx={{ marginBottom: "8px" }}
                         >
-                          {card.currency}{card.sales_price}
+                          {card.currency} {card.sales_price}
                         </Typography>
                         <ChevronRight
                           sx={{ color: "#2189ff", marginLeft: "8px" }}

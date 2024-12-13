@@ -72,7 +72,7 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
             {item.variant}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0.5 }}>
-            {currency}{parseFloat(item.unit_price).toFixed(2)}
+            {currency} {parseFloat(item.unit_price).toFixed(2)}
           </Typography>
         </Box>
         <Stack direction={"row"} alignItems={"center"} mt={1} gap={4}>

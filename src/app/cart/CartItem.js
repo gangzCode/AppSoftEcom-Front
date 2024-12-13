@@ -5,7 +5,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { deleteCartItem } from "../../services/apiCalls";
 
-function CartItem({ item, onQuantityChange }) {
+function CartItem({ item, onQuantityChange, currency = "$"  }) {
   const [quantity, setQuantity] = useState(parseFloat(item.quantity));
   const pricePerItem = parseFloat(item.unit_price);
   const totalPrice = pricePerItem * quantity;
@@ -65,10 +65,10 @@ function CartItem({ item, onQuantityChange }) {
         alignItems={"flex-start"}
       >
         <Typography sx={{ fontSize: "1.5em", fontWeight: 400 }}>
-          {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
+          {item?.product?.name.length > 30 ? item?.product?.name.slice(0, 30) + "..." : item?.product?.name}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          ${item.unit_price}
+          {currency} {item.unit_price}
         </Typography>
         <Typography variant="body1" color="text.secondary">
           Variant: {item.variant}
@@ -139,7 +139,7 @@ function CartItem({ item, onQuantityChange }) {
       </Stack>
 
       <Box sx={{ textAlign: "right", mt: "auto", background: "#fff", p: 1 }}>
-        <Typography variant="h6">Total: ${totalPrice.toFixed(2)}</Typography>
+        <Typography variant="h6">Total: {currency} {totalPrice.toFixed(2)}</Typography>
       </Box>
     </Box>
   );

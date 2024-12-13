@@ -192,7 +192,7 @@ const TabSection = () => {
                           color="primary"
                           fontWeight="bold"
                         >
-                          ${product.price.toLocaleString()}
+                          {product.currency} {product.price.toLocaleString()}
                         </Typography>
                         {product.originalPrice && (
                           <Typography
