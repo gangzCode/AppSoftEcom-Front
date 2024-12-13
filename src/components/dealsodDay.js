@@ -118,7 +118,26 @@ const DealsofDay = () => {
       >
         {subTitle}
       </Typography>
-      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
+      <Typography
+        onClick={() =>
+          navigate("/custom-products", {
+            state: { title, products: products },
+          })
+        }
+        variant="h4"
+        fontWeight={"600"}
+        component="h2"
+        gutterBottom
+        width={"fit-content"}
+        sx={{
+          cursor: "pointer",
+          transition: "color 0.3s ease",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
+          "&:hover": {
+            color: "#2189ff",
+          },
+        }}
+      >
         {title}
       </Typography>
       <Box sx={{ padding: "40px 0" }}>

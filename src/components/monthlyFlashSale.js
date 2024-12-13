@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { getMonthlyFlashSaleProducts } from "../services/apiCalls";
 import { Container } from "../common/Spacing";
 import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 const MonthlyFlashSale = () => {
   const scrollContainerRef = useRef(null);
@@ -13,6 +14,7 @@ const MonthlyFlashSale = () => {
   const [products, setProducts] = useState([]); // Ensure products is an array
   const [title, setTitle] = useState("Default Title"); // Initialize with default
   const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -67,7 +69,26 @@ const MonthlyFlashSale = () => {
       >
         {subTitle}
       </Typography>
-      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
+      <Typography
+        onClick={() =>
+          navigate("/custom-products", {
+            state: { title, products: products },
+          })
+        }
+        variant="h4"
+        fontWeight={"600"}
+        component="h2"
+        gutterBottom
+        width={"fit-content"}
+        sx={{
+          cursor: "pointer",
+          transition: "color 0.3s ease",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
+          "&:hover": {
+            color: "#2189ff",
+          },
+        }}
+      >
         {title}
       </Typography>
       <Box
