@@ -49,12 +49,13 @@ import {
   getTopCategoriesForMenu,
   quickSearch,
   fetchSystemData,
+  getCartDetails, 
+  getWishListofUser,
 } from "../services/apiCalls";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
-import { getCartDetails, getWishListofUser } from "../services/apiCalls";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -91,7 +92,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const fetchCart = async () => {
     try {
       const response = await getCartDetails();
-      console.log("dwdqewedwedwedwedw", response);
       setCartItems(response.data);
     } catch (error) {
       console.error("Failed to fetch cart:", error);
@@ -710,99 +710,97 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Grid>
       )}
 
-      <Box position={"relative"} width={"100%"}>
-        {menus.map(
-          (menu, index) =>
-            menu.sub_category.length > 0 && (
-              <Grow in={menuIndex === index}>
-                <Box
-                  py={4}
-                  px={6}
-                  sx={{
-                    position: "absolute",
-                    left: 0,
-                    top: -25,
-                    bgcolor: "#f3f3f3",
-                    width: "100%",
-                    // display: Boolean(anchorMenu) && menuIndex === index ? "block" : "none",
-                    boxShadow: "0 1px 5px rgba(0,0,0,.1)",
-                  }}
-                  onMouseEnter={() => handleHover(index)}
-                  onMouseLeave={handleHoverClose}
-                  // onMouseHover={handleHover}
-                >
-                  {
-                    <Grid container>
-                      {menu.sub_category.slice(0, 5).map((item, idx) => (
-                        <Grid item xs={2.4}>
-                          <Box key={idx}>
-                            <RouterLink
-                              to={`/products/${menu.id}`}
+<Box position={"relative"} width={"100%"}>
+  {menus.map(
+    (menu, index) =>
+      menu.is_sub_category && menu.sub_category.length > 0 && (
+        <Grow in={menuIndex === index} key={menu.id}>
+          <Box
+            py={4}
+            px={6}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: -25,
+              bgcolor: "#f3f3f3",
+              width: "100%",
+              boxShadow: "0 1px 5px rgba(0,0,0,.1)",
+            }}
+            onMouseEnter={() => handleHover(index)}
+            onMouseLeave={handleHoverClose}
+          >
+            <Grid container>
+              {menu.sub_category.slice(0, 5).map((sub, idx) => (
+                <Grid item xs={2.4} key={sub.id}>
+                  <Box>
+                  <RouterLink
+                      to={`/products/${menu.id}`}
+                      state={{
+                        subcategoryId: sub.id,
+                        subcategoryName: sub.name,
+                      }}
+                    >
+                    <Typography
+                      fontSize={"14px"}
+                      fontWeight={"600"}
+                      variant="p"
+                      mb={"30px"}
+                    >
+                      {sub.name}
+                    </Typography>
+                    </RouterLink>
+                    {sub.products.length > 0 ? (
+                      sub.products.map((product, productIdx) => (
+                        <MenuItem
+                          sx={{ padding: "10px 0" }}
+                          key={product.id || productIdx}
+                          onClick={handleClose}
+                        >
+                          <RouterLink
+                              to={`/product/${product.id}`}
                               state={{
-                                subcategoryId: item.id,
-                                subcategoryName: item.name,
+                                subcategoryId: product.id,
+                                subcategoryName: product.name,
                               }}
                             >
-                              <Typography
-                                fontSize={"14px"}
-                                fontWeight={"600"}
-                                variant="p"
-                                mb={"30px"}
-                              >
-                                {menu.label}
-                              </Typography>
-                              <MenuItem
-                                sx={{ padding: "10px 0" }}
-                                onClick={handleClose}
-                              >
-                                <Typography fontSize={"14px"} variant="p">
-                                  {item.name}
-                                </Typography>
-                              </MenuItem>
-                            </RouterLink>
-                          </Box>
-                        </Grid>
-                      ))}
+                          <Typography fontSize={"14px"} variant="p">
+                            {product?.name.length > 20 ? product?.name.slice(0, 20) + "..." : product?.name}
+                          </Typography>
+                          </RouterLink>
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <Typography fontSize={"14px"} variant="p" color="gray">
+                        No products available
+                      </Typography>
+                    )}
+                  </Box>
+                </Grid>
+              ))}
 
-                      {menu.sub_category &&
-                        menu.sub_category.length < 5 &&
-                        Array.from({
-                          length: 5 - menu.sub_category.length,
-                        }).map((_, fillIndex) => (
-                          <Grid item xs={2.4}>
-                            <Box
-                              key={`fill-${fillIndex}`}
-                              sx={{ textAlign: "center" }}
-                            >
-                              <img
-                                src={menu.image}
-                                alt={menu.name}
-                                height={"100%"}
-                                width={"auto"}
-                              />
-                            </Box>
-                          </Grid>
-                        ))}
-                      {/*   {[...Array(5 - menu.sub_category.length)].map((item, i) => {
-                  return (
-                    <Grid item xs={2.4}>
-                      <Box
-                        key={i}
-                        component={"img"}
-                        src="https://dt-elektrix.myshopify.com/cdn/shop/files/Elektrix_Mega_Menu_3.png?v=1667563640"
-                        height={"100%"}
-                        width={"auto"}
-                      />
+              {menu.sub_category.length < 5 &&
+                Array.from({ length: 5 - menu.sub_category.length }).map(
+                  (_, fillIndex) => (
+                    <Grid item xs={2.4} key={`fill-${fillIndex}`}>
+                      <Box sx={{ textAlign: "center" }}>
+                        <img
+                          src={menu.images[0] || "https://ecom-test2.yalpos.com/img/default.png"}
+                          alt={menu.name}
+                          height={"100%"}
+                          width={"auto"}
+                        />
+                      </Box>
                     </Grid>
-                  );
-                })} */}
-                    </Grid>
-                  }
-                </Box>
-              </Grow>
-            )
-        )}
-      </Box>
+                  )
+                )}
+            </Grid>
+          </Box>
+        </Grow>
+      )
+  )}
+</Box>
+
+
 
       {isMobile && bottomNav}
     </AppBar>
