@@ -128,7 +128,7 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_category === 1 && <BestCategory />}
+        {settings.is_show_best_category === 0 && <BestCategory />}
       </ScrollTransition>
 
       <ScrollTransition>
