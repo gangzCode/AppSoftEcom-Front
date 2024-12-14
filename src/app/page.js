@@ -71,10 +71,7 @@ const HomePage = () => {
           sx={{
             mt: 3,
             fontWeight: 500,
-            background: "linear-gradient(45deg, #2189ff, #1976d2)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
+            color: "black",
             animation: "wave 2s ease-in-out infinite",
             "@keyframes wave": {
               "0%, 100%": { transform: "translateY(0)" },
@@ -132,7 +129,7 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_brand_product === 1 && <BestBrand />}
+        {settings.is_show_best_brand_product === 0 && <BestBrand />}
       </ScrollTransition>
 
       <ScrollTransition>

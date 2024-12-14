@@ -22,6 +22,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
   Email,
   AccountCircle,
@@ -31,6 +32,7 @@ import {
   Edit,
   Delete,
   Add,
+  Caer,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -648,7 +650,7 @@ function ProfilePage() {
             iconPosition="start"
             label="Address Book"
           />
-          <Tab icon={<Phone />} iconPosition="start" label="My Orders" />
+          <Tab icon={<ShoppingCartIcon />} iconPosition="start" label="My Orders" />
         </Tabs>
 
         <Box sx={{ flexGrow: 1, ml: { xs: 0, md: 3 }, mt: { xs: 3, md: 0 } }}>
