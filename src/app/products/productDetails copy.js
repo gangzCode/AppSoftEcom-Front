@@ -58,13 +58,11 @@ const ProductDetailsPage = () => {
   // const product = productDetails[id];
 
   useEffect(() => {
-    console.log(productId + "productId");
 
     const fetchGetProductDetails = async () => {
       try {
         const response = await fetchProductById(productId);
         setproduct(response.data);
-        console.log("productbyid ::::: ", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -76,7 +74,6 @@ const ProductDetailsPage = () => {
   }, [product, productId]);
 
   useEffect(() => {
-    console.log("productbyid in state", product);
 
     return () => {};
   }, [product]);

@@ -52,7 +52,6 @@ function ShippingEstimate({ expanded = false,currencyforShipEsti }) {
       return;
     }
     try {
-      console.log("Fetching shipping charge for city ID:", selectedCity);
   
       const response = await getShippingCharge(selectedCity);
   

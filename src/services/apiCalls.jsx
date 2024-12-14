@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
-export const baseUrl = "https://ecom-test2.yalpos.com/api";
+export const baseUrl = "https://yalpos.com/custom/Electronics/computerzone/public/api";
 
 export const getIPAddress = async () => {
   try {
@@ -51,8 +51,6 @@ export const getTopCategoriesForMenu = async () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data);
-
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
@@ -61,14 +59,12 @@ export const getTopCategoriesForMenu = async () => {
 
 export const updateUserProfile = async (userData, token) => {
   try {
-    console.log("Sending token in request:", token);
     const res = await axios.put(baseUrl + "/profile/update", userData, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(res.data);
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
@@ -306,7 +302,6 @@ export const fetchProducts = async (categoryId) => {
         },
       }
     );
-    console.log(res.data + " API");
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
@@ -320,8 +315,6 @@ export const fetchProductById = async (id) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res + "res api");
-
     return res.data;
   } catch (error) {
     throw error.response ? error.response.status : error;
@@ -334,7 +327,7 @@ export const quickSearch = async (term) => {
 
   try {
     const response = await axios.post(
-      "https://ecom-test2.yalpos.com/api/product-search",
+      baseUrl+"/product-search",
       { term },
       {
         headers: {
@@ -347,7 +340,6 @@ export const quickSearch = async (term) => {
     return response.data;
   } catch (error) {
     if (axios.isCancel(error)) {
-      console.log("Request was aborted");
     } else {
       console.error("Request failed", error);
     }
@@ -612,8 +604,6 @@ export const addToCartGuest = async (cartItem) => {
   try {
     const ip_address = await getIPAddress();
 
-    console.log("ipaddress:>>>>", ip_address);
-
     const response = await axios.post(
       "https://ecom-test2.yalpos.com/api/guest/add-card",
       {
@@ -867,8 +857,6 @@ export const getCities = async (countryId) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(JSON.stringify(response.data) + "API cities");
-
     return response.data;
   } catch (error) {
     throw error.response?.data || error;

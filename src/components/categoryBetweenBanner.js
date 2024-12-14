@@ -12,7 +12,6 @@ const CategoryBetweenBanner = () => {
       try {
         const response = await getPromotions();
         setPromotions(response.data);
-        console.log("Featured ::::: ", response.data);
       } catch (error) {
         console.error("Error fetching promotions:", error);
       }

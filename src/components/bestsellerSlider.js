@@ -25,7 +25,6 @@ const BestsellerSlider = () => {
       try {
         const response = await getBestSellingProducts();
         setproducts(response.data);
-        console.log("Products Best selling", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }

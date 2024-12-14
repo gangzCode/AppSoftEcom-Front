@@ -111,7 +111,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   };
 
   const handleProfileClick = () => {
-    console.log("user:", user);
 
     if (user) {
       navigate("/profile");
@@ -144,7 +143,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       try {
         const response = await quickSearch(searchTerm);
         const results = response.data;
-        console.log("Search Results:", results);
         if (results.length === 0) {
           setSearchResults([
             { message: "No products found for the search term" },
@@ -160,7 +158,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
   useEffect(() => {
     if (searchResults.length > 0) {
-      console.log(searchResults);
     }
   }, [searchResults]);
 
@@ -187,7 +184,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       try {
         const response = await getCategoriesForAllCategoriesDrop();
         setCategories(response.data);
-        console.log("responseee", response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -201,7 +197,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
       try {
         const response = await getTopCategoriesForMenu();
         setmenus(response.data);
-        console.log("responseee menu", response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

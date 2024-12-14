@@ -5,7 +5,6 @@ import { fetchProducts, fetchProductById } from "../../services/apiCalls";
 export const getProducts = createAsyncThunk(
   "products/getProducts",
   async () => {
-    console.log('thunk');
     
     return await fetchProducts();
   }

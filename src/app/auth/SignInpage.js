@@ -28,7 +28,6 @@ const SignInPage = () => {
   
     try {
       const response = await loginUser(email, password);
-      console.log("Login successful:", response);
       if (response.http_status === 200) {
         const { token, info } = response.data;
         login(token, info); // Pass both token and user info to login

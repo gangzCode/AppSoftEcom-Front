@@ -52,7 +52,6 @@ const SignUpPage = () => {
         phone,
         password
       );
-      console.log("Registration successful:", response);
 
       navigate("/otp", { state: { email } });
     } catch (err) {

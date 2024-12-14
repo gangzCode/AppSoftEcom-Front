@@ -106,14 +106,12 @@ const ProductsPage = () => {
   }, [categoryId, subcategoryId, subcategoryName]);
 
   useEffect(() => {
-    console.log("CategoryId from Params:", categoryId);
     const fetchGetProducts = async () => {
       setLoading(true);
       try {
         const response = await fetchProducts(categoryId);
         setproducts(response.data);
         setTotalProductCount(response.product_count);
-        console.log("Products by Category", response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -140,7 +138,6 @@ const ProductsPage = () => {
     const fetchTrendingProducts = async () => {
       const response = await getTrendingProduct();
       setTrendingProducts(response.data);
-      console.log("Trending Products", response.data);
     };
 
     fetchTrendingProducts();

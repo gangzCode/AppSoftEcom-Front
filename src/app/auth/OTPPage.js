@@ -25,7 +25,6 @@ const OTPPage = () => {
 
     try {
       const response = await verifyOtp(email, activationCode);
-      console.log("OTP verification successful:", response);
 
       if (response.http_status === 200) {
         setSuccess("OTP verified successfully!");

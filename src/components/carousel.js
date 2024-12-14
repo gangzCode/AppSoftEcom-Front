@@ -14,7 +14,6 @@ const CarouselSection = () => {
         const response = await getSliders();
         const sortedSlides = response.data.sort((a, b) => a.order - b.order);
         setSlides(sortedSlides);
-        console.log("Slides ::::: ", sortedSlides);
       } catch (error) {
         console.error("Error fetching sliders:", error);
       }

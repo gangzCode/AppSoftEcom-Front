@@ -20,7 +20,6 @@ const TopSellingBetweenBanner = () => {
         const response = await getPromotions();
 
         setpromotions(response.data.filter((item) => item.type === "Top"));
-        console.log("Featured Top ", response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

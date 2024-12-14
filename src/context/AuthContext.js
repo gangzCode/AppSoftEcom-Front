@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
     if (savedData) {
       try {
         const { token, info } = JSON.parse(savedData);
-        console.log("Token from localStorage: ", token);
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         if (decodedToken.exp > currentTime) {

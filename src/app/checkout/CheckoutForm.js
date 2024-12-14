@@ -199,7 +199,6 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         try {
           const response = await getCities(formData.country);
 
-          console.log("Cities:", response.data);
           setCities(response.data || []);
           setCityLoading(false);
         } catch (error) {

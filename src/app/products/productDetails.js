@@ -109,7 +109,6 @@ const ProductDetailsPage = () => {
       try {
         const response = await fetchProductById(productId);
         setproduct(response.data);
-        console.log("productbyid ::::: ", response.data);
 
         const variationImages = response.data.product_variation_combination
           .map((combination) => combination.image)
