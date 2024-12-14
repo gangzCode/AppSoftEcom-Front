@@ -129,7 +129,7 @@ function AddressBook() {
       const response = await getUserAddress(token);
       const fetchedAddresses = response.data || [];
 
-      console.log("Fetched Addresses:", fetchedAddresses);
+
       setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
     } catch (err) {
       console.error("Error fetching addresses:", err);
@@ -211,7 +211,6 @@ function AddressBook() {
           selectedAddress.id,
           addressData
         );
-        console.log("Address updated:", updatedAddress);
 
         await fetchAddresses();
       } else {
@@ -414,6 +413,7 @@ const OrdersHistory = () => {
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
+  const [expandedOrders, setExpandedOrders] = useState([]);
 
   useEffect(() => {
     fetchOrders();
@@ -427,7 +427,6 @@ const OrdersHistory = () => {
       const response = await getUserOrders(token);
       const fetchOrders = response.data || [];
 
-      console.log("Fetched Addresses:", fetchOrders);
       setOrders(fetchOrders ? fetchOrders : []);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -435,6 +434,14 @@ const OrdersHistory = () => {
       setOrders([]);
     }
   };
+
+  const handleViewMore = (orderId) => {
+  setExpandedOrders((prevExpandedOrders) =>
+    prevExpandedOrders.includes(orderId)
+      ? prevExpandedOrders.filter((id) => id !== orderId)
+      : [...prevExpandedOrders, orderId]
+  );
+};
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -460,7 +467,7 @@ const OrdersHistory = () => {
           <TableHead>
             <TableRow>
               <TableCell>Order #</TableCell>
-              <TableCell>Date</TableCell>
+              {/* <TableCell>Date</TableCell> */}
               <TableCell>Status</TableCell>
               <TableCell>Total Items</TableCell>
               <TableCell>Total Amount</TableCell>
@@ -471,11 +478,11 @@ const OrdersHistory = () => {
             {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell>{order.order_no}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   {order.order_at
                     ? new Date(order.order_at).toLocaleDateString()
                     : "N/A"}
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Alert severity={getStatusColor(order.order_status)}>
                     {order.order_status}
@@ -487,14 +494,32 @@ const OrdersHistory = () => {
                 </TableCell>
                 <TableCell>
                   <Box>
-                    {order.sell_lines.map((line, index) => (
+                    {order.sell_lines.slice(0, 1).map((line, index) => (
                       <Typography key={index} variant="body2">
                         {line.quantity}x {JSON.parse(line.product_name).En} - $
                         {parseFloat(line.line_total).toFixed(2)}
                       </Typography>
                     ))}
+                    {order.sell_lines.length > 1 && (
+                      <Button
+                        size="small"
+                        onClick={() => handleViewMore(order.id)}
+                        variant="text"
+                        color="primary"
+                      >
+                        View More
+                      </Button>
+                    )}
+                    {expandedOrders.includes(order.id) &&
+                      order.sell_lines.slice(1).map((line, index) => (
+                        <Typography key={`expanded-${index}`} variant="body2">
+                          {line.quantity}x {JSON.parse(line.product_name).En} - $
+                          {parseFloat(line.line_total).toFixed(2)}
+                        </Typography>
+                      ))}
                   </Box>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
@@ -553,6 +578,7 @@ function ProfilePage() {
 
     try {
       const response = await updateUserProfile(updatedData, token);
+     
       console.log("Profile updated successfully", response);
       setSnackbarMessage("Profile updated successfully");
       setSnackbarSeverity("success");
@@ -766,6 +792,10 @@ function ProfilePage() {
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{
+          vertical: 'top', 
+          horizontal: 'center',
+        }}
       >
         <Alert
           onClose={() => setOpenSnackbar(false)}
