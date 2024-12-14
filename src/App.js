@@ -27,6 +27,7 @@ import DynamicFavicon from "./components/dynamicFavicon";
 import PrivateRoute from "./components/privateRoute";
 import { AuthProvider } from "./context/AuthContext";
 import CustomProducts from "./components/CustomProducts";
+import Snow from "./components/Snow";
 
 // Define theme
 /* const theme = createTheme({
@@ -42,41 +43,47 @@ function Layout() {
 
   return (
     <>
-      <DynamicFavicon />
-      {/* <Box>
-        <TopBar />
-      </Box> */}
-      <Box paddingX={{ xs: "1em", md: "8em" }}>
-        {!isAuthPage && <Navbar />}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/products/:categoryId" element={<ProductsPage />} />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/otp" element={<OTPPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          {/* <Route path="/forgotpassword" element={< />} /> */}
-          <Route path="/product/:productId" element={<ProductDetailsPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/custom-products" element={<CustomProducts />} />
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
-        </Routes>
+      <Box sx={{ minHeight: "100vh", position: "relative" }}>
+        <Snow />
+        <DynamicFavicon />
+        {/* <Box>
+          <TopBar />
+        </Box> */}
+        <Box paddingX={{ xs: "1em", md: "8em" }}>
+          {!isAuthPage && <Navbar />}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/products/:categoryId" element={<ProductsPage />} />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/otp" element={<OTPPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            {/* <Route path="/forgotpassword" element={< />} /> */}
+            <Route
+              path="/product/:productId"
+              element={<ProductDetailsPage />}
+            />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/custom-products" element={<CustomProducts />} />
+            {/* <Route path="*" element={<NotFoundPage />} /> */}
+          </Routes>
 
-        {!isAuthPage && <Footer />}
+          {!isAuthPage && <Footer />}
+        </Box>
+        <Copyright />
+        <ScrollToTopButton />
       </Box>
-      <Copyright />
-      <ScrollToTopButton />
     </>
   );
 }
