@@ -1,21 +1,74 @@
-import React, { useState } from "react";
-import { Box, Typography, MenuItem, Select, TextField, Button } from "@mui/material";
-import { GetCountryList, GetProvinces } from "./CountryData";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+  Button,
+  TextField,
+} from "@mui/material";
+import { getCountries, getCities, getShippingCharge } from "../../services/apiCalls";
 
 function ShippingEstimate({ expanded = false }) {
-  const [country, setCountry] = useState("NONE");
-  const [province, setProvince] = useState("");
-  const [zip, setZip] = useState("35242");
+  const [countries, setCountries] = useState([]);
+  const [selectedCountryId, setSelectedCountryId] = useState("");
+  const [cities, setCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(""); // Now stores city ID
+  const [shippingCharge, setShippingCharge] = useState(0);
 
-  const [provinceOptions, setProvinceOptions] = useState([]);
+  // Fetch countries on component mount
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await getCountries();
+        setCountries(response.data || []);
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+    fetchCountries();
+  }, []);
 
-  const handleCalculateShipping = () => {
-    // Add logic for calculating shipping here
-    console.log(`Calculating shipping for ${country}, ${province}, ZIP: ${zip}`);
+  // Fetch cities when a country is selected
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (selectedCountryId) {
+        try {
+          const response = await getCities(selectedCountryId);
+          setCities(response.data || []);
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+          setCities([]);
+        }
+      } else {
+        setCities([]);
+      }
+    };
+    fetchCities();
+  }, [selectedCountryId]);
+
+  const handleCalculateShipping = async () => {
+    if (!selectedCountryId || !selectedCity) {
+      alert("Please select a country and a city.");
+      return;
+    }
+    try {
+      console.log("Fetching shipping charge for city ID:", selectedCity);
+  
+      const response = await getShippingCharge(selectedCity);
+  
+      if (response && response.shiping_charge) {
+        setShippingCharge(response.shiping_charge); // Set the charge
+      } else {
+        console.error("Invalid response:", response);
+        setShippingCharge(0);
+      }
+    } catch (error) {
+      console.error("Error fetching shipping charge:", error);
+      setShippingCharge(0);
+    }
   };
-
-  console.log(GetCountryList());
-  console.log(GetProvinces("US"));
+  
 
   return (
     <Box sx={{ mx: "auto", mt: 2 }} display={expanded ? "block" : "none"}>
@@ -24,120 +77,52 @@ function ShippingEstimate({ expanded = false }) {
         Country
       </Typography>
       <Select
-        value={country}
-        onChange={(e) => {
-          setCountry(e.target.value);
-          setProvince("");
-          setProvinceOptions(GetProvinces(e.target.value));
-        }}
+        value={selectedCountryId}
+        onChange={(e) => setSelectedCountryId(e.target.value)}
         fullWidth
-        MenuProps={{
-          sx: {
-            ul: {
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
-              border: "1px solid #F2F6FA",
-              li: {
-                "&.Mui-selected": {
-                  bgcolor: "info.main",
-                  "&:hover": {
-                    bgcolor: "primary.dark",
-                  },
-                },
-                "&:hover": {
-                  bgcolor: "primary.dark",
-                },
-              },
-            },
-          },
-        }}
         sx={{
           mb: 2,
           bgcolor: "bluebutton.main",
           color: "#fff",
           fontWeight: "bold",
           borderRadius: 1,
-          transition: "background-color 0.2s ease-in-out",
           "& .MuiSelect-icon": { color: "#fff" },
-          "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-          "&:hover": {
-            bgcolor: "bluebutton.dark",
-          },
         }}
       >
-        {GetCountryList().map((country) => {
-          return <MenuItem value={country.code}>{country.name}</MenuItem>;
-        })}
-        
-        {/* Add more countries as needed */}
+        {countries.map((country) => (
+          <MenuItem key={country.id} value={country.id}>
+            {country.name}
+          </MenuItem>
+        ))}
       </Select>
 
-      {/* State Selection */}
-      {provinceOptions.length > 1 && (
+      {/* City Selection */}
+      {cities.length > 0 && (
         <>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            State/Province
+            City
           </Typography>
           <Select
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)} // Use city ID
             fullWidth
-            MenuProps={{
-              sx: {
-                ul: {
-                  bgcolor: "primary.main",
-                  color: "primary.contrastText",
-                  border: "1px solid #F2F6FA",
-                  li: {
-                    "&.Mui-selected": {
-                      bgcolor: "info.main",
-                      "&:hover": {
-                        bgcolor: "primary.dark",
-                      },
-                    },
-                    "&:hover": {
-                      bgcolor: "primary.dark",
-                    },
-                  },
-                },
-              },
-            }}
             sx={{
               mb: 2,
               bgcolor: "bluebutton.main",
               color: "#fff",
               fontWeight: "bold",
               borderRadius: 1,
-              transition: "background-color 0.2s ease-in-out",
               "& .MuiSelect-icon": { color: "#fff" },
-              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-              "&:hover": {
-                bgcolor: "bluebutton.dark",
-              },
             }}
           >
-            {provinceOptions.map((province) => (
-              <MenuItem value={province}>{province}</MenuItem>
+            {cities.map((city) => (
+              <MenuItem key={city.id} value={city.id}>
+                {city.name_en}
+              </MenuItem>
             ))}
           </Select>
         </>
       )}
-
-      {/* Zip/Postal Code Input */}
-      <Typography variant="body2" sx={{ mb: 1 }}>
-        Zip/Postal Code
-      </Typography>
-      <TextField
-        value={zip}
-        onChange={(e) => setZip(e.target.value)}
-        fullWidth
-        variant="outlined"
-        sx={{
-          mb: 2,
-          bgcolor: "#f5f5f5",
-          "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-        }}
-      />
 
       {/* Calculate Shipping Button */}
       <Button
@@ -145,14 +130,20 @@ function ShippingEstimate({ expanded = false }) {
         color="primary"
         fullWidth
         onClick={handleCalculateShipping}
-        sx={{
-          fontWeight: "bold",
-        }}
+        sx={{ fontWeight: "bold" }}
       >
         Calculate Shipping
       </Button>
+
+      {/* Display Shipping Charge */}
+      {shippingCharge > 0 && (
+        <Typography variant="h6" sx={{ mt: 2 }}>
+
+          Shipping Charge: ${shippingCharge}
+        </Typography>
+      )}
     </Box>
   );
 }
 
-export default ShippingEstimate;
+export default ShippingEstimate;           
