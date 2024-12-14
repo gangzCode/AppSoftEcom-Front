@@ -11,8 +11,9 @@ import { useNavigate } from "react-router-dom";
 const DayFlashSale = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [products, setProducts] = useState([]); // Ensure products is an array
-  const [title, setTitle] = useState("Default Title"); // Initialize with default
+  const [products, setProducts] = useState([]);
+  const [title, setTitle] = useState("Default Title");
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [subTitle, setSubTitle] = useState("Default Subtitle");
   const navigate = useNavigate();
 
@@ -23,9 +24,16 @@ const DayFlashSale = () => {
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response?.data || []);
+        const filteredProducts = (response?.data || []).filter(
+          (product) => product.category.status === "1"
+        );
+        setFilteredProducts(
+          filteredProducts
+        );
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]);
+        setFilteredProducts([]);
       }
     };
 
@@ -114,8 +122,8 @@ const DayFlashSale = () => {
           },
         }}
       >
-        {products.length > 0 && products !== null ? (
-          products.map((product) => (
+        {filteredProducts.length > 0 && filteredProducts !== null ? (
+          filteredProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))
         ) : (

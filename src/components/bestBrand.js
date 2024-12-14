@@ -12,7 +12,7 @@ const BestBrand = () => {
   const [products, setProducts] = useState([]); 
   const [title, setTitle] = useState("Default Title");
   const [subTitle, setSubTitle] = useState("Default Subtitle");
-
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,10 +21,17 @@ const BestBrand = () => {
         const response = await getBestBrandedProducts();
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
+        const filteredProducts = (response?.data || []).filter(
+          (product) => product.category.status === "1"
+        );
+        setFilteredProducts(
+          filteredProducts
+        );
         setProducts(response?.data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]);
+        setFilteredProducts([]);
       }
     };
 

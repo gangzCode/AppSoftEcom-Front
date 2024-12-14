@@ -13,19 +13,37 @@ import {
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Container } from "../common/Spacing";
-import { getBestTopNewArrivalTabProducts } from "../services/apiCalls";
+import {
+  getBestTopNewArrivalTabProducts,
+  fetchSystemData,
+} from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const navigate = useNavigate();
-
+  const [settings, setSettings] = useState(null);
   const [products, setProducts] = useState({
     BestSellers: [],
     NewArrivals: [],
     TopSellings: [],
   });
+  const navigate = useNavigate();
 
+  // Fetch system settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await fetchSystemData();
+        setSettings(data);
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  // Fetch products
   useEffect(() => {
     const fetchGetProducts = async () => {
       try {
@@ -49,10 +67,6 @@ const TabSection = () => {
     fetchGetProducts();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated products:", products);
-  }, [products]);
-
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
@@ -61,7 +75,17 @@ const TabSection = () => {
     navigate(`/product/${productId}`);
   };
 
-  const tabKeys = Object.keys(products);
+  // Dynamically determine visible tabs
+  const visibleTabs = [];
+  if (settings?.is_show_best_sales === 1) {
+    visibleTabs.push("BestSellers");
+  }
+  if (settings?.is_show_new_arrivals === 1) {
+    visibleTabs.push("NewArrivals");
+  }
+  if (settings?.is_show_top_selling === 1) {
+    visibleTabs.push("TopSellings");
+  }
 
   return (
     <Container>
@@ -88,21 +112,18 @@ const TabSection = () => {
             backgroundColor: "#007bff",
           },
           "& .MuiTab-root:hover": {
-            backgroundColor: "#d3e5ff",
-          },
-          "& .MuiTab-root:hover": {
             backgroundColor: "#000",
             color: "#fff",
           },
         }}
       >
-        {tabKeys.map((tab, index) => (
+        {visibleTabs.map((tab, index) => (
           <Tab key={index} label={tab.replace(/([A-Z])/g, " $1").trim()} />
         ))}
       </Tabs>
 
       <Box sx={{ mt: 3 }}>
-        {tabKeys.map((tab, index) => (
+        {visibleTabs.map((tab, index) => (
           <Box
             key={index}
             role="tabpanel"
