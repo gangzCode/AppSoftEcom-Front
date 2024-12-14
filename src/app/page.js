@@ -137,7 +137,9 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_new_arrivals === 1 &&  <TabSection />}
+        {(settings?.is_show_top_selling === 1 || 
+          settings?.is_show_best_sales === 1 || 
+          settings?.is_show_new_arrivals === 1) && <TabSection />}
       </ScrollTransition>
 
       <ScrollTransition>
