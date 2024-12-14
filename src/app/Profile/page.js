@@ -13,8 +13,6 @@ import {
   Alert,
   Tabs,
   Tab,
-  Card,
-  CardContent,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -44,7 +42,7 @@ import {
   updateUserAddress,
   getCountries,
   getCities,
-  getUserOrders
+  getUserOrders,
 } from "../../services/apiCalls";
 import { Chip } from "@mui/material";
 import {
@@ -213,12 +211,12 @@ function AddressBook() {
         );
         console.log("Address updated:", updatedAddress);
 
-        await fetchAddresses(); 
+        await fetchAddresses();
       } else {
         const newAddress = await createUserAddress(addressData, token);
         console.log("Address saved:", newAddress);
 
-        await fetchAddresses(); 
+        await fetchAddresses();
       }
 
       handleCloseDialog();
@@ -419,7 +417,6 @@ const OrdersHistory = () => {
     fetchOrders();
   }, []);
 
-
   const fetchOrders = async () => {
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
@@ -437,33 +434,6 @@ const OrdersHistory = () => {
     }
   };
 
-  const mockOrders = [
-    {
-      id: "ORD001",
-      date: "2024-03-15",
-      status: "Delivered",
-      total: 299.99,
-      items: [
-        { name: "Blue T-Shirt", quantity: 2, price: 49.99 },
-        { name: "Black Jeans", quantity: 1, price: 199.99 },
-      ],
-    },
-    {
-      id: "ORD002",
-      date: "2024-03-10",
-      status: "Processing",
-      total: 159.99,
-      items: [{ name: "Running Shoes", quantity: 1, price: 159.99 }],
-    },
-    {
-      id: "ORD003",
-      date: "2024-03-05",
-      status: "Shipped",
-      total: 89.97,
-      items: [{ name: "Baseball Cap", quantity: 3, price: 29.99 }],
-    },
-  ];
-
   const getStatusColor = (status) => {
     switch (status) {
       case "Delivered":
@@ -479,54 +449,56 @@ const OrdersHistory = () => {
 
   return (
     <Box>
-    <Typography variant="h6" gutterBottom>
-      Order History
-    </Typography>
-    {error && <Alert severity="error">{error}</Alert>}
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Order #</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Total Items</TableCell>
-            <TableCell>Total Amount</TableCell>
-            <TableCell>Details</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.order_no}</TableCell>
-              <TableCell>
-                {order.order_at
-                  ? new Date(order.order_at).toLocaleDateString()
-                  : "N/A"}
-              </TableCell>
-              <TableCell>
-                <Alert severity={getStatusColor(order.order_status)}>
+      <Typography variant="h6" gutterBottom>
+        Order History
+      </Typography>
+      {error && <Alert severity="error">{error}</Alert>}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Order #</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Total Items</TableCell>
+              <TableCell>Total Amount</TableCell>
+              <TableCell>Details</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.order_no}</TableCell>
+                <TableCell>
+                  {order.order_at
+                    ? new Date(order.order_at).toLocaleDateString()
+                    : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <Alert severity={getStatusColor(order.order_status)}>
                     {order.order_status}
                   </Alert>
                 </TableCell>
-              <TableCell>{order.total_qty}</TableCell>
-              <TableCell>${parseFloat(order.final_total).toFixed(2)}</TableCell>
-              <TableCell>
-                <Box>
-                  {order.sell_lines.map((line, index) => (
-                    <Typography key={index} variant="body2">
-                      {line.quantity}x {JSON.parse(line.product_name).En} - $
-                      {parseFloat(line.line_total).toFixed(2)}
-                    </Typography>
-                  ))}
-                </Box>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </Box>
+                <TableCell>{order.total_qty}</TableCell>
+                <TableCell>
+                  ${parseFloat(order.final_total).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <Box>
+                    {order.sell_lines.map((line, index) => (
+                      <Typography key={index} variant="body2">
+                        {line.quantity}x {JSON.parse(line.product_name).En} - $
+                        {parseFloat(line.line_total).toFixed(2)}
+                      </Typography>
+                    ))}
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
@@ -643,12 +615,28 @@ function ProfilePage() {
 
       <Divider sx={{ my: 3 }} />
 
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          aria-label="profile tabs"
-          sx={{ borderBottom: 1, borderColor: "divider" }}
+          orientation="vertical"
+          variant="scrollable"
+          sx={{
+            borderRight: 1,
+            borderColor: "divider",
+            minWidth: { xs: "100%", md: "230px" },
+            "& .MuiTab-root": {
+              alignItems: "center",
+              justifyContent: { md: "flex-end", xs: "center" },
+              textAlign: "left",
+              fontWeight: "bold",
+              padding: "12px 24px",
+              color: "#333",
+              transition: "0.5s",
+              borderRadius: "8px",
+              // marginBottom: 1,
+            },
+          }}
         >
           <Tab
             icon={<Person />}
@@ -663,111 +651,113 @@ function ProfilePage() {
           <Tab icon={<Phone />} iconPosition="start" label="My Orders" />
         </Tabs>
 
-        <TabPanel value={tabValue} index={0}>
-          <Box sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="First Name"
-                  required
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </Grid>
+        <Box sx={{ flexGrow: 1, ml: { xs: 0, md: 3 }, mt: { xs: 3, md: 0 } }}>
+          <TabPanel value={tabValue} index={0}>
+            <Box sx={{ mt: 2 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    required
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Last Name"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    required
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="E-mail Address"
-                  required
-                  value={user?.email || ""}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="E-mail Address"
+                    required
+                    value={user?.email || ""}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Date of Birth"
-                  placeholder="YYYY-MM-DD"
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton position="end">
-                        <CalendarToday fontSize="small" />
-                      </IconButton>
-                    ),
-                  }}
-                  required
-                />
-              </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Date of Birth"
+                    placeholder="YYYY-MM-DD"
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton position="end">
+                          <CalendarToday fontSize="small" />
+                        </IconButton>
+                      ),
+                    }}
+                    required
+                  />
+                </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Gender"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  SelectProps={{ native: true }}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Gender"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    SelectProps={{ native: true }}
+                    InputLabelProps={{ shrink: true }}
+                    required
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </Grid>
 
-              <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{
-                    padding: 2,
-                    fontSize: "16px",
-                  }}
-                  onClick={handleSaveChanges}
-                >
-                  Save Changes
-                </Button>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{
+                      padding: 2,
+                      fontSize: "16px",
+                    }}
+                    onClick={handleSaveChanges}
+                  >
+                    Save Changes
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </TabPanel>
+            </Box>
+          </TabPanel>
 
-        <TabPanel value={tabValue} index={1}>
-          <AddressBook />
-        </TabPanel>
+          <TabPanel value={tabValue} index={1}>
+            <AddressBook />
+          </TabPanel>
 
-        <TabPanel value={tabValue} index={2}>
-          <OrdersHistory />
-        </TabPanel>
+          <TabPanel value={tabValue} index={2}>
+            <OrdersHistory />
+          </TabPanel>
+        </Box>
       </Box>
 
       <Snackbar

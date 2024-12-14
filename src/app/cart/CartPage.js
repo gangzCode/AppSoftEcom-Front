@@ -175,21 +175,48 @@ const CartPage = () => {
   }
 
   return (
-    <Grid sx={{ width: { xs: "100%" }, mx: "auto", my: 6 }} container>
-      <Grid md={8} pr={4}>
-        <TableContainer component={Paper} sx={{ mb: 4 }}>
-          <Typography variant="h4" fontSize={30} sx={{ p: 2, fontWeight: 600 }}>
+    <Grid sx={{ width: "100%", mx: "auto", my: 3 }} container>
+      <Grid md={8} pr={{ xs: 0, md: 4 }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            mb: 4,
+            overflowX: "auto",
+            width: { xs: "380px", md: "100%" },
+            WebkitOverflowScrolling: "touch",
+            "&::-webkit-scrollbar": {
+              height: "6px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#2189ff",
+              borderRadius: "10px",
+            },
+          }}
+        >
+          <Typography
+            variant="h4"
+            fontSize={{ xs: 24, md: 30 }}
+            sx={{ p: 2, fontWeight: 600 }}
+          >
             Products ({cartItems.length})
           </Typography>
 
-          <Table>
+          <Table sx={{ minWidth: { xs: 650, sm: 750, md: "100%" } }}>
             <TableHead>
               <TableRow>
-                <TableCell>Product</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="center">Quantity</TableCell>
-                <TableCell align="right">Total</TableCell>
-                <TableCell align="center">Actions</TableCell>
+                <TableCell sx={{ minWidth: 300 }}>Product</TableCell>
+                <TableCell align="right" sx={{ minWidth: 100 }}>
+                  Price
+                </TableCell>
+                <TableCell align="center" sx={{ minWidth: 150 }}>
+                  Quantity
+                </TableCell>
+                <TableCell align="right" sx={{ minWidth: 100 }}>
+                  Total
+                </TableCell>
+                <TableCell align="center" sx={{ minWidth: 100 }}>
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -215,7 +242,8 @@ const CartPage = () => {
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    {item.product.currency} {parseFloat(item.unit_price).toFixed(2)}
+                    {item.product.currency}{" "}
+                    {parseFloat(item.unit_price).toFixed(2)}
                   </TableCell>
                   <TableCell align="center">
                     <Box
@@ -288,7 +316,8 @@ const CartPage = () => {
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    {item.product.currency} {(
+                    {item.product.currency}{" "}
+                    {(
                       parseFloat(item.unit_price) * parseFloat(item.quantity)
                     ).toFixed(2)}
                   </TableCell>
@@ -309,27 +338,7 @@ const CartPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        <Grid container justifyContent="space-between" sx={{ mt: 2 }}>
-          <Grid item>
-            <Button variant="contained" href="/">
-              Continue Shopping
-            </Button>
-          </Grid>
-          <Grid item sx={{ display: "flex", gap: 2 }}>
-            <LoadingButton
-              loading={clearingCart}
-              variant="contained"
-              color="error"
-              onClick={handleClearCart}
-              disabled={cartItems.length === 0}
-            >
-              Clear Cart
-            </LoadingButton>
-          </Grid>
-        </Grid>
       </Grid>
-
       <Grid md={4} container item alignContent={"flex-start"}>
         <Grid item xs={12}>
           <Typography variant="h4" fontSize={30} sx={{ fontWeight: 600 }}>
