@@ -211,7 +211,7 @@ const ProductCard = ({ product }) => {
               opacity: isHovered === product.id ? 1 : 0,
             }}
           />
-          <IconButton
+        {/*   <IconButton
             onClick={handleAddToCart}
             disabled={addingToCartId === product.id}
             sx={{
@@ -238,8 +238,8 @@ const ProductCard = ({ product }) => {
             ) : (
               <ShoppingCart />
             )}
-          </IconButton>
-
+          </IconButton> */}
+{/* 
           <IconButton
             onClick={handleAddToWishlist}
             sx={{
@@ -262,7 +262,7 @@ const ProductCard = ({ product }) => {
             }}
           >
             <Favorite />
-          </IconButton>
+          </IconButton> */}
         </Box>
 
         <Box

@@ -504,7 +504,7 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         borderRadius: 2,
       }}
     >
-      {!isGuest && addresses.length > 0 ? (
+{(!isGuest && addresses.length > 0 && (
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
           <FormControl sx={{ flexGrow: 1 }}>
             <InputLabel>Select Address</InputLabel>
@@ -528,18 +528,17 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
             Add New Address
           </Button>
         </Box>
-      ) : (
-        !isGuest && (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleOpenAddressDialog}
-            sx={{ minWidth: "auto", px: 3 }}
-          >
-            Add New Address
-          </Button>
-        )
-      )}
+      )) /* || (
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleOpenAddressDialog}
+          sx={{ minWidth: "auto", px: 3 }}
+        >
+          Add New Address
+        </Button> }*/
+      }
+
 
       {/* Contact Section */}
       {/* <Typography variant="h5" sx={{ mb: 2 }}>
@@ -561,7 +560,7 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
 
       {/* Delivery Section */}
       <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>
-        Delivery
+        Shipping Address
       </Typography>
       <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
         <InputLabel>Country</InputLabel>
@@ -581,31 +580,6 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           ))}
         </Select>
       </FormControl>
-
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <TextField
-          label="First name"
-          variant="outlined"
-          fullWidth
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          error={!!errors.firstName}
-          helperText={errors.firstName}
-          disabled={!isGuest && selectedAddressId}
-        />
-        <TextField
-          label="Last name"
-          variant="outlined"
-          fullWidth
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          error={!!errors.lastName}
-          helperText={errors.lastName}
-          disabled={!isGuest && selectedAddressId}
-        />
-      </Box>
 
       <TextField
         label="Address"
@@ -662,6 +636,59 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           onChange={handleChange}
           error={!!errors.postal_code}
           helperText={errors.postal_code}
+          disabled={!isGuest && selectedAddressId}
+        />
+      </Box>
+
+      {/* User Information Section */}
+      <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>
+        User Information
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <TextField
+          label="First name"
+          variant="outlined"
+          fullWidth
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          error={!!errors.firstName}
+          helperText={errors.firstName}
+          disabled={!isGuest && selectedAddressId}
+        />
+        <TextField
+          label="Last name"
+          variant="outlined"
+          fullWidth
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          error={!!errors.lastName}
+          helperText={errors.lastName}
+          disabled={!isGuest && selectedAddressId}
+        />
+      </Box>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          name="email"
+          value={formData.firstName}
+          onChange={handleChange}
+          error={!!errors.firstName}
+          helperText={errors.firstName}
+          disabled={!isGuest && selectedAddressId}
+        />
+        <TextField
+          label="Phone Number"
+          variant="outlined"
+          fullWidth
+          name="phoneNumber"
+          value={formData.lastName}
+          onChange={handleChange}
+          error={!!errors.lastName}
+          helperText={errors.lastName}
           disabled={!isGuest && selectedAddressId}
         />
       </Box>

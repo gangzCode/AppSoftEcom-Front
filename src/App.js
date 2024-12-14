@@ -50,7 +50,7 @@ function Layout() {
           <TopBar />
         </Box> */}
         <Box paddingX={{ xs: "1em", md: "8em" }}>
-          {!isAuthPage && <Navbar />}
+          {<Navbar />}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
@@ -79,7 +79,7 @@ function Layout() {
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
 
-          {!isAuthPage && <Footer />}
+          {<Footer />}
         </Box>
         <Copyright />
         <ScrollToTopButton />

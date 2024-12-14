@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getSpecialDayOfferSaleProducts } from "../services/apiCalls";
 import { Container } from "../common/Spacing";
+import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 const SpecialDayOfferSale = () => {
   const scrollContainerRef = useRef(null);
@@ -12,7 +14,6 @@ const SpecialDayOfferSale = () => {
   const [products, setProducts] = useState([]); // Ensure products is an array
   const [title, setTitle] = useState("Default Title"); // Initialize with default
   const [subTitle, setSubTitle] = useState("Default Subtitle");
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,10 +22,10 @@ const SpecialDayOfferSale = () => {
         const response = await getSpecialDayOfferSaleProducts();
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
-        setProducts(response?.data || []); // Fallback to empty array
+        setProducts(response?.data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]); // Handle API failure gracefully
+        setProducts([]);
       }
     };
 
@@ -47,10 +48,10 @@ const SpecialDayOfferSale = () => {
   });
 
   return (
-    <Container sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+    <Container>
       <Typography
         variant="p"
-        fontSize={{ xs: "10px", sm: "12px" }}
+        fontSize={"12px"}
         color={"#1e1e1e"}
         sx={{
           position: "relative",
@@ -60,7 +61,7 @@ const SpecialDayOfferSale = () => {
             top: "50%",
             marginLeft: "1em",
             transform: "translateY(-50%)",
-            width: { xs: "100px", sm: "150px" },
+            width: "150px",
             height: "2px",
             backgroundColor: "#2189ff",
           },
@@ -68,7 +69,6 @@ const SpecialDayOfferSale = () => {
       >
         {subTitle}
       </Typography>
-
       <Typography
         onClick={() =>
           navigate("/custom-products", {
@@ -98,13 +98,12 @@ const SpecialDayOfferSale = () => {
           display: "flex",
           overflowX: "auto",
           whiteSpace: "nowrap",
-          gap: { xs: 2, sm: 3 },
-          padding: { xs: 1, sm: 2 },
+          gap: 3,
+          padding: 2,
           scrollBehavior: "smooth",
-          paddingBottom: { xs: "30px", sm: "50px" },
-          WebkitOverflowScrolling: "touch",
+          paddingBottom: "50px",
           "&::-webkit-scrollbar": {
-            height: { xs: "6px", sm: "8px" },
+            height: "8px",
           },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#2189ff",
@@ -115,130 +114,9 @@ const SpecialDayOfferSale = () => {
           },
         }}
       >
-        {products.length > 0 ? (
+        {products.length > 0 && products !== null ? (
           products.map((product) => (
-            <Link to={`/product/${product.id}`} key={product.id}>
-              <Box
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: "280px",
-                  padding: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: "#f5f5f5",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  ":hover": {
-                    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-                onMouseEnter={() => setHoveredProductId(product.id)}
-                onMouseLeave={() => setHoveredProductId(null)}
-              >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    maxWidth: "240px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={product.thumbnailz}
-                    alt={product.name}
-                    sx={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "contain",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 0 : 1,
-                    }}
-                  />
-                  <Box
-                    component="img"
-                    src={product.images[0]}
-                    alt={product.name}
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "contain",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 1 : 0,
-                    }}
-                  />
-                </Box>
-
-                <Box
-                  className="hover-icons"
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    display: "flex",
-                    gap: "8px",
-                    opacity: hoveredProductId === product.id ? 1 : 0,
-                    visibility:
-                      hoveredProductId === product.id ? "visible" : "hidden",
-                    transition: "opacity 0.3s ease, visibility 0.3s ease",
-                  }}
-                >
-                  {[
-                    { icon: <ShoppingCart />, id: "cart" },
-                    { icon: <Favorite />, id: "favorite" },
-                  ].map((item) => (
-                    <IconButton
-                      key={item.id}
-                      sx={{
-                        backgroundColor: "#2189ff",
-                        color: "#fff",
-                        borderRadius: "10px",
-                        width: "40px",
-                        height: "40px",
-                        "&:hover": {
-                          backgroundColor: "#000",
-                        },
-                      }}
-                    >
-                      {item.icon}
-                    </IconButton>
-                  ))}
-                </Box>
-                <Typography
-                  variant="caption"
-                  fontSize={"12px"}
-                  color={"#bebebe"}
-                  sx={{ letterSpacing: "1px", marginBottom: "3px" }}
-                >
-                  {product.category_name}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight="400"
-                  sx={{ marginBottom: "8px" }}
-                >
-                  {product.name.substr(0, 20)}
-                </Typography>
-                <Box
-                  display={"flex"}
-                  justifyContent="space-between"
-                  sx={{ marginTop: "auto" }}
-                >
-                  <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                    {product.currency}
-                    {product.sales_price}
-                  </Typography>
-                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
-                </Box>
-              </Box>
-            </Link>
+            <ProductCard product={product} key={product.id} />
           ))
         ) : (
           <Typography variant="body1">No products available.</Typography>

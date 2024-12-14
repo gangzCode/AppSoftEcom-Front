@@ -778,21 +778,26 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 </Grid>
               ))}
 
-              {menu.sub_category.length < 5 &&
-                Array.from({ length: 5 - menu.sub_category.length }).map(
-                  (_, fillIndex) => (
-                    <Grid item xs={2.4} key={`fill-${fillIndex}`}>
-                      <Box sx={{ textAlign: "center" }}>
-                        <img
-                          src={menu.images[0] || "https://ecom-test2.yalpos.com/img/default.png"}
-                          alt={menu.name}
-                          height={"100%"}
-                          width={"auto"}
-                        />
-                      </Box>
-                    </Grid>
-                  )
-                )}
+          {menu.sub_category.length < 5 &&
+            Array.from({ length: 5 - menu.sub_category.length }).map((_, fillIndex) => {
+              // Use modulo to cycle through images if there are multiple images
+              const imageSrc =
+                menu.images[fillIndex % menu.images.length] || "https://ecom-test2.yalpos.com/img/default.png";
+
+              return (
+                <Grid item xs={2.4} key={`fill-${fillIndex}`}>
+                  <Box sx={{ textAlign: "center" }}>
+                    <img
+                      src={imageSrc}
+                      alt={menu.name}
+                      height={"260px"}
+                      width={"241px"}
+                    />
+                  </Box>
+                </Grid>
+              );
+            })}
+
             </Grid>
           </Box>
         </Grow>

@@ -125,11 +125,11 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_category === 0 && <BestCategory />}
+        {settings.is_show_best_category === 1 && <BestCategory />}
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_brand_product === 0 && <BestBrand />}
+        {settings.is_show_best_brand_product === 1 && <BestBrand />}
       </ScrollTransition>
 
       <ScrollTransition>
@@ -137,7 +137,7 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        <TabSection />
+        {settings.is_show_new_arrivals === 1 &&  <TabSection />}
       </ScrollTransition>
 
       <ScrollTransition>

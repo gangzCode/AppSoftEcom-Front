@@ -282,7 +282,7 @@ const BestsellerSlider = () => {
                     sx={{ marginTop: "auto" }}
                   >
                     <Typography variant="h6" fontWeight="600">
-                      ${product.price}
+                      {product.currency}{product.price}
                     </Typography>
                     <ChevronRight
                       sx={{ color: "#2189ff", marginLeft: "8px" }}

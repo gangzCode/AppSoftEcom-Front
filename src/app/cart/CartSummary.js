@@ -75,7 +75,7 @@ const CartSummary = ({ total = 0, shipping = 0, tax = 0, cartItems, currency = "
         Get Shipping Estimates
       </Button>
 
-      <ShippingEstimate expanded={isShippingExpanded} />
+      <ShippingEstimate expanded={isShippingExpanded} currencyforShipEsti={currency}/>
     </Stack>
   );
 };

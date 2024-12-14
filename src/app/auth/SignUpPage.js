@@ -53,7 +53,6 @@ const SignUpPage = () => {
         password
       );
       console.log("Registration successful:", response);
-      alert("Sign-up successful!");
 
       navigate("/otp", { state: { email } });
     } catch (err) {
@@ -70,19 +69,19 @@ const SignUpPage = () => {
 
   return (
     <Container
-      maxWidth="s"
+      maxWidth="xs"
       sx={{
-        minHeight: "90vh",
+        minHeight: "30vh",
+        mt: 4,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <Paper elevation={3} sx={{ p: 3, width: "100%", maxWidth: 500 }}>
-        <Typography variant="h5" align="center" gutterBottom>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Typography variant="h4" align="center" gutterBottom>
           Sign Up
         </Typography>
-
         {errorMessages.length > 0 && (
           <Box sx={{ mb: 2 }}>
             {errorMessages.map((error, index) => (
@@ -122,55 +121,47 @@ const SignUpPage = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                margin="normal"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Phone"
-                variant="outlined"
-                margin="normal"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Password"
-                variant="outlined"
-                margin="normal"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Confirm Password"
-                variant="outlined"
-                margin="normal"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </Grid>
           </Grid>
+          <TextField
+            fullWidth
+            label="Email"
+            variant="outlined"
+            margin="normal"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Phone"
+            variant="outlined"
+            margin="normal"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            variant="outlined"
+            margin="normal"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <TextField
+            fullWidth
+            label="Confirm Password"
+            variant="outlined"
+            margin="normal"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
           <Button
             variant="contained"
             color="primary"

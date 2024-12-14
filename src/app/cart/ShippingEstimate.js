@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { getCountries, getCities, getShippingCharge } from "../../services/apiCalls";
 
-function ShippingEstimate({ expanded = false }) {
+function ShippingEstimate({ expanded = false,currencyforShipEsti }) {
   const [countries, setCountries] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [cities, setCities] = useState([]);
@@ -49,7 +49,6 @@ function ShippingEstimate({ expanded = false }) {
 
   const handleCalculateShipping = async () => {
     if (!selectedCountryId || !selectedCity) {
-      alert("Please select a country and a city.");
       return;
     }
     try {
@@ -139,7 +138,7 @@ function ShippingEstimate({ expanded = false }) {
       {shippingCharge > 0 && (
         <Typography variant="h6" sx={{ mt: 2 }}>
 
-          Shipping Charge: ${shippingCharge}
+          Shipping Charge: {currencyforShipEsti} {shippingCharge}
         </Typography>
       )}
     </Box>
