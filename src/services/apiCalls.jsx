@@ -905,22 +905,48 @@ export const getPaymentTypes = async () => {
 export const placeOrder = async (orderData) => {
   try {
     const userStr = localStorage.getItem("user");
-    let response;
+    const formattedOrderData = {
+      final_total: orderData.final_total,
+      note: orderData.note || "Order from website",
+      shipping_charge: orderData.shipping_charge || 0,
+      coupon_id: orderData.coupon_id,
+      coupon_type: orderData.coupon_type,
+      coupon_value: orderData.coupon_value,
+      country: orderData.country,
+      city: orderData.city,
+      first_name: orderData.first_name,
+      last_name: orderData.last_name || "",
+      apartment: orderData.apartment || "",
+      email: orderData.email || "",
+      phone: orderData.phone || "",
+      state: orderData.state || "",
+      postal_code: orderData.postal_code || "",
+      products: orderData.products.map((product) => ({
+        line_id: product.line_id,
+        discount: product.discount || "",
+        quantity: product.quantity,
+      })),
+    };
 
+    let response;
     if (userStr) {
       const { token } = JSON.parse(userStr);
-      response = await axios.post(`${baseUrl}/user/place-order`, orderData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      response = await axios.post(
+        `${baseUrl}/user/place-order`,
+        formattedOrderData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } else {
       const ip_address = await getIPAddress();
       response = await axios.post(
         `${baseUrl}/guest/order`,
         {
-          ...orderData,
+          ...formattedOrderData,
           ip_address,
         },
         {
@@ -930,6 +956,8 @@ export const placeOrder = async (orderData) => {
         }
       );
     }
+    console.log(JSON.stringify(response.data) + "API order");
+
     return response.data;
   } catch (error) {
     throw error.response?.data || error;

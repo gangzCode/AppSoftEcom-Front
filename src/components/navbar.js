@@ -26,7 +26,7 @@ import {
   ListItemText,
   Collapse,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import {
   AccountCircleOutlined,
@@ -49,7 +49,7 @@ import {
   getTopCategoriesForMenu,
   quickSearch,
   fetchSystemData,
-  getCartDetails, 
+  getCartDetails,
   getWishListofUser,
 } from "../services/apiCalls";
 import { useAuth } from "../context/AuthContext";
@@ -81,6 +81,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [expandedMenu, setExpandedMenu] = useState(null);
+  const location = useLocation();
+  const isCheckoutPage = location.pathname === "/checkout";
 
   let closeMenuTimer;
 
@@ -321,14 +323,16 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
             </Badge>
           }
         />
-        <BottomNavigationAction
-          onClick={toggleCart}
-          icon={
-            <Badge badgeContent={cartItems.length} color="primary">
-              <ShoppingCart />
-            </Badge>
-          }
-        />
+        {!isCheckoutPage && (
+          <BottomNavigationAction
+            onClick={toggleCart}
+            icon={
+              <Badge badgeContent={cartItems.length} color="primary">
+                <ShoppingCart />
+              </Badge>
+            }
+          />
+        )}
       </BottomNavigation>
     </Paper>
   );
@@ -440,11 +444,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
 
         {!isMobile && (
           <Grid md={1}>
-            <Box
-              display="flex"
-              justifyContent="space-around"
-              alignItems="center"
-            >
+            <Box display="flex" justifyContent="flex-start" alignItems="center">
               <IconButton onClick={handleProfileClick}>
                 <AccountCircleOutlined />
               </IconButton>
@@ -453,11 +453,13 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                   <FavoriteBorderRounded />
                 </Badge>
               </IconButton>
-              <IconButton onClick={toggleCart}>
-                <Badge badgeContent={cartItems.length} color="primary">
-                  <ShoppingCartOutlined />
-                </Badge>
-              </IconButton>
+              {!isCheckoutPage && (
+                <IconButton onClick={toggleCart}>
+                  <Badge badgeContent={cartItems.length} color="primary">
+                    <ShoppingCartOutlined />
+                  </Badge>
+                </IconButton>
+              )}
             </Box>
           </Grid>
         )}
@@ -710,102 +712,109 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         </Grid>
       )}
 
-<Box position={"relative"} width={"100%"}>
-  {menus.map(
-    (menu, index) =>
-      menu.is_sub_category && menu.sub_category.length > 0 && (
-        <Grow in={menuIndex === index} key={menu.id}>
-          <Box
-            py={4}
-            px={6}
-            sx={{
-              position: "absolute",
-              left: 0,
-              top: -25,
-              bgcolor: "#f3f3f3",
-              width: "100%",
-              boxShadow: "0 1px 5px rgba(0,0,0,.1)",
-            }}
-            onMouseEnter={() => handleHover(index)}
-            onMouseLeave={handleHoverClose}
-          >
-            <Grid container>
-              {menu.sub_category.slice(0, 5).map((sub, idx) => (
-                <Grid item xs={2.4} key={sub.id}>
-                  <Box>
-                  <RouterLink
-                      to={`/products/${menu.id}`}
-                      state={{
-                        subcategoryId: sub.id,
-                        subcategoryName: sub.name,
-                      }}
-                    >
-                    <Typography
-                      fontSize={"14px"}
-                      fontWeight={"600"}
-                      variant="p"
-                      mb={"30px"}
-                    >
-                      {sub.name}
-                    </Typography>
-                    </RouterLink>
-                    {sub.products.length > 0 ? (
-                      sub.products.map((product, productIdx) => (
-                        <MenuItem
-                          sx={{ padding: "10px 0" }}
-                          key={product.id || productIdx}
-                          onClick={handleClose}
-                        >
+      <Box position={"relative"} width={"100%"}>
+        {menus.map(
+          (menu, index) =>
+            menu.is_sub_category &&
+            menu.sub_category.length > 0 && (
+              <Grow in={menuIndex === index} key={menu.id}>
+                <Box
+                  py={4}
+                  px={6}
+                  sx={{
+                    position: "absolute",
+                    left: 0,
+                    top: -25,
+                    bgcolor: "#f3f3f3",
+                    width: "100%",
+                    boxShadow: "0 1px 5px rgba(0,0,0,.1)",
+                  }}
+                  onMouseEnter={() => handleHover(index)}
+                  onMouseLeave={handleHoverClose}
+                >
+                  <Grid container>
+                    {menu.sub_category.slice(0, 5).map((sub, idx) => (
+                      <Grid item xs={2.4} key={sub.id}>
+                        <Box>
                           <RouterLink
-                              to={`/product/${product.id}`}
-                              state={{
-                                subcategoryId: product.id,
-                                subcategoryName: product.name,
-                              }}
+                            to={`/products/${menu.id}`}
+                            state={{
+                              subcategoryId: sub.id,
+                              subcategoryName: sub.name,
+                            }}
+                          >
+                            <Typography
+                              fontSize={"14px"}
+                              fontWeight={"600"}
+                              variant="p"
+                              mb={"30px"}
                             >
-                          <Typography fontSize={"14px"} variant="p">
-                            {product?.name.length > 20 ? product?.name.slice(0, 20) + "..." : product?.name}
-                          </Typography>
+                              {sub.name}
+                            </Typography>
                           </RouterLink>
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <Typography fontSize={"14px"} variant="p" color="gray">
-                        No products available
-                      </Typography>
-                    )}
-                  </Box>
-                </Grid>
-              ))}
+                          {sub.products.length > 0 ? (
+                            sub.products.map((product, productIdx) => (
+                              <MenuItem
+                                sx={{ padding: "10px 0" }}
+                                key={product.id || productIdx}
+                                onClick={handleClose}
+                              >
+                                <RouterLink
+                                  to={`/product/${product.id}`}
+                                  state={{
+                                    subcategoryId: product.id,
+                                    subcategoryName: product.name,
+                                  }}
+                                >
+                                  <Typography fontSize={"14px"} variant="p">
+                                    {product?.name.length > 20
+                                      ? product?.name.slice(0, 20) + "..."
+                                      : product?.name}
+                                  </Typography>
+                                </RouterLink>
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <Typography
+                              fontSize={"14px"}
+                              variant="p"
+                              color="gray"
+                            >
+                              No products available
+                            </Typography>
+                          )}
+                        </Box>
+                      </Grid>
+                    ))}
 
-          {menu.sub_category.length < 5 &&
-            Array.from({ length: 5 - menu.sub_category.length }).map((_, fillIndex) => {
-              // Use modulo to cycle through images if there are multiple images
-              const imageSrc =
-                menu.images[fillIndex % menu.images.length] || "https://ecom-test2.yalpos.com/img/default.png";
+                    {menu.sub_category.length < 5 &&
+                      Array.from({
+                        length: 5 - menu.sub_category.length,
+                      }).map((_, fillIndex) => {
+                        // Use modulo to cycle through images if there are multiple images
+                        const imageSrc =
+                          menu.images[fillIndex % menu.images.length] ||
+                          "https://ecom-test2.yalpos.com/img/default.png";
 
-              return (
-                <Grid item xs={2.4} key={`fill-${fillIndex}`}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <img
-                      src={imageSrc}
-                      alt={menu.name}
-                      height={"260px"}
-                      width={"241px"}
-                    />
-                  </Box>
-                </Grid>
-              );
-            })}
-
-            </Grid>
-          </Box>
-        </Grow>
-      )
-  )}
-</Box>
-
-
+                        return (
+                          <Grid item xs={2.4} key={`fill-${fillIndex}`}>
+                            <Box sx={{ textAlign: "center" }}>
+                              <img
+                                src={imageSrc}
+                                alt={menu.name}
+                                height={"260px"}
+                                width={"241px"}
+                              />
+                            </Box>
+                          </Grid>
+                        );
+                      })}
+                  </Grid>
+                </Box>
+              </Grow>
+            )
+        )}
+      </Box>
 
       {isMobile && bottomNav}
     </AppBar>

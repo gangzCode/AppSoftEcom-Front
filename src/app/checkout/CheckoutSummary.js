@@ -20,10 +20,15 @@ const CheckoutSummary = ({
 
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
         <Typography variant="body1">Shipping</Typography>
-        <Typography variant="body1">
-          {shippingCharge
-            ? `${currency} ${shippingCharge.toFixed(2)}`
-            : "Enter shipping address"}
+        <Typography
+          variant="body1"
+          color={shippingCharge === 0 ? "success.main" : "text.primary"}
+        >
+          {!shippingCharge
+            ? "Enter shipping address"
+            : shippingCharge === 0
+            ? "Free Shipping"
+            : `${currency} ${shippingCharge.toFixed(2)}`}
         </Typography>
       </Box>
 

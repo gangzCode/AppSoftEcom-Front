@@ -19,6 +19,7 @@ import {
   Snackbar,
   Alert,
   TextareaAutosize,
+  Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -34,6 +35,7 @@ import {
   getIPAddress,
   validateCoupon,
 } from "../../services/apiCalls";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
+    phoneNumber: "",
     firstName: "",
     lastName: "",
     address: "",
@@ -57,6 +60,8 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
   const [newAddressData, setNewAddressData] = useState({
     first_name: "",
     last_name: "",
+    phoneNumber: "",
+    email: "",
     address: "",
     country: "",
     city: "",
@@ -88,6 +93,8 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [dialogCities, setDialogCities] = useState([]);
   const [dialogCityLoading, setDialogCityLoading] = useState(false);
+  const [orderSuccessOpen, setOrderSuccessOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -164,6 +171,8 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           ...prev,
           firstName: info.first_name || "",
           lastName: info.last_name || "",
+          email: info.email || "",
+          phoneNumber: info.phone || "",
         }));
       } catch (error) {
         console.error("Error loading user data:", error);
@@ -396,6 +405,11 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
 
   let total;
 
+  const handleOrderSuccess = (response) => {
+    setOrderDetails(response);
+    setOrderSuccessOpen(true);
+  };
+
   const handleOrderSubmit = async () => {
     setOrderProcessing(true);
     try {
@@ -419,7 +433,8 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         })),
       };
 
-      await placeOrder(orderData);
+      const response = await placeOrder(orderData);
+      handleOrderSuccess(response);
 
       const userStr = localStorage.getItem("user");
       if (userStr) {
@@ -429,18 +444,6 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         const ipAddress = await getIPAddress();
         await clearCart(null, ipAddress);
       }
-
-      localStorage.removeItem("cartNote");
-
-      setSnackbar({
-        open: true,
-        message: "Order placed successfully!",
-        severity: "success",
-      });
-
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
     } catch (error) {
       console.error("Order submission failed:", error);
       setSnackbar({
@@ -504,31 +507,32 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         borderRadius: 2,
       }}
     >
-{(!isGuest && addresses.length > 0 && (
-        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-          <FormControl sx={{ flexGrow: 1 }}>
-            <InputLabel>Select Address</InputLabel>
-            <Select
-              value={selectedAddressId}
-              onChange={handleAddressSelect}
-              label="Select Address"
+      {
+        !isGuest && addresses.length > 0 && (
+          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <FormControl sx={{ flexGrow: 1 }}>
+              <InputLabel>Select Address</InputLabel>
+              <Select
+                value={selectedAddressId}
+                onChange={handleAddressSelect}
+                label="Select Address"
+              >
+                {addresses.map((address) => (
+                  <MenuItem key={address.id} value={address.id}>
+                    {address.address}, {address.city}, {address.country}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              onClick={handleOpenAddressDialog}
+              sx={{ minWidth: "auto", px: 3 }}
             >
-              {addresses.map((address) => (
-                <MenuItem key={address.id} value={address.id}>
-                  {address.address}, {address.city}, {address.country}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            variant="contained"
-            onClick={handleOpenAddressDialog}
-            sx={{ minWidth: "auto", px: 3 }}
-          >
-            Add New Address
-          </Button>
-        </Box>
-      )) /* || (
+              Add New Address
+            </Button>
+          </Box>
+        ) /* || (
         <Button
           variant="contained"
           fullWidth
@@ -538,7 +542,6 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           Add New Address
         </Button> }*/
       }
-
 
       {/* Contact Section */}
       {/* <Typography variant="h5" sx={{ mb: 2 }}>
@@ -674,10 +677,10 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           variant="outlined"
           fullWidth
           name="email"
-          value={formData.firstName}
+          value={formData.email}
           onChange={handleChange}
-          error={!!errors.firstName}
-          helperText={errors.firstName}
+          error={!!errors.email}
+          helperText={errors.email}
           disabled={!isGuest && selectedAddressId}
         />
         <TextField
@@ -685,10 +688,10 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           variant="outlined"
           fullWidth
           name="phoneNumber"
-          value={formData.lastName}
+          value={formData.phoneNumber}
           onChange={handleChange}
-          error={!!errors.lastName}
-          helperText={errors.lastName}
+          error={!!errors.phoneNumber}
+          helperText={errors.phoneNumber}
           disabled={!isGuest && selectedAddressId}
         />
       </Box>
@@ -910,6 +913,52 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Dialog open={orderSuccessOpen} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ textAlign: "center", pt: 4 }}>
+          Order Confirmed!
+        </DialogTitle>
+        <DialogContent sx={{ px: 4, py: 3 }}>
+          <Box sx={{ textAlign: "center", mb: 3 }}>
+            <CheckCircleOutlineIcon
+              sx={{ fontSize: 60, color: "success.main", mb: 2 }}
+            />
+            <Typography variant="h6" gutterBottom>
+              Thank you for shopping with AppSoft!
+            </Typography>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              We're excited to let you know that your order #
+              {orderDetails?.order_no} has been successfully placed.
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              If you have any questions about your order or need assistance,
+              feel free to contact us.
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Contact Us: +94 777 123 456
+              <br />
+              Email: support@appsoft.com
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, justifyContent: "center" }}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setOrderSuccessOpen(false);
+              navigate("/");
+            }}
+            sx={{ minWidth: 200 }}
+          >
+            Continue Shopping
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

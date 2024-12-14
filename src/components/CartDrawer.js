@@ -81,11 +81,6 @@ const CartDrawer = ({ open, onClose }) => {
     }
   };
 
-  const handleNoteChange = (newNote) => {
-    setNote(newNote);
-    localStorage.setItem("cartNote", newNote);
-  };
-
   useEffect(() => {
     if (open) {
       fetchCart();
