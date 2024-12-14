@@ -15,6 +15,7 @@ const DealsofDay = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [title, setTitle] = useState("Default Title");
   const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const navigate = useNavigate();
 
 
@@ -25,9 +26,15 @@ const DealsofDay = () => {
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response.data);
-        
-        console.log("Products deal of the day", response.data);
+        const filteredProducts = (response?.data || []).filter(
+          (product) => product.category.status === "1"
+        );
+        setFilteredProducts(
+          filteredProducts
+        );
       } catch (error) {
+        setProducts([]);
+        setFilteredProducts([]);
         console.error("Error fetching products:", error);
       }
     };
@@ -159,12 +166,12 @@ const DealsofDay = () => {
                 backgroundColor: "#fff",
                 flexGrow: 1,
               }}
-              onClick={() => handleCardClick(products[0]?.id)}
+              onClick={() => handleCardClick(filteredProducts[0]?.id)}
             >
               <Box
                 component="img"
-                src={products[0]?.thumbnailz}
-                alt={cards[0].name}
+                src={filteredProducts[0]?.thumbnailz}
+                alt={filteredProducts[0].name}
                 sx={{
                   width: "100%",
                   height: "70%",
@@ -172,7 +179,7 @@ const DealsofDay = () => {
                 }}
               />
 
-                {products[0]?.soldOut && (
+                {filteredProducts[0]?.soldOut && (
                         <Chip
                           label="Sold Out"
                           color="error"
@@ -180,9 +187,9 @@ const DealsofDay = () => {
                         />
                       )}
                 {/* Discount Chip */}
-                {products[0]?.discount && (
+                {filteredProducts[0]?.discount && (
                   <Chip
-                    label={'-'+products[0]?.discount+'%'}
+                    label={'-'+filteredProducts[0]?.discount+'%'}
                     color="primary"
                     sx={{
                       position: "absolute",
@@ -205,7 +212,7 @@ const DealsofDay = () => {
                   fontSize={"36px"}
                   fontWeight={"600"}
                 >
-                  {products[0]?.currency} {products[0]?.sales_price}
+                  {filteredProducts[0]?.currency} {products[0]?.sales_price}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -215,7 +222,7 @@ const DealsofDay = () => {
                   letterSpacing={"2px"}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  {getCategoryName(products[0]?.category.name)}
+                  {getCategoryName(filteredProducts[0]?.category.name)}
                 </Typography>
 
                 <Box
@@ -230,7 +237,7 @@ const DealsofDay = () => {
                     fontSize={"16px"}
                     fontWeight={"500"}
                   >
-                    {products[0]?.name}
+                    {filteredProducts[0]?.name}
                   </Typography>
                   <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
@@ -240,7 +247,7 @@ const DealsofDay = () => {
 
           <Grid item xs={12} md={7}>
             <Grid container spacing={4}>
-              {products.slice(1, 4).map((card) => (
+              {filteredProducts.slice(1, 4).map((card) => (
                 <Grid item xs={12} sm={4} key={card.id}>
                   <Box
                     sx={{
@@ -378,7 +385,7 @@ const DealsofDay = () => {
                 </Grid>
               ))}
 
-              {products.slice(4, 6).map((card) => (
+              {filteredProducts.slice(4, 6).map((card) => (
                 <Grid item xs={12} sm={6} key={card.id}>
                   <Box
                     sx={{

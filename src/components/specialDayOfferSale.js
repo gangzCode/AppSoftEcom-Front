@@ -11,10 +11,12 @@ import { useNavigate } from "react-router-dom";
 const SpecialDayOfferSale = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [products, setProducts] = useState([]); // Ensure products is an array
-  const [title, setTitle] = useState("Default Title"); // Initialize with default
+  const [products, setProducts] = useState([]);
+  const [title, setTitle] = useState("Default Title");
   const [subTitle, setSubTitle] = useState("Default Subtitle");
   const navigate = useNavigate();
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -22,10 +24,17 @@ const SpecialDayOfferSale = () => {
         const response = await getSpecialDayOfferSaleProducts();
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
+        const filteredProducts = (response?.data || []).filter(
+          (product) => product.category.status === "1"
+        );
+        setFilteredProducts(
+          filteredProducts
+        );
         setProducts(response?.data || []);
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]);
+        setFilteredProducts([]);
       }
     };
 
@@ -114,8 +123,8 @@ const SpecialDayOfferSale = () => {
           },
         }}
       >
-        {products.length > 0 && products !== null ? (
-          products.map((product) => (
+        {filteredProducts.length > 0 && filteredProducts !== null ? (
+          filteredProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))
         ) : (

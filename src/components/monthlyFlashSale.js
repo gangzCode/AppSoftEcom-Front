@@ -15,6 +15,7 @@ const MonthlyFlashSale = () => {
   const [title, setTitle] = useState("Default Title"); // Initialize with default
   const [subTitle, setSubTitle] = useState("Default Subtitle");
   const navigate = useNavigate();
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -22,10 +23,18 @@ const MonthlyFlashSale = () => {
         const response = await getMonthlyFlashSaleProducts();
         setTitle(response?.title || "Default Title");
         setSubTitle(response?.sub_title || "Default Subtitle");
+        const filteredProducts = (response?.data || []).filter(
+          (product) => product.category.status === "1"
+        );
+        setFilteredProducts(
+          filteredProducts
+        );
         setProducts(response?.data || []); // Fallback to empty array
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]); // Handle API failure gracefully
+        setProducts([]);
+        setFilteredProducts([]);
+
       }
     };
 
@@ -114,8 +123,8 @@ const MonthlyFlashSale = () => {
           },
         }}
       >
-        {products.length > 0 && products !== null ? (
-          products.map((product) => (
+        {filteredProducts.length > 0 && filteredProducts !== null ? (
+          filteredProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))
         ) : (
