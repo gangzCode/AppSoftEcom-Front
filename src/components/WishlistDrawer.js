@@ -101,7 +101,6 @@ const WishlistDrawer = ({ open, onClose }) => {
               container
               key={item.id}
               sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
-              onClick={() => handleNavigateToProductDetail(item.id)}
             >
               <Grid item xs={3}>
                 <Avatar
@@ -109,6 +108,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                   src={item.images[0]}
                   alt={item.name}
                   sx={{ width: 70, height: 70 }}
+                  onClick={() => handleNavigateToProductDetail(item.id)}
                 />
               </Grid>
               <Grid item xs={9} px={1}>
@@ -118,7 +118,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                   flexDirection={"column"}
                   gap={0.5}
                 >
-                  <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
+                  <Typography variant="body1" fontWeight={500} lineHeight={1.5} onClick={() => handleNavigateToProductDetail(item.id)}>
                     {item?.name.length > 70 ? item?.name.slice(0, 70) + "..." : item?.name}
                   </Typography>
                   <Typography variant="body2" fontWeight={400} fontSize={12}>

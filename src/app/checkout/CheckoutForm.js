@@ -391,6 +391,14 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
       newErrors.postal_code = "Postal code is required";
     }
 
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    }
+
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [formData]);
