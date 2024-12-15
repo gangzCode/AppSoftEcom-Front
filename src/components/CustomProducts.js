@@ -84,7 +84,7 @@ const CustomProducts = () => {
                     WebkitBoxOrient: "vertical",
                   }}
                 >
-                  {product.name}
+                  {product.name.substr(0, 20)}
                 </Typography>
 
                 <Box

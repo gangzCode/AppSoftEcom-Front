@@ -117,6 +117,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                   src={item.images[0]}
                   alt={item.name}
                   sx={{ width: 70, height: 70 }}
+                  onClick={() => handleNavigateToProductDetail(item.id)}
                 />
               </Grid>
               <Grid item xs={9} px={1}>

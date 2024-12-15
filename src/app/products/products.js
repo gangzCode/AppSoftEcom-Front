@@ -87,6 +87,7 @@ const ProductsPage = () => {
   const [isInWishlist, setIsInWishlist] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -334,7 +335,6 @@ const ProductsPage = () => {
     return options;
   };
 
-  // Update handleAddToCart function
   const handleAddToCart = async (product) => {
     try {
       // Check stock
@@ -346,7 +346,7 @@ const ProductsPage = () => {
       }
 
       // Check for variations
-      if (product.product_variation_tempalte?.length > 0) {
+      if (product.product_variation_combination?.length > 0) {
         navigate(`/product/${product.id}`);
         return;
       }
@@ -426,6 +426,7 @@ const ProductsPage = () => {
       setSnackbarOpen(true);
     }
   };
+  
 
   if (loading) {
     return (
@@ -587,8 +588,8 @@ const ProductsPage = () => {
                   value={priceRange}
                   onChange={handlePriceRangeChange}
                   valueLabelDisplay="auto"
-                  min={Math.min(...products.map((p) => p.price || 0))}
-                  max={Math.max(...products.map((p) => p.price || 0))}
+                  min={Math.min(...products.map((p) => p.sales_price || 0))}
+                  max={Math.max(...products.map((p) => p.sales_price || 0))}
                 />
                 <Box display={"flex"} gap={3} flexDirection={"row"}>
                   <Box>

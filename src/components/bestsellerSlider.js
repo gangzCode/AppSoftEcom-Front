@@ -211,7 +211,7 @@ const BestsellerSlider = () => {
                     />
                   </Box>
 
-                  <Box
+             {/*      <Box
                     className="hover-icons"
                     sx={{
                       position: "absolute",
@@ -246,7 +246,7 @@ const BestsellerSlider = () => {
                         {item.icon}
                       </IconButton>
                     ))}
-                  </Box>
+                  </Box> */}
                   <Typography
                     variant="caption"
                     fontSize={"12px"}
