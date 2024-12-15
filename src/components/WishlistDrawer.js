@@ -22,6 +22,7 @@ const WishlistDrawer = ({ open, onClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [removingItemId, setRemovingItemId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,22 +43,25 @@ const WishlistDrawer = ({ open, onClose }) => {
     }
   };
 
-  const handleDeleteWishlistItem = async (wishlist_id) => {
-    setLoading(true);
-    try {
-      const response = await deleteWishlistItem(wishlist_id);
+  const handleDeleteWishlistItem = async (wishlistId) => {
+    setRemovingItemId(wishlistId);
+    const previousItems = [...wishlistItems];
+    setWishlistItems((items) =>
+      items.filter((item) => item.wishlist_id !== wishlistId)
+    );
 
-      if (response.status === 200) {
-        fetchWishlist();
-        setSnackbarSeverity("success");
-        setSnackbarMessage("Item removed from wishlist");
-        setSnackbarOpen(true);
-      }
-    } catch (error) {
-      console.error("Error deleting wishlist item:", error);
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Failed to remove item");
+    try {
+      await deleteWishlistItem(wishlistId);
+      setSnackbarMessage("Item removed from wishlist");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
+    } catch (error) {
+      setWishlistItems(previousItems);
+      setSnackbarMessage("Failed to remove item");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setRemovingItemId(null);
     }
   };
 
@@ -159,9 +163,14 @@ const WishlistDrawer = ({ open, onClose }) => {
                         e.stopPropagation();
                         handleDeleteWishlistItem(item.wishlist_id);
                       }}
-                      disabled={loading}
+                      color="error"
+                      disabled={removingItemId === item.wishlist_id}
                     >
-                      <DeleteOutline />
+                      {removingItemId === item.wishlist_id ? (
+                        <CircularProgress size={20} />
+                      ) : (
+                        <DeleteOutline />
+                      )}
                     </IconButton>
                   </Grid>
                 </Box>

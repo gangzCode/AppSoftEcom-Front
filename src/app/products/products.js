@@ -943,6 +943,7 @@ const ProductsPage = () => {
                       Out of Stock
                     </Box>
                   )}
+                  
                   <RouterLink to={`/product/${product.id}`}>
                     <Box
                       sx={{
@@ -1005,6 +1006,7 @@ const ProductsPage = () => {
                         transition: "opacity 0.3s ease, visibility 0.3s ease",
                       }}
                     ></Box>
+
                     <Typography
                       variant="caption"
                       fontSize={"12px"}
@@ -1078,6 +1080,7 @@ const ProductsPage = () => {
                       />
                     </Box>
                   </RouterLink>
+                  
                   <IconButton
                     onClick={() => handleAddToCart(product)}
                     // disabled={addingToCartId === product.id}
