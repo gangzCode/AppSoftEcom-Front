@@ -18,6 +18,7 @@ import {
   clearCart,
   updateCartItem,
 } from "../services/apiCalls";
+import { useNavigate } from "react-router-dom";
 
 const CartDrawer = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -27,6 +28,7 @@ const CartDrawer = ({ open, onClose }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [note, setNote] = useState("");
+  const navigate = useNavigate();
 
   const fetchCart = async () => {
     try {
@@ -154,22 +156,28 @@ const CartDrawer = ({ open, onClose }) => {
       </Typography>
 
       <Box display="flex" justifyContent="space-between" marginTop={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          href="/checkout"
-          onClick={onClose}
-        >
-          Checkout
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          href="/cart"
-          onClick={onClose}
-        >
-          View Cart
-        </Button>
+        {cartItems.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              onClose();
+              navigate("/checkout");
+            }}
+          >
+            Checkout
+          </Button>
+        )}
+        {cartItems.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            href="/cart"
+            onClick={onClose}
+          >
+            View Cart
+          </Button>
+        )}
       </Box>
 
       {/* <Box display="flex" justifyContent="space-between" marginTop={2}>

@@ -10,12 +10,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  Drawer
+  Drawer,
 } from "@mui/material";
 import { Close, DeleteOutline } from "@mui/icons-material";
 import { getWishListofUser, deleteWishlistItem } from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
-
 
 const WishlistDrawer = ({ open, onClose }) => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -100,7 +99,16 @@ const WishlistDrawer = ({ open, onClose }) => {
             <Grid
               container
               key={item.id}
-              sx={{ mt: 2, pb: 2, borderBottom: "1px solid #ebebeb" }}
+              sx={{
+                mt: 2,
+                pb: 2,
+                borderBottom: "1px solid #ebebeb",
+                cursor: "pointer",
+                transition: "background-color 0.2s ease",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.04)",
+                },
+              }}
               onClick={() => handleNavigateToProductDetail(item.id)}
             >
               <Grid item xs={3}>
@@ -118,22 +126,39 @@ const WishlistDrawer = ({ open, onClose }) => {
                   flexDirection={"column"}
                   gap={0.5}
                 >
-                  <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
-                    {item?.name.length > 70 ? item?.name.slice(0, 70) + "..." : item?.name}
+                  <Typography
+                    variant="body1"
+                    fontWeight={500}
+                    lineHeight={1.5}
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": {
+                        textDecoration: "underline",
+                      },
+                    }}
+                  >
+                    {item?.name.length > 70
+                      ? item?.name.slice(0, 70) + "..."
+                      : item?.name}
                   </Typography>
                   <Typography variant="body2" fontWeight={400} fontSize={12}>
                     {item.variant}
                   </Typography>
-                  <Grid container alignItems="center" justifyContent="space-between">
+                  <Grid
+                    container
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
                     <Typography variant="body1" sx={{ mt: 0.5 }}>
                       {item.currency} {parseFloat(item.sales_price).toFixed(2)}
                     </Typography>
                     <IconButton
                       size="small"
-                      onClick={() => handleDeleteWishlistItem(item.wishlist_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteWishlistItem(item.wishlist_id);
+                      }}
                       disabled={loading}
-                      sx={{ position: 'relative', left: -50 }}
-                      color="error"
                     >
                       <DeleteOutline />
                     </IconButton>

@@ -111,7 +111,6 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   };
 
   const handleProfileClick = () => {
-
     if (user) {
       navigate("/profile");
     } else {
@@ -336,6 +335,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     <AppBar
       position="sticky"
       sx={{
+        paddingX: { xs: "1em", md: "8em" },
         marginBottom: { xs: "56px", sm: "0" },
       }}
       elevation={0}

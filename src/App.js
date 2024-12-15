@@ -49,8 +49,8 @@ function Layout() {
         {/* <Box>
           <TopBar />
         </Box> */}
+        {<Navbar />}
         <Box paddingX={{ xs: "1em", md: "8em" }}>
-          {<Navbar />}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
