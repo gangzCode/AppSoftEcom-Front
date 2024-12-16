@@ -5,114 +5,135 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Paper,
+  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function FAQPage() {
+  const faqs = [
+    {
+      category: "Orders & Shipping",
+      items: [
+        {
+          question: "How do I track my order?",
+          answer:
+            "You can track your order by logging into your account and viewing the order status under 'My Orders'.",
+        },
+        {
+          question: "What are the shipping costs?",
+          answer:
+            "Shipping costs vary based on your location and the items purchased. Free shipping is available for orders over $100.",
+        },
+      ],
+    },
+    {
+      category: "Returns & Refunds",
+      items: [
+        {
+          question: "What is your return policy?",
+          answer:
+            "We accept returns within 30 days of purchase. Items must be unused and in original packaging.",
+        },
+        {
+          question: "How long do refunds take?",
+          answer:
+            "Refunds are typically processed within 5-7 business days after we receive your return.",
+        },
+      ],
+    },
+  ];
+
   return (
-    <Container sx={{ marginY: 8 }}>
-      <Typography variant="h4" gutterBottom>
-        Frequently Asked Questions
-      </Typography>
-
-      <Accordion
-        disableGutters
+    <Container maxWidth="lg" sx={{ marginY: 8 }}>
+      <Paper
         elevation={0}
-        square
         sx={{
-          border: "1px solid #E0E0E0",
-          borderRadius: "8px",
-          marginBottom: 2,
-          "&:before": { display: "none" },
+          p: { xs: 2, md: 6 },
+          backgroundColor: "#f5f5f5",
+          borderRadius: 2,
+          mb: 4,
         }}
       >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="specification-content"
-          id="specification-header"
+        <Typography
+          variant="h4"
+          gutterBottom
           sx={{
-            paddingY: 1,
-            paddingX: 2,
-            fontSize: "1rem",
-            fontWeight: 500,
-            color: "#333",
+            fontWeight: 600,
+            color: "#1e1e1e",
+            mb: 2,
+            textAlign: { xs: "left", md: "center" },
           }}
         >
-          <Typography variant="subtitle1">Specification</Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ padding: 2, color: "#666" }}>
-          <Typography variant="body2">
-            Here you can provide detailed specifications of the product,
-            including dimensions, materials, and other relevant information.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+          Frequently Asked Questions
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: "#666",
+            mb: 4,
+            textAlign: { xs: "left", md: "center" },
+          }}
+        >
+          Find answers to common questions about our products and services
+        </Typography>
+      </Paper>
 
-      <Accordion
-        disableGutters
-        elevation={0}
-        square
-        sx={{
-          border: "1px solid #E0E0E0",
-          borderRadius: "8px",
-          marginBottom: 2,
-          "&:before": { display: "none" },
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="shipping-info-content"
-          id="shipping-info-header"
-          sx={{
-            paddingY: 1,
-            paddingX: 2,
-            fontSize: "1rem",
-            fontWeight: 500,
-            color: "#333",
-          }}
-        >
-          <Typography variant="subtitle1">Shipping Information</Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ padding: 2, color: "#666" }}>
-          <Typography variant="body2">
-            Provide information on shipping methods, delivery times, and any
-            shipping fees that may apply.
+      {faqs.map((category, index) => (
+        <Box key={index} sx={{ mb: 4 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 500,
+              color: "#2189ff",
+              mb: 2,
+            }}
+          >
+            {category.category}
           </Typography>
-        </AccordionDetails>
-      </Accordion>
 
-      <Accordion
-        disableGutters
-        elevation={0}
-        square
-        sx={{
-          border: "1px solid #E0E0E0",
-          borderRadius: "8px",
-          marginBottom: 2,
-          "&:before": { display: "none" },
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="reviews-content"
-          id="reviews-header"
-          sx={{
-            paddingY: 1,
-            paddingX: 2,
-            fontSize: "1rem",
-            fontWeight: 500,
-            color: "#333",
-          }}
-        >
-          <Typography variant="subtitle1">Reviews</Typography>
-        </AccordionSummary>
-        <AccordionDetails sx={{ padding: 2, color: "#666" }}>
-          <Typography variant="body2">
-            Display customer reviews, ratings, and feedback to give potential
-            buyers more insight into the product quality.
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+          {category.items.map((faq, faqIndex) => (
+            <Accordion
+              key={faqIndex}
+              disableGutters
+              elevation={0}
+              sx={{
+                border: "1px solid #E0E0E0",
+                borderRadius: "8px !important",
+                mb: 2,
+                "&:before": { display: "none" },
+                "&:hover": {
+                  borderColor: "#2189ff",
+                  transition: "all 0.3s ease",
+                },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{
+                  padding: 2,
+                  "& .MuiAccordionSummary-content": {
+                    margin: 0,
+                  },
+                }}
+              >
+                <Typography sx={{ fontWeight: 500, color: "#333" }}>
+                  {faq.question}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  padding: 2,
+                  backgroundColor: "#f8f9fa",
+                  color: "#666",
+                }}
+              >
+                <Typography>{faq.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
+      ))}
     </Container>
   );
 }
