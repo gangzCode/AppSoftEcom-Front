@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, IconButton, Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import { Facebook, Instagram, PinDrop } from "@mui/icons-material";
@@ -17,6 +17,15 @@ const Footer = () => {
     instaLink: "",
   });
   const [menus, setmenus] = useState([]);
+  const navigate = useNavigate();
+
+  const footerLinks = [
+    { name: "Return Policy", path: "#" },
+    { name: "Privacy Policy", path: "#" },
+    { name: "Terms of Service", path: "/terms" },
+    { name: "FAQ", path: "/faq" },
+    { name: "Contact Us", path: "/contact" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,15 +119,20 @@ const Footer = () => {
             Policy Information
           </Typography>
           <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-            {[
-              "Return Policy",
-              "Privacy Policy",
-              "Terms of Service",
-              "FAQ",
-              "Support",
-            ].map((item, index) => (
-              <Link key={index} href={"#"} color={"inherit"} underline="none">
-                <Typography fontSize={"16px"}>{item}</Typography>
+            {footerLinks.map((item, index) => (
+              <Link
+                key={index}
+                onClick={() => navigate(item.path)}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "#2189ff",
+                  },
+                }}
+                color={"inherit"}
+                underline="none"
+              >
+                <Typography fontSize={"16px"}>{item.name}</Typography>
               </Link>
             ))}
           </Grid>

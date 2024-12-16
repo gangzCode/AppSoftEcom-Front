@@ -28,6 +28,8 @@ import PrivateRoute from "./components/privateRoute";
 import { AuthProvider } from "./context/AuthContext";
 import CustomProducts from "./components/CustomProducts";
 import Snow from "./components/Snow";
+import ContactUsPage from "./app/ContactUs/page";
+import TermsPage from "./app/Terms/page";
 
 // Define theme
 /* const theme = createTheme({
@@ -76,6 +78,8 @@ function Layout() {
             />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/custom-products" element={<CustomProducts />} />
+            <Route path="/contact" element={<ContactUsPage />} />
+            <Route path="/terms" element={<TermsPage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
 

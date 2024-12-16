@@ -10,16 +10,20 @@ import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { DeleteOutline } from "@mui/icons-material";
-import { deleteCartItem,getCartDetails } from "../../services/apiCalls";
+import { deleteCartItem, getCartDetails } from "../../services/apiCalls";
+import useAppDispatch from "../../hooks/useAppDispatch";
+import { removeItem } from "../../features/cart/cartSlice";
 
-const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
+const CartSliderItem = ({ item, onUpdate, onQuantityChange }) => {
   const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const dispatch = useAppDispatch();
 
   const handleDelete = async () => {
     try {
       setLoading(true);
       await deleteCartItem(item.card_id);
+      dispatch(removeItem());
       onUpdate();
     } catch (error) {
       console.error("Failed to delete item:", error);
@@ -66,7 +70,9 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
           gap={0.5}
         >
           <Typography variant="body1" fontWeight={500} lineHeight={1.5}>
-            {item?.product?.name.length > 70 ? item?.product?.name.slice(0, 70) + "..." : item?.product?.name}
+            {item?.product?.name.length > 70
+              ? item?.product?.name.slice(0, 70) + "..."
+              : item?.product?.name}
           </Typography>
           <Typography variant="body2" fontWeight={400} fontSize={12}>
             {item.variant}
@@ -80,7 +86,9 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
             <Typography>Quantity:</Typography>
             <IconButton
               size="small"
-              onClick={() => handleQuantityUpdate(parseFloat(item.quantity) - 1)}
+              onClick={() =>
+                handleQuantityUpdate(parseFloat(item.quantity) - 1)
+              }
               disabled={parseFloat(item.quantity) <= 1}
             >
               <RemoveIcon fontSize="small" />
@@ -88,13 +96,20 @@ const CartSliderItem = ({ item, onUpdate,onQuantityChange }) => {
             <Typography> {parseFloat(item.quantity)}</Typography>
             <IconButton
               size="small"
-              onClick={() => handleQuantityUpdate(parseFloat(item.quantity) + 1)}
+              onClick={() =>
+                handleQuantityUpdate(parseFloat(item.quantity) + 1)
+              }
               disabled={parseFloat(item.quantity) >= item.stock}
             >
               <AddIcon fontSize="small" />
             </IconButton>
           </Box>
-          <IconButton size="small" onClick={handleDelete} disabled={loading} color="error">
+          <IconButton
+            size="small"
+            onClick={handleDelete}
+            disabled={loading}
+            color="error"
+          >
             <DeleteOutline />
           </IconButton>
         </Stack>

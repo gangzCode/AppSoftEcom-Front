@@ -43,6 +43,8 @@ import {
 import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
+import useAppDispatch from "../../hooks/useAppDispatch";
+import { addItemSuccess } from "../../features/cart/cartSlice";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
@@ -75,6 +77,7 @@ const ProductDetailsPage = () => {
     fbLink: "",
     instaLink: "",
   });
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -402,6 +405,8 @@ const ProductDetailsPage = () => {
 
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
+
+      dispatch(addItemSuccess(cartResponse.data));
 
       const isSingleProduct =
         !product.product_variation_combination ||

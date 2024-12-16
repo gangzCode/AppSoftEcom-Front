@@ -56,6 +56,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
+import useAppSelector from "../hooks/useAppSelector";
 
 const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [anchorCat, setAnchorCat] = useState(null);
@@ -81,6 +82,8 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
   const [expandedMenu, setExpandedMenu] = useState(null);
+  const { cartCount } = useAppSelector((state) => state.cart);
+
   const location = useLocation();
   const isCheckoutPage = location.pathname === "/checkout";
 
@@ -90,6 +93,10 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
     fetchCart();
     fetchWishlist();
   }, []);
+
+  useEffect(() => {
+    console.log("cartCount", cartCount);
+  }, [cartCount]);
 
   const fetchCart = async () => {
     try {
@@ -321,7 +328,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
           <BottomNavigationAction
             onClick={toggleCart}
             icon={
-              <Badge badgeContent={cartItems.length} color="primary">
+              <Badge badgeContent={cartCount} color="primary">
                 <ShoppingCart />
               </Badge>
             }
@@ -450,7 +457,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
               </IconButton>
               {!isCheckoutPage && (
                 <IconButton onClick={toggleCart}>
-                  <Badge badgeContent={cartItems.length} color="primary">
+                  <Badge badgeContent={cartCount} color="primary">
                     <ShoppingCartOutlined />
                   </Badge>
                 </IconButton>
