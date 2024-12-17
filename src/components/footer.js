@@ -24,7 +24,11 @@ const Footer = () => {
     { name: "Privacy Policy", path: "#" },
     { name: "Terms of Service", path: "/terms" },
     { name: "FAQ", path: "/faq" },
+  ];
+
+  const footerUsefulLinks = [
     { name: "Contact Us", path: "/contact" },
+    { name: "Track Order", path: "/profile#orders" }
   ];
 
   useEffect(() => {
@@ -195,17 +199,24 @@ const Footer = () => {
             Useful Links
           </Typography>
           <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-            {[
-              "Contact Us",
-              "Help",
-              "Shipping Info",
-              "Track Order",
-              "Sitemap",
-            ].map((item, index) => (
-              <Link key={index} href={"#"} color={"inherit"} underline="none">
-                <Typography fontSize={"16px"}>{item}</Typography>
+          <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
+            {footerUsefulLinks.map((item, index) => (
+              <Link
+                key={index}
+                onClick={() => navigate(item.path)}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "#2189ff",
+                  },
+                }}
+                color={"inherit"}
+                underline="none"
+              >
+                <Typography fontSize={"16px"}>{item.name}</Typography>
               </Link>
             ))}
+          </Grid>
           </Grid>
         </Grid>
       </Grid>

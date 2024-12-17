@@ -216,7 +216,7 @@ export const getDealsofMonthProducts = async () => {
 
 export const getBestBrandedProducts = async () => {
   try {
-    const res = await axios.get(baseUrl + "/products/best-brand?items=2", {
+    const res = await axios.get(baseUrl + "/best-brand", {
       headers: {
         "Content-Type": "application/json",
       },

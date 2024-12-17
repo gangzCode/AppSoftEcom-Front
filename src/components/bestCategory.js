@@ -1,33 +1,38 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Chip,
+} from "@mui/material";
 import { useSwipeable } from "react-swipeable";
 import { ChevronRight, ShoppingCart, Favorite } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { getBestCategoryProducts } from "../services/apiCalls";
+import {
+  getCartDetails,
+  addToCart,
+  addToCartGuest,
+  addToWishlist,
+  getAuthToken,
+} from "../services/apiCalls";
 import { Container } from "../common/Spacing";
+import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
-const BestCategory = () => {
+const BestCategory = ({title,subTitle,filteredProducts,products}) => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [products, setProducts] = useState([]); // Ensure products is an array
-  const [title, setTitle] = useState("Default Title"); // Initialize with default
-  const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const navigate = useNavigate();
+  const [addingToCartId, setAddingToCartId] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [isInWishlist, setIsInWishlist] = useState({});
+  const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getBestCategoryProducts();
-        setTitle(response?.title || "Default Title");
-        setSubTitle(response?.sub_title || "Default Subtitle");
-        setProducts(response?.data || []); // Fallback to empty array
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setProducts([]); // Handle API failure gracefully
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -43,6 +48,98 @@ const BestCategory = () => {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
+
+  const handleAddToCart = async (product) => {
+    try {
+      // Check stock
+      if (product.total_stock <= 0) {
+        setSnackbarMessage("Sorry, this item is out of stock");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // Check for variations
+      if (product.product_variation_combination?.length > 0) {
+        navigate(`/product/${product.id}`);
+        return;
+      }
+
+      setAddingToCartId(product.id);
+
+      const cartResponse = await getCartDetails();
+      const cartItems = cartResponse.data || [];
+
+      const existingItem = cartItems.find(
+        (item) => item.product.id === product.id
+      );
+
+      if (existingItem) {
+        setSnackbarMessage(
+          "Item already in cart. Please update quantity in cart."
+        );
+        setSnackbarSeverity("info");
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // Add new item to cart
+      const cartItem = {
+        product_id: product.id,
+        discount: product.discount || "",
+        quantity: "1",
+        line_discount_type: "percentage",
+        unit_price: product.sales_price.toString(),
+      };
+
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        await addToCart(getAuthToken(), cartItem);
+      } else {
+        await addToCartGuest(cartItem);
+      }
+      setSnackbarMessage("Added to cart successfully");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      setSnackbarMessage("Failed to add to cart");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setAddingToCartId(null);
+    }
+  };
+
+  const handleAddToWishlist = async (product) => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      navigate("/signin");
+      return;
+    }
+
+    if (isInWishlist[product.id]) {
+      setSnackbarMessage("This product is already in your wishlist!");
+      setSnackbarSeverity("info");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      await addToWishlist(product.id);
+      setIsInWishlist((prev) => ({
+        ...prev,
+        [product.id]: true,
+      }));
+      setSnackbarMessage("Added to wishlist successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Failed to add to wishlist");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
 
   return (
     <Container>
@@ -66,7 +163,26 @@ const BestCategory = () => {
       >
         {subTitle}
       </Typography>
-      <Typography variant="h4" fontWeight={"600"} component="h2" gutterBottom>
+      <Typography
+        onClick={() =>
+          navigate("/custom-products", {
+            state: { title, products: products },
+          })
+        }
+        variant="h4"
+        fontWeight={"600"}
+        component="h2"
+        gutterBottom
+        width={"fit-content"}
+        sx={{
+          cursor: "pointer",
+          transition: "color 0.3s ease",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
+          "&:hover": {
+            color: "#2189ff",
+          },
+        }}
+      >
         {title}
       </Typography>
       <Box
@@ -92,113 +208,37 @@ const BestCategory = () => {
           },
         }}
       >
-        {products.length > 0 ? (
-          products.map((product) => (
-            <Link to={`/products/${product.id}`} key={product.id}>
-              <Box
-                sx={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                  minWidth: "280px",
-                  padding: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: "#f5f5f5",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  ":hover": {
-                    boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-                onMouseEnter={() => setHoveredProductId(product.id)}
-                onMouseLeave={() => setHoveredProductId(null)}
-              >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    maxWidth: "240px",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={product.image}
-                    alt={product.description}
-                    sx={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "contain",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 0 : 1,
-                    }}
-                  />
-                  <Box
-                    component="img"
-                    src={product.image}
-                    alt={product.description}
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "contain",
-                      transition: "opacity 0.5s ease",
-                      opacity: hoveredProductId === product.id ? 1 : 0,
-                    }}
-                  />
-                </Box>
-
-                <Box
-                  className="hover-icons"
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    display: "flex",
-                    gap: "8px",
-                    opacity: hoveredProductId === product.id ? 1 : 0,
-                    visibility:
-                      hoveredProductId === product.id ? "visible" : "hidden",
-                    transition: "opacity 0.3s ease, visibility 0.3s ease",
-                  }}
-                >
-                  
-                </Box>
-                <Typography
-                  variant="caption"
-                  fontSize={"12px"}
-                  color={"#bebebe"}
-                  sx={{ letterSpacing: "1px", marginBottom: "3px" }}
-                >
-                  {product.category_name}
-                </Typography>
-                <Box
-                  display={"flex"}
-                  justifyContent="space-between"
-                  sx={{ marginTop: "auto" }}
-                >
-                  <Typography
-                    variant="body1"
-                    fontWeight="400"
-                    sx={{ marginBottom: "8px" }}
-                  >
-                    {product.name.substr(0, 20)}
-                  </Typography>
-
-                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
-                </Box>
-              </Box>
-            </Link>
+        {filteredProducts?.length > 0 && filteredProducts !== null ? (
+          filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              hoveredProductId={hoveredProductId}
+              setHoveredProductId={setHoveredProductId}
+              handleAddToCart={handleAddToCart}
+              handleAddToWishlist={handleAddToWishlist}
+              addingToCartId={addingToCartId}
+              isInWishlist={isInWishlist}
+              isHovered={isHovered}
+            />
           ))
         ) : (
           <Typography variant="body1">No products available.</Typography>
         )}
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

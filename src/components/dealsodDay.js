@@ -13,8 +13,8 @@ import { useNavigate } from "react-router-dom";
 const DealsofDay = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [title, setTitle] = useState("Default Title");
-  const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const [title, setTitle] = useState();
+  const [subTitle, setSubTitle] = useState();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ const DealsofDay = () => {
         setSubTitle(response?.sub_title || "Default Subtitle");
         setProducts(response.data);
         const filteredProducts = (response?.data || []).filter(
-          (product) => product.category.status === "1"
+          (product) => product.top_status === 1
         );
         setFilteredProducts(
           filteredProducts

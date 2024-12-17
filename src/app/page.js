@@ -12,7 +12,7 @@ import BestBrand from "../components/bestBrand";
 import TopSellingBetweenBanner from "../components/topSellingBetweenBanner";
 import CategoryBetweenBanner from "../components/categoryBetweenBanner";
 import BestCategory from "../components/bestCategory";
-import { fetchSystemData } from "../services/apiCalls";
+import { fetchSystemData,getBestBrandedProducts, getBestCategoryProducts } from "../services/apiCalls";
 import DayFlashSale from "../components/dayFlashSale";
 import SpecialDayOfferSale from "../components/specialDayOfferSale";
 import MonthlyFlashSale from "../components/monthlyFlashSale";
@@ -22,6 +22,12 @@ import ScrollTransition from "../common/ScrollTransition";
 
 const HomePage = () => {
   const [settings, setSettings] = useState(null);
+  const [title, setTitle] = useState();
+  const [subTitle, setSubTitle] = useState();
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [filteredCategoryProducts, setFilteredCategoryProducts] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState([]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -35,6 +41,68 @@ const HomePage = () => {
 
     fetchSettings();
   }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getBestBrandedProducts();
+
+        const products = response?.data?.map((brand) => ({
+          title: brand.title,
+          subTitle: brand.sub_title, 
+          products: brand.data,
+        })) || [];
+
+        const filteredProducts = response?.data?.map((brand) => ({
+          title: brand.title,
+          subTitle: brand.sub_title,
+          products: brand.data?.filter((product) => product.top_status === 1) || [],
+        })) || [];
+
+        setFilteredProducts(
+          filteredProducts
+        );
+        setProducts(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setFilteredProducts([]);
+        setProducts([]);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategoryProducts = async () => {
+      try {
+        const response = await getBestCategoryProducts();
+
+        const categories = response?.data?.map((category) => ({
+          title: category.title,
+          subTitle: category.sub_title,
+          products: category.data,
+        })) || [];
+
+        const filteredCategories = response?.data?.map((category) => ({
+          title: category.title,
+          subTitle: category.sub_title,
+          products: category.data?.filter((product) => product.top_status === 1) || [],
+        })) || [];
+
+        setFilteredCategoryProducts(filteredCategories);
+        console.log('dfadfds',filteredCategories)
+        setCategoryProducts(categories);
+      } catch (error) {
+        console.error("Error fetching category products:", error);
+        setFilteredCategoryProducts([]);
+        setCategoryProducts([]);
+      }
+    };
+
+    fetchCategoryProducts();
+  }, []);
+
 
   if (!settings) {
     return (
@@ -125,11 +193,28 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_category === 1 && <BestCategory />}
+        {settings.is_show_best_category === 0 &&
+          filteredCategoryProducts?.map((category) => (
+            <BestCategory
+              key={category.title}
+              title={category.title}
+              subTitle={category.subTitle}
+              products={categoryProducts.find((p) => p.title === category.title)?.products || []}
+              filteredProducts={category.products}
+            />
+          ))}
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_brand_product === 1 && <BestBrand />}
+        {settings.is_show_best_brand_product === 0 && filteredProducts?.map((brand) => (
+          <BestBrand
+            key={brand.title}
+            title={brand.title}
+            subTitle={brand.subTitle} 
+            products={products.find((p) => p.title === brand.title)?.products || []}
+            filteredProducts={brand.products}
+          />
+        ))}
       </ScrollTransition>
 
       <ScrollTransition>

@@ -457,7 +457,7 @@ const OrdersHistory = () => {
   };
 
   return (
-    <Box>
+    <Box id="orders">
       <Typography variant="h6" gutterBottom>
         Order History
       </Typography>
