@@ -43,8 +43,8 @@ const SpecialDayOfferSale = () => {
     const fetchProducts = async () => {
       try {
         const response = await getDayFlashSaleProducts();
-        setTitle(response?.title || "Default Title");
-        setSubTitle(response?.sub_title || "Default Subtitle");
+        setTitle(response?.title);
+        setSubTitle(response?.sub_title);
         const filteredProducts = (response?.data || []).filter(
           (product) => product.top_status === 1
         );

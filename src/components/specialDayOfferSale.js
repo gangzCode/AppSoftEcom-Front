@@ -27,8 +27,8 @@ const SpecialDayOfferSale = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [products, setProducts] = useState([]);
-  const [title, setTitle] = useState("Default Title");
-  const [subTitle, setSubTitle] = useState("Default Subtitle");
+  const [title, setTitle] = useState();
+  const [subTitle, setSubTitle] = useState();
   const navigate = useNavigate();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [addingToCartId, setAddingToCartId] = useState(null);
@@ -42,8 +42,8 @@ const SpecialDayOfferSale = () => {
     const fetchProducts = async () => {
       try {
         const response = await getSpecialDayOfferSaleProducts();
-        setTitle(response?.title || "Default Title");
-        setSubTitle(response?.sub_title || "Default Subtitle");
+        setTitle(response?.title);
+        setSubTitle(response?.sub_title);
         const filteredProducts = (response?.data || []).filter(
           (product) => product.top_status === 1
         );

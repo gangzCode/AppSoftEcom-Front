@@ -23,8 +23,8 @@ const DealsofDay = () => {
     const fetchGetProducts = async () => {
       try {
         const response = await getDealsofDayProducts();
-        setTitle(response?.title || "Default Title");
-        setSubTitle(response?.sub_title || "Default Subtitle");
+        setTitle(response?.title);
+        setSubTitle(response?.sub_title);
         setProducts(response.data);
         const filteredProducts = (response?.data || []).filter(
           (product) => product.top_status === 1
