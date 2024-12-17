@@ -193,7 +193,7 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_category === 0 &&
+        {settings.is_show_best_category === 1 &&
           filteredCategoryProducts?.map((category) => (
             <BestCategory
               key={category.title}
@@ -206,7 +206,7 @@ const HomePage = () => {
       </ScrollTransition>
 
       <ScrollTransition>
-        {settings.is_show_best_brand_product === 0 && filteredProducts?.map((brand) => (
+        {settings.is_show_best_brand_product === 1 && filteredProducts?.map((brand) => (
           <BestBrand
             key={brand.title}
             title={brand.title}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography,Chip } from "@mui/material";
 
 const CustomProducts = () => {
   const location = useLocation();
@@ -26,7 +26,7 @@ const CustomProducts = () => {
             marginTop: 1,
           }}
         >
-          {1} Products available
+         {/* {1} Products available */}
         </Typography>
       </Box>
 
@@ -71,6 +71,25 @@ const CustomProducts = () => {
                     }}
                   />
                 </Box>
+
+                {product?.discount && (
+                  <Chip
+                    label={`-${product.discount}%`}
+                    color="primary"
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      backgroundColor: "#ff4646",
+                      color: "white",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontWeight: "bold",
+                      zIndex: 1,
+                      fontSize: "14px",
+                    }}
+                  />
+                )}
 
                 <Typography
                   variant="body1"
