@@ -433,7 +433,7 @@ const ProductsPage = () => {
       <Box sx={{ display: "flex", padding: "20px 0" }}>
         <Box
           sx={{
-            width: "20%",
+            width: { lg: "20%", md: "40%" },
             paddingRight: "2.5em",
             display: { xs: "none", md: "block" },
           }}
@@ -676,7 +676,7 @@ const ProductsPage = () => {
           </Box>
         </Box>
 
-        <Box sx={{ width: { md: "80%", xs: "100%" } }}>
+        <Box sx={{ width: { lg: "80%", md: "60%", xs: "100%" } }}>
           <Box
             sx={{
               marginBottom: "30px",
@@ -832,7 +832,7 @@ const ProductsPage = () => {
           <Grid
             container
             gap={"34px"}
-            justifyContent={{ md: "flex-start", xs: "center" }}
+            justifyContent={{ lg: "flex-start", md: "center", xs: "center" }}
             direction={displayMode === "grid" ? "row" : "column"}
           >
             {getFilteredProducts()

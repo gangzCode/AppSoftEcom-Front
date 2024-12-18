@@ -53,7 +53,7 @@ function Layout() {
           <TopBar />
         </Box> */}
         {<Navbar />}
-        <Box paddingX={{ xs: "1em", md: "8em" }}>
+        <Box paddingX={{ xs: "1em", md: "4em", lg: "8em" }}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
@@ -97,9 +97,9 @@ const App = () => (
   <Provider store={store}>
     <AuthProvider>
       <SnackbarProvider>
-      <BrowserRouter>
-        <Layout />
-      </BrowserRouter>
+        <BrowserRouter>
+          <Layout />
+        </BrowserRouter>
       </SnackbarProvider>
     </AuthProvider>
   </Provider>

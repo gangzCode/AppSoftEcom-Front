@@ -84,7 +84,7 @@ const ProductCard = ({
               sx={{
                 width: "100%",
                 height: "200px",
-                objectFit: "contain",
+                objectFit: "cover",
                 transition: "opacity 0.5s ease",
                 opacity: isHovered === product.id ? 0 : 1,
               }}
@@ -99,7 +99,7 @@ const ProductCard = ({
                 left: 0,
                 width: "100%",
                 height: "200px",
-                objectFit: "contain",
+                objectFit: "cover",
                 transition: "opacity 0.5s ease",
                 opacity: isHovered === product.id ? 1 : 0,
               }}
@@ -110,7 +110,11 @@ const ProductCard = ({
             variant="caption"
             fontSize={"12px"}
             color={"#bebebe"}
-            sx={{ letterSpacing: "1px", marginBottom: "3px" }}
+            sx={{
+              letterSpacing: "1px",
+              marginBottom: "3px",
+              marginTop: "12px",
+            }}
           >
             {product.category_name}
           </Typography>
@@ -127,6 +131,20 @@ const ProductCard = ({
             sx={{ marginTop: "auto" }}
           >
             <Typography variant="h6" fontSize={"22px"} fontWeight="600">
+              {product.currency}{" "}
+              {(product.sales_price * (1 - product.discount / 100)).toFixed(2)}
+            </Typography>
+            <Typography
+              variant="h6"
+              fontSize={"16px"}
+              fontWeight="600"
+              color={"#bebebe"}
+              sx={{
+                marginLeft: "8px",
+                textDecoration: "line-through",
+                color: "text.secondary",
+              }}
+            >
               {product.currency} {product.sales_price}
             </Typography>
             <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />

@@ -295,17 +295,21 @@ const Navbar = ({ refreshCart, onRemove }) => {
         bottom: 0,
         left: 0,
         right: 0,
+        display: { md: "none" },
         zIndex: 1000,
-        display: { xs: "block", md: "none" }, // Hide on desktop
       }}
       elevation={3}
     >
       <BottomNavigation
-        // value={bottomValue}
-        // onChange={(event, newValue) => {
-        //   setBottomValue(newValue);
-        // }}
-        showLabels
+        value={bottomValue}
+        onChange={(event, newValue) => setBottomValue(newValue)}
+        sx={{
+          height: { xs: "56px", sm: "64px" },
+          "& .MuiBottomNavigationAction-root": {
+            minWidth: { xs: "auto", sm: "80px" },
+            padding: { xs: "6px", sm: "8px" },
+          },
+        }}
       >
         <BottomNavigationAction onClick={toggleMenu} icon={<MenuIcon />} />
 
@@ -340,14 +344,28 @@ const Navbar = ({ refreshCart, onRemove }) => {
     <AppBar
       position="sticky"
       sx={{
-        paddingX: { xs: "1em", md: "8em" },
-        marginBottom: { xs: "56px", sm: "0" },
+        paddingX: {
+          xs: "1em",
+          sm: "2em",
+          md: "2em",
+          lg: "6em",
+          xl: "8em",
+        },
+        marginBottom: {
+          xs: "56px",
+          sm: "64px",
+          md: "0",
+        },
       }}
       elevation={0}
       color=""
     >
-      <Grid pt={"2em"} container alignItems={"center"}>
-        <Grid md={2} xs={3}>
+      <Grid
+        pt={{ xs: "1em", sm: "1.5em", md: "2em" }}
+        container
+        alignItems="center"
+      >
+        <Grid item xs={3} sm={2} md={2}>
           <RouterLink to={"/"}>
             <img
               src={systemData.logo}
@@ -575,6 +593,7 @@ const Navbar = ({ refreshCart, onRemove }) => {
               boxShadow: "4.243px 4.243px 10px 0px rgb(33 137 255 / 30%)",
               color: "white",
               borderRadius: "20px",
+              width: { lg: "300px", md: "auto" },
               height: "fit-content",
               "&:hover": {
                 backgroundColor: "#1a76d2",
@@ -635,7 +654,15 @@ const Navbar = ({ refreshCart, onRemove }) => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: { md: 0, lg: 10 },
+              alignItems: "center",
+              justifyContent: "flex-end",
+              width: { xl: "100%", lg: "840px", md: "580px", sm: "100%" },
+            }}
+          >
             {menus.slice(0, 4).map((menu, index) => (
               <RouterLink to={`/products/${menu.id}`}>
                 <Box
@@ -644,7 +671,6 @@ const Navbar = ({ refreshCart, onRemove }) => {
                   onMouseLeave={handleHoverClose}
                   sx={{
                     position: "relative",
-                    // bgcolor: "primary.main",
                     py: 3,
                     "& .MuiMenu-paper": {
                       opacity: 0,
@@ -655,62 +681,44 @@ const Navbar = ({ refreshCart, onRemove }) => {
                 >
                   <MuiLink
                     href="#"
-                    fontSize={"16px"}
-                    fontWeight={"500"}
-                    variant="h5"
-                    color="inherit"
-                    underline="none"
                     sx={{
-                      "&:hover": {
+                      position: "relative",
+                      display: "inline-block",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "inherit",
+                      textDecoration: "none",
+                      transition: "all 0.5s ease",
+                      transformStyle: "preserve-3d",
+                      transformOrigin: "center center",
+                      "&::before": {
+                        content: `"${menu.name}"`,
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
                         color: "#2189ff",
+                        opacity: 0,
+                        transform: "rotateX(180deg)",
+                        transition: "all 0.5s ease",
+                        backfaceVisibility: "hidden",
+                        transformOrigin: "center center",
                       },
-                      transition: "color 0.3s ease",
+                      "&:hover": {
+                        transform: "rotateX(180deg)",
+                        "&::before": {
+                          opacity: 1,
+                        },
+                      },
+                      "& span": {
+                        display: "inline-block",
+                        backfaceVisibility: "hidden",
+                      },
                     }}
                   >
-                    {menu.name}
+                    <span>{menu.name}</span>
                   </MuiLink>
-
-                  {/* <Menu
-                id={`menu-${index}`}
-                anchorEl={anchorMenu}
-                open={Boolean(anchorMenu) && menuIndex === index}
-                // onMouseLeave={handleHoverClose}
-                onClose={handleHoverClose}
-                // transitionDuration={0.2}
-
-                MenuListProps={{
-                  // onMouseEnter: handleMouseEnter,
-                  onMouseLeave: handleHoverClose,
-                  sx: {
-                    pointerEvents: "all",
-                  },
-                }}
-                sx={{
-                  "& .MuiPaper-root": {
-                    borderRadius: "0 0 20px 20px",
-                    backgroundColor: "#f3f3f3",
-                    opacity: 1, // Set opacity to 1 when menu is open
-                    visibility: "visible",
-                    transition: "opacity 0.3s ease", // Smooth transition for submenu
-                    pointerEvents: "none",
-                  },
-                }}
-              >
-                <Grid display={"flex"} flexDirection={"row"} padding={"2em"} gap={6}>
-                  {menu.items.map((item, idx) => (
-                    <Box key={idx}>
-                      <Typography fontSize={"14px"} fontWeight={"600"} variant="p" mb={"30px"}>
-                        {menu.label}
-                      </Typography>
-                      <MenuItem sx={{ padding: "10px 0" }} onClick={handleClose}>
-                        <Typography fontSize={"14px"} variant="p">
-                          {item}
-                        </Typography>
-                      </MenuItem>
-                    </Box>
-                  ))}
-                </Grid>
-              </Menu> */}
                 </Box>
               </RouterLink>
             ))}

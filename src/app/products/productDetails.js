@@ -628,10 +628,13 @@ const ProductDetailsPage = () => {
       </Box>
       <Box
         padding={{ xs: 1, md: 4 }}
-        sx={{ width: { xs: "100%", md: "1300px" }, marginX: "auto" }}
+        sx={{
+          width: { xs: "100%", md: "800px", lg: "1300px" },
+          marginX: "auto",
+        }}
       >
         <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4} lg={6}>
             <Box display="flex" flexDirection="column" alignItems="center">
               <CardMedia
                 component="img"
@@ -670,7 +673,7 @@ const ProductDetailsPage = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={8} lg={6}>
             <Typography
               variant="h4"
               fontWeight={400}
