@@ -30,6 +30,7 @@ import CustomProducts from "./components/CustomProducts";
 import Snow from "./components/Snow";
 import ContactUsPage from "./app/ContactUs/page";
 import TermsPage from "./app/Terms/page";
+import { SnackbarProvider } from "./context/SnackbarContext";
 
 // Define theme
 /* const theme = createTheme({
@@ -95,9 +96,11 @@ function Layout() {
 const App = () => (
   <Provider store={store}>
     <AuthProvider>
+      <SnackbarProvider>
       <BrowserRouter>
         <Layout />
       </BrowserRouter>
+      </SnackbarProvider>
     </AuthProvider>
   </Provider>
 );

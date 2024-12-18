@@ -19,6 +19,9 @@ import {
   updateCartItem,
 } from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { fetchCartItems } from "../features/cart/cartThunks";
+import useAppSelector from "../hooks/useAppSelector";
 
 const CartDrawer = ({ open, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -29,18 +32,28 @@ const CartDrawer = ({ open, onClose }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [note, setNote] = useState("");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const cartItem = useAppSelector((state) => state.cart.items);
 
   const fetchCart = async () => {
-    try {
-      setLoading(true);
-      const response = await getCartDetails();
-      setCartItems(response.data);
-    } catch (error) {
-      console.error("Failed to fetch cart:", error);
-    } finally {
-      setLoading(false);
-    }
+    dispatch(fetchCartItems());
+
+    // try {
+    //   setLoading(true);
+    //   const response = await getCartDetails();
+    //   setCartItems(response.data);
+    // } catch (error) {
+    //   console.error("Failed to fetch cart:", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
+
+  useEffect(() => {
+    setCartItems(cartItem);
+    console.log("cartItem UI", cartItems);
+  }, [cartItem]);
 
   const handleClearCart = async () => {
     try {
@@ -89,13 +102,25 @@ const CartDrawer = ({ open, onClose }) => {
     }
   }, [open]);
 
-  const total = cartItems.reduce(
-    (sum, item) =>
-      sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
-    0
-  );
+  const [total, setTotal] = useState(0);
+  const [currency, setCurrency] = useState("");
 
-  const currency = cartItems.length > 0 ? cartItems[0].product.currency : "";
+  useEffect(() => {
+    const calculatedTotal =
+      cartItems.length > 0
+        ? cartItems.reduce(
+            (sum, item) =>
+              sum + parseFloat(item.unit_price) * parseFloat(item.quantity),
+            0
+          )
+        : 0;
+
+    setTotal(calculatedTotal);
+
+    const currentCurrency =
+      cartItems.length > 0 ? cartItems[0].product.currency : "";
+    setCurrency(currentCurrency);
+  }, [cartItems, cartItems.length]);
 
   return (
     <Drawer
@@ -127,14 +152,16 @@ const CartDrawer = ({ open, onClose }) => {
         </Box>
       ) : (
         <>
-          {cartItems.map((item) => (
-            <CartSliderItem
-              key={item.card_id}
-              item={item}
-              onQuantityChange={handleQuantityChange}
-              onUpdate={fetchCart}
-            />
-          ))}
+          {cartItems !== undefined && cartItems.length > 0 && cartItems !== null
+            ? cartItems?.map((item) => (
+                <CartSliderItem
+                  key={item.card_id}
+                  item={item}
+                  onQuantityChange={handleQuantityChange}
+                  onUpdate={fetchCart}
+                />
+              ))
+            : null}
         </>
       )}
 

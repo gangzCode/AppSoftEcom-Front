@@ -12,7 +12,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { DeleteOutline } from "@mui/icons-material";
 import { deleteCartItem, getCartDetails } from "../../services/apiCalls";
 import useAppDispatch from "../../hooks/useAppDispatch";
-import { removeItem } from "../../features/cart/cartSlice";
+// import { removeItem } from "../../features/cart/cartSlice";
 
 const CartSliderItem = ({ item, onUpdate, onQuantityChange }) => {
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ const CartSliderItem = ({ item, onUpdate, onQuantityChange }) => {
     try {
       setLoading(true);
       await deleteCartItem(item.card_id);
-      dispatch(removeItem());
+      // dispatch(removeItem());
       onUpdate();
     } catch (error) {
       console.error("Failed to delete item:", error);

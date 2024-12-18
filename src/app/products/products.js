@@ -66,6 +66,13 @@ import {
   getWishListofUser,
   addToWishlist,
 } from "../../services/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart } from "../../features/cart/cartThunks";
+import {
+  addWishlistItem,
+  removeWishlistItem,
+} from "../../features/wishlist/wishlistThunks";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -83,10 +90,19 @@ const ProductsPage = () => {
   const [totalProductCount, setTotalProductCount] = useState(0);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const { categoryId } = useParams();
-  const [wishlistItems, setWishlistItems] = useState([]);
+  // const [wishlistItems, setWishlistItems] = useState([]);
   const [isInWishlist, setIsInWishlist] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
+  const dispatch = useDispatch();
+  const { showSnackbar } = useSnackbar();
+
+  const { items: wishlistItems, loading: wishlistLoading } = useSelector(
+    (state) => state.wishlist
+  );
+  const { items: cartItems, loading: cartLoading } = useSelector(
+    (state) => state.cart
+  );
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -142,29 +158,6 @@ const ProductsPage = () => {
     };
 
     fetchTrendingProducts();
-  }, []);
-
-  useEffect(() => {
-    const checkWishlistStatus = async () => {
-      const userStr = localStorage.getItem("user");
-      if (!userStr) return;
-
-      try {
-        const response = await getWishListofUser();
-        if (response && response.data) {
-          setWishlistItems(response.data);
-          const wishlistStatus = {};
-          response.data.forEach((item) => {
-            wishlistStatus[item.id] = true;
-          });
-          setIsInWishlist(wishlistStatus);
-        }
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-      }
-    };
-
-    checkWishlistStatus();
   }, []);
 
   const handleSortChange = (event) => {
@@ -337,96 +330,60 @@ const ProductsPage = () => {
 
   const handleAddToCart = async (product) => {
     try {
-      // Check stock
       if (product.total_stock <= 0) {
-        setSnackbarMessage("Sorry, this item is out of stock");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar("Out of stock", "error");
         return;
       }
 
-      // Check for variations
       if (product.product_variation_combination?.length > 0) {
         navigate(`/product/${product.id}`);
         return;
       }
 
-      setAddingToCartId(product.id);
-
-      const cartResponse = await getCartDetails();
-      const cartItems = cartResponse.data || [];
-
-      const existingItem = cartItems.find(
-        (item) => item.product.id === product.id
-      );
-
-      if (existingItem) {
-        setSnackbarMessage(
-          "Item already in cart. Please update quantity in cart."
-        );
-        setSnackbarSeverity("info");
-        setSnackbarOpen(true);
-        return;
-      }
-
-      // Add new item to cart
       const cartItem = {
         product_id: product.id,
-        discount: product.discount || "",
         quantity: "1",
-        line_discount_type: "percentage",
         unit_price: product.sales_price.toString(),
+        line_discount_type: "percentage",
+        discount: product.discount || "",
       };
 
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        await addToCart(getAuthToken(), cartItem);
-      } else {
-        await addToCartGuest(cartItem);
-      }
-      setSnackbarMessage("Added to cart successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      await dispatch(addItemToCart(cartItem)).unwrap();
+      showSnackbar("Added to cart successfully", "success");
     } catch (error) {
-      console.error("Failed to add to cart:", error);
-      setSnackbarMessage("Failed to add to cart");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-    } finally {
-      setAddingToCartId(null);
+      showSnackbar("Failed to add to cart", "error");
     }
   };
 
-  const handleAddToWishlist = async (product) => {
-    const userStr = localStorage.getItem("user");
-    if (!userStr) {
+  const handleWishlistAction = async (product) => {
+    const user = localStorage.getItem("user");
+    if (!user) {
       navigate("/signin");
       return;
     }
 
-    if (isInWishlist[product.id]) {
-      setSnackbarMessage("This product is already in your wishlist!");
-      setSnackbarSeverity("info");
-      setSnackbarOpen(true);
-      return;
-    }
-
     try {
-      await addToWishlist(product.id);
-      setIsInWishlist((prev) => ({
-        ...prev,
-        [product.id]: true,
-      }));
-      setSnackbarMessage("Added to wishlist successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      const isProductInWishlist = wishlistItems.some(
+        (item) => item.id === product.id
+      );
+
+      if (isProductInWishlist) {
+        const wishlistItem = wishlistItems.find(
+          (item) => item.id === product.id
+        );
+        await dispatch(removeWishlistItem(wishlistItem.wishlist_id)).unwrap();
+      } else {
+        await dispatch(addWishlistItem(product.id)).unwrap();
+      }
+
+      showSnackbar(
+        isProductInWishlist ? "Removed from wishlist" : "Added to wishlist",
+        "success"
+      );
     } catch (error) {
-      setSnackbarMessage("Failed to add to wishlist");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Failed to update wishlist", "error");
     }
   };
-  
 
   if (loading) {
     return (
@@ -943,7 +900,7 @@ const ProductsPage = () => {
                       Out of Stock
                     </Box>
                   )}
-                  
+
                   <RouterLink to={`/product/${product.id}`}>
                     <Box
                       sx={{
@@ -1080,7 +1037,7 @@ const ProductsPage = () => {
                       />
                     </Box>
                   </RouterLink>
-                  
+
                   <IconButton
                     onClick={() => handleAddToCart(product)}
                     // disabled={addingToCartId === product.id}
@@ -1112,7 +1069,7 @@ const ProductsPage = () => {
                   </IconButton>
 
                   <IconButton
-                    onClick={() => handleAddToWishlist(product)}
+                    onClick={() => handleWishlistAction(product)}
                     sx={{
                       position: "absolute",
                       top: "38%",

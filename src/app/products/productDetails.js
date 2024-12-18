@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -44,7 +44,14 @@ import NotFoundPage from "../../components/404";
 import { Link as RouterLink } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import useAppDispatch from "../../hooks/useAppDispatch";
-import { addItemSuccess } from "../../features/cart/cartSlice";
+import { addItemToCart } from "../../features/cart/cartThunks";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addWishlistItem,
+  fetchWishlist,
+  removeWishlistItem,
+} from "../../features/wishlist/wishlistThunks";
+import { FavoriteOutlined } from "@mui/icons-material";
 
 const ProductDetailsPage = () => {
   const [product, setproduct] = useState(null);
@@ -60,7 +67,6 @@ const ProductDetailsPage = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
-  const [isInWishlist, setIsInWishlist] = useState(false);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -78,6 +84,9 @@ const ProductDetailsPage = () => {
     instaLink: "",
   });
   const dispatch = useAppDispatch();
+  const { items: wishlistItems, loading: wishlistLoading } = useSelector(
+    (state) => state.wishlist
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -164,26 +173,12 @@ const ProductDetailsPage = () => {
   }, [productId]);
 
   useEffect(() => {
-    const checkIfInWishlist = async () => {
-      if (!product || !product.id) {
-        return;
-      }
-      try {
-        const response = await getWishListofUser();
-        if (response && response.data) {
-          const isProductInWishlist = response.data.some(
-            (item) => item.id === product.id
-          );
-          setIsInWishlist(isProductInWishlist);
-        } else {
-          console.error("Wishlist response does not contain data:", response);
-        }
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-      }
-    };
-    checkIfInWishlist();
-  }, [product]);
+    dispatch(fetchWishlist());
+  }, [dispatch]);
+
+  const isInWishlist = useMemo(() => {
+    return product && wishlistItems.some((item) => item.id === product.id);
+  }, [product, wishlistItems]);
 
   const handleAddToWishlist = async () => {
     if (isInWishlist) {
@@ -195,10 +190,8 @@ const ProductDetailsPage = () => {
       return;
     }
 
-    setLoading(true);
     try {
-      await addToWishlist(product.id);
-      setIsInWishlist(true);
+      await dispatch(addWishlistItem(product.id)).unwrap();
       setSnackbar({
         open: true,
         message: "Product added to wishlist successfully!",
@@ -210,8 +203,6 @@ const ProductDetailsPage = () => {
         message: error?.message || "Failed to add product to wishlist",
         severity: "error",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -406,7 +397,7 @@ const ProductDetailsPage = () => {
       const cartResponse = await getCartDetails();
       const cartItems = cartResponse.data || [];
 
-      dispatch(addItemSuccess(cartResponse.data));
+      // dispatch(addItemSuccess(cartResponse.data));
 
       const isSingleProduct =
         !product.product_variation_combination ||
@@ -466,16 +457,11 @@ const ProductDetailsPage = () => {
               unit_price: selectedCombination?.price?.toString(),
             };
 
-        const userStr = localStorage.getItem("user");
-        if (userStr) {
-          await addToCart(getAuthToken(), cartItem);
-        } else {
-          await addToCartGuest(cartItem);
-        }
+        dispatch(addItemToCart(cartItem));
 
-        setSnackbarSeverity("success");
-        setSnackbarMessage("Added to cart successfully");
-        setSnackbarOpen(true);
+        // setSnackbarSeverity("success");
+        // setSnackbarMessage("Added to cart successfully");
+        // setSnackbarOpen(true);
       }
     } catch (error) {
       console.error("Failed to add to cart:", error);
@@ -559,6 +545,42 @@ const ProductDetailsPage = () => {
       setSnackbarOpen(true);
     } finally {
       setIsBuyingNow(false);
+    }
+  };
+
+  const handleWishlistAction = async () => {
+    const user = localStorage.getItem("user");
+
+    if (!user) {
+      navigate("/signin");
+      return;
+    }
+
+    try {
+      if (isInWishlist) {
+        const wishlistItem = wishlistItems.find(
+          (item) => item.id === product.id
+        );
+        await dispatch(removeWishlistItem(wishlistItem.wishlist_id)).unwrap();
+        setSnackbar({
+          open: true,
+          message: "Product removed from wishlist!",
+          severity: "success",
+        });
+      } else {
+        await dispatch(addWishlistItem(product.id)).unwrap();
+        setSnackbar({
+          open: true,
+          message: "Product added to wishlist successfully!",
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error?.message || "Failed to update wishlist",
+        severity: "error",
+      });
     }
   };
 
@@ -914,13 +936,15 @@ const ProductDetailsPage = () => {
               <Grid item xs={12} md={6}>
                 <Button
                   variant="contained"
-                  color="bluebutton"
-                  startIcon={<FavoriteBorderIcon />}
-                  onClick={handleAddToWishlist}
+                  color={isInWishlist ? "error" : "bluebutton"}
+                  startIcon={
+                    isInWishlist ? <FavoriteOutlined /> : <FavoriteBorderIcon />
+                  }
+                  onClick={handleWishlistAction}
                   fullWidth
                   sx={{ flexGrow: 1 }}
                 >
-                  Add to Wishlist
+                  {isInWishlist ? "Remove Wishlist" : "Add to Wishlist"}
                 </Button>
               </Grid>
               <Grid item xs={12}>

@@ -22,6 +22,14 @@ import {
 import { Container } from "../common/Spacing";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../context/SnackbarContext";
+import { addItemToCart } from "../features/cart/cartThunks";
+import { useDispatch } from "react-redux";
+import useAppSelector from "../hooks/useAppSelector";
+import {
+  addWishlistItem,
+  removeWishlistItem,
+} from "../features/wishlist/wishlistThunks";
 
 const SpecialDayOfferSale = () => {
   const scrollContainerRef = useRef(null);
@@ -37,6 +45,16 @@ const SpecialDayOfferSale = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isInWishlist, setIsInWishlist] = useState({});
   const [isHovered, setIsHovered] = useState(false);
+  const { showSnackbar } = useSnackbar();
+
+  const dispatch = useDispatch();
+
+  const { items: wishlistItems, loading: wishlistLoading } = useAppSelector(
+    (state) => state.wishlist
+  );
+  const { items: cartItems, loading: cartLoading } = useAppSelector(
+    (state) => state.cart
+  );
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -78,9 +96,7 @@ const SpecialDayOfferSale = () => {
     try {
       // Check stock
       if (product.total_stock <= 0) {
-        setSnackbarMessage("Sorry, this item is out of stock");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar("Sorry, this item is out of stock", "error");
         return;
       }
 
@@ -100,11 +116,10 @@ const SpecialDayOfferSale = () => {
       );
 
       if (existingItem) {
-        setSnackbarMessage(
-          "Item already in cart. Please update quantity in cart."
+        showSnackbar(
+          "Item already in cart. Please update quantity in cart.",
+          "error"
         );
-        setSnackbarSeverity("info");
-        setSnackbarOpen(true);
         return;
       }
 
@@ -117,22 +132,40 @@ const SpecialDayOfferSale = () => {
         unit_price: product.sales_price.toString(),
       };
 
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        await addToCart(getAuthToken(), cartItem);
-      } else {
-        await addToCartGuest(cartItem);
-      }
-      setSnackbarMessage("Added to cart successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      await dispatch(addItemToCart(cartItem)).unwrap();
+      showSnackbar("Added to cart successfully", "success");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      setSnackbarMessage("Failed to add to cart");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+
+      showSnackbar("Failed to add to cart", "error");
     } finally {
       setAddingToCartId(null);
+    }
+  };
+
+  const handleWishlistAction = async (product) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      navigate("/signin");
+      return;
+    }
+
+    try {
+      if (isInWishlist) {
+        const wishlistItem = wishlistItems.find(
+          (item) => item.id === product.id
+        );
+        await dispatch(removeWishlistItem(wishlistItem.wishlist_id)).unwrap();
+      } else {
+        await dispatch(addWishlistItem(product.id)).unwrap();
+      }
+
+      showSnackbar(
+        isInWishlist ? "Removed from wishlist" : "Added to wishlist",
+        "success"
+      );
+    } catch (error) {
+      showSnackbar(error?.message || "Failed to update wishlist", "error");
     }
   };
 
@@ -144,9 +177,7 @@ const SpecialDayOfferSale = () => {
     }
 
     if (isInWishlist[product.id]) {
-      setSnackbarMessage("This product is already in your wishlist!");
-      setSnackbarSeverity("info");
-      setSnackbarOpen(true);
+      showSnackbar("This product is already in your wishlist!", "info");
       return;
     }
 
@@ -156,13 +187,9 @@ const SpecialDayOfferSale = () => {
         ...prev,
         [product.id]: true,
       }));
-      setSnackbarMessage("Added to wishlist successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Added to wishlist successfully", "success");
     } catch (error) {
-      setSnackbarMessage("Failed to add to wishlist");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Failed to add to wishlist", "error");
     }
   };
 
@@ -241,7 +268,7 @@ const SpecialDayOfferSale = () => {
               hoveredProductId={hoveredProductId}
               setHoveredProductId={setHoveredProductId}
               handleAddToCart={handleAddToCart}
-              handleAddToWishlist={handleAddToWishlist}
+              handleAddToWishlist={handleWishlistAction}
               addingToCartId={addingToCartId}
               isInWishlist={isInWishlist}
               isHovered={isHovered}
@@ -251,19 +278,6 @@ const SpecialDayOfferSale = () => {
           <Typography variant="body1">No products available.</Typography>
         )}
       </Box>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };

@@ -1,8 +1,9 @@
 import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
-export const baseUrl = "https://ecom-test2.yalpos.com/api";
-//export const baseUrl = "https://yalpos.com/custom/Electronics/computerzone/public/api";
+// export const baseUrl = "https://ecom-test2.yalpos.com/api";
+export const baseUrl =
+  "https://yalpos.com/custom/Electronics/computerzone/public/api";
 
 export const getIPAddress = async () => {
   try {
@@ -328,7 +329,7 @@ export const quickSearch = async (term) => {
 
   try {
     const response = await axios.post(
-      baseUrl+"/product-search",
+      baseUrl + "/product-search",
       { term },
       {
         headers: {
@@ -573,7 +574,7 @@ export const getCartDetails = async () => {
 export const addToCart = async (token, cartItem) => {
   try {
     const response = await axios.post(
-      "https://ecom-test2.yalpos.com/api/add-card",
+      baseUrl + "/api/add-card",
       {
         products: [
           {
@@ -606,7 +607,7 @@ export const addToCartGuest = async (cartItem) => {
     const ip_address = await getIPAddress();
 
     const response = await axios.post(
-      "https://ecom-test2.yalpos.com/api/guest/add-card",
+      baseUrl + "/add-card",
       {
         ip_address,
         products: [

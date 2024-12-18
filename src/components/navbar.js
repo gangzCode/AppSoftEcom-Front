@@ -57,8 +57,20 @@ import { useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
 import WishlistDrawer from "./WishlistDrawer";
 import useAppSelector from "../hooks/useAppSelector";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { fetchCartItems } from "../features/cart/cartThunks";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchWishlist } from "../features/wishlist/wishlistThunks";
 
-const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
+const Navbar = ({ refreshCart, onRemove }) => {
+  const dispatch = useDispatch();
+  const { count: wishlistCount, loading: wishlistLoading } = useSelector(
+    (state) => state.wishlist
+  );
+
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const { items, cartCount, loading } = useAppSelector((state) => state.cart);
+
   const [anchorCat, setAnchorCat] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [menus, setmenus] = useState([]);
@@ -78,11 +90,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [wishlistOpen, setWishlistOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [wishlistItems, setWishlistItems] = useState([]);
   const [expandedMenu, setExpandedMenu] = useState(null);
-  const { cartCount } = useAppSelector((state) => state.cart);
 
   const location = useLocation();
   const isCheckoutPage = location.pathname === "/checkout";
@@ -90,32 +98,22 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
   let closeMenuTimer;
 
   useEffect(() => {
-    fetchCart();
-    fetchWishlist();
-  }, []);
+    dispatch(fetchWishlist());
+  }, [dispatch]);
 
   useEffect(() => {
-    console.log("cartCount", cartCount);
+    dispatch(fetchCartItems());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (cartOpen) {
+      dispatch(fetchCartItems());
+    }
+  }, [cartOpen, dispatch]);
+
+  useEffect(() => {
+    console.log("cartCount FROM Navbar ", cartCount);
   }, [cartCount]);
-
-  const fetchCart = async () => {
-    try {
-      const response = await getCartDetails();
-      setCartItems(response.data);
-    } catch (error) {
-      console.error("Failed to fetch cart:", error);
-    } finally {
-    }
-  };
-
-  const fetchWishlist = async () => {
-    try {
-      const response = await getWishListofUser();
-      setWishlistItems(response.data || []);
-    } catch (error) {
-      console.error("Failed to fetch cart:", error);
-    }
-  };
 
   const handleProfileClick = () => {
     if (user) {
@@ -319,7 +317,7 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
         <BottomNavigationAction
           onClick={toggleWishlist}
           icon={
-            <Badge badgeContent={wishlistItems.length} color="primary">
+            <Badge badgeContent={wishlistCount} color="primary">
               <FavoriteBorderRounded />
             </Badge>
           }
@@ -451,13 +449,19 @@ const Navbar = ({ refreshCart, refreshWishlist, onRemove }) => {
                 <AccountCircleOutlined />
               </IconButton>
               <IconButton onClick={toggleWishlist}>
-                <Badge badgeContent={wishlistItems.length} color="primary">
+                <Badge
+                  badgeContent={wishlistLoading ? "..." : wishlistCount}
+                  color="primary"
+                >
                   <FavoriteBorderRounded />
                 </Badge>
               </IconButton>
               {!isCheckoutPage && (
                 <IconButton onClick={toggleCart}>
-                  <Badge badgeContent={cartCount} color="primary">
+                  <Badge
+                    badgeContent={loading ? "..." : cartCount}
+                    color="primary"
+                  >
                     <ShoppingCartOutlined />
                   </Badge>
                 </IconButton>
