@@ -28,7 +28,7 @@ const Footer = () => {
 
   const footerUsefulLinks = [
     { name: "Contact Us", path: "/contact" },
-    { name: "Track Order", path: "/profile#orders" }
+    { name: "Track Order", path: "/profile#orders" },
   ];
 
   useEffect(() => {
@@ -73,28 +73,40 @@ const Footer = () => {
     <Box sx={{ backgroundColor: "#fff", color: "#233", padding: "40px 0" }}>
       <Grid container spacing={4}>
         {/* Combined Company Details Grid */}
-        <Grid item xs={12} md={4.8}>
+        <Grid item xs={12} md={3.5}>
           <Box mb={"3em"}>
             <img
               src={systemData.logo}
               alt="Logo"
-              style={{ width: "100%", maxWidth: "250px" }}
+              style={{ width: "100%", maxWidth: "180px" }}
             />
           </Box>
           <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "1.4em",
+            }}
           >
             <PinDrop sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.address}</Typography>
           </Box>
           <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "1.4em",
+            }}
           >
             <PhoneIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.phone}</Typography>
           </Box>
           <Box
-            sx={{ display: "flex", alignItems: "center", marginBottom: "3em" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "1.4em",
+            }}
           >
             <EmailIcon sx={{ marginRight: "8px" }} />
             <Typography variant="body1">{systemData.email}</Typography>
@@ -105,7 +117,7 @@ const Footer = () => {
         <Grid
           item
           xs={12}
-          md={2.4}
+          md={3}
           sx={{
             position: "relative",
             "&::before": {
@@ -146,7 +158,7 @@ const Footer = () => {
         <Grid
           item
           xs={12}
-          md={2.4}
+          md={2.5}
           sx={{
             position: "relative",
             "&::before": {
@@ -181,7 +193,7 @@ const Footer = () => {
         <Grid
           item
           xs={12}
-          md={2.4}
+          md={2.5}
           sx={{
             position: "relative",
             "&::before": {
@@ -199,29 +211,29 @@ const Footer = () => {
             Useful Links
           </Typography>
           <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-          <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
-            {footerUsefulLinks.map((item, index) => (
-              <Link
-                key={index}
-                onClick={() => navigate(item.path)}
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": {
-                    color: "#2189ff",
-                  },
-                }}
-                color={"inherit"}
-                underline="none"
-              >
-                <Typography fontSize={"16px"}>{item.name}</Typography>
-              </Link>
-            ))}
-          </Grid>
+            <Grid gap={"1.7em"} display={"flex"} flexDirection={"column"}>
+              {footerUsefulLinks.map((item, index) => (
+                <Link
+                  key={index}
+                  onClick={() => navigate(item.path)}
+                  sx={{
+                    cursor: "pointer",
+                    "&:hover": {
+                      color: "#2189ff",
+                    },
+                  }}
+                  color={"inherit"}
+                  underline="none"
+                >
+                  <Typography fontSize={"16px"}>{item.name}</Typography>
+                </Link>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-start" }}>
+      <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-start" }}>
         {systemData.fbLink && (
           <IconButton
             sx={{ color: "#1e1e1e" }}

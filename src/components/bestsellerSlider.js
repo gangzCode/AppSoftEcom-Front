@@ -19,7 +19,6 @@ const BestsellerSlider = () => {
   const [products, setproducts] = useState([]);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const fetchGetProducts = async () => {
       try {
@@ -64,10 +63,12 @@ const BestsellerSlider = () => {
         }}
         className="slick-arrow"
       >
-        <ArrowForwardIosIcon sx={{ 
-          color: "#fff", 
-          fontSize: { xs: "16px", sm: "20px" } 
-        }} />
+        <ArrowForwardIosIcon
+          sx={{
+            color: "#fff",
+            fontSize: { xs: "16px", sm: "20px" },
+          }}
+        />
       </Box>
     );
   }
@@ -99,10 +100,12 @@ const BestsellerSlider = () => {
         }}
         className="slick-arrow"
       >
-        <ArrowBackIosNewIcon sx={{ 
-          color: "#fff", 
-          fontSize: { xs: "16px", sm: "20px" } 
-        }} />
+        <ArrowBackIosNewIcon
+          sx={{
+            color: "#fff",
+            fontSize: { xs: "16px", sm: "20px" },
+          }}
+        />
       </Box>
     );
   }
@@ -161,7 +164,7 @@ const BestsellerSlider = () => {
                     // alignItems: "center",
                     minWidth: "280px",
                     width: "31%",
-                    padding: "60px",
+                    padding: { xl: "40px", lg: "20px", md: "20px", xs: "20px" },
                     borderRadius: "20px",
                     backgroundColor: "#f5f5f5",
                     // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -179,7 +182,13 @@ const BestsellerSlider = () => {
                     sx={{
                       position: "relative",
                       width: "100%",
-                      maxWidth: "360px",
+                      maxWidth: {
+                        xl: "360px",
+                        lg: "280px",
+                        md: "240px",
+                        sm: "200px",
+                        xs: "160px",
+                      },
                       borderRadius: "10px",
                       overflow: "hidden",
                     }}
@@ -211,7 +220,7 @@ const BestsellerSlider = () => {
                     />
                   </Box>
 
-             {/*      <Box
+                  {/*      <Box
                     className="hover-icons"
                     sx={{
                       position: "absolute",
@@ -281,7 +290,8 @@ const BestsellerSlider = () => {
                     sx={{ marginTop: "auto" }}
                   >
                     <Typography variant="h6" fontWeight="600">
-                      {product.currency}{product.price}
+                      {product.currency}
+                      {product.price}
                     </Typography>
                     <ChevronRight
                       sx={{ color: "#2189ff", marginLeft: "8px" }}
