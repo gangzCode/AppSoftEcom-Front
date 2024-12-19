@@ -65,11 +65,10 @@ export const removeItemFromCart = createAsyncThunk(
   async (productId, { dispatch }) => {
     try {
       const userStr = localStorage.getItem("user");
-      let response;
 
       if (userStr) {
         const token = JSON.parse(userStr).token;
-        response = await axios.delete(`${baseUrl}/card/remove/${productId}`, {
+        await axios.delete(`${baseUrl}/card/remove/${productId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -77,12 +76,14 @@ export const removeItemFromCart = createAsyncThunk(
         });
       } else {
         const ip_address = await getIPAddress();
-        response = await axios.delete(`${baseUrl}/card/remove/${productId}`, {
+        await axios.delete(`${baseUrl}/card/remove/${productId}`, {
           params: { ip_address },
           headers: { "Content-Type": "application/json" },
         });
       }
-      return productId;
+
+      const updatedCart = await dispatch(fetchCartItems()).unwrap();
+      return updatedCart;
     } catch (error) {
       throw error.response?.data || "Failed to remove item from cart";
     }
@@ -145,3 +146,42 @@ export const updateCartItemQuantity = createAsyncThunk(
     }
   }
 );
+
+export const clearCartThunk = createAsyncThunk(
+  "cart/clearCart",
+  async (_, { dispatch }) => {
+    try {
+      const userStr = localStorage.getItem("user");
+
+      if (userStr) {
+        const token = JSON.parse(userStr).token;
+        await axios.post(
+          `${baseUrl}/card-clear`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        const ip_address = await getIPAddress();
+        await axios.post(
+          `${baseUrl}/card/clear`,
+          { ip_address },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      return [];
+    } catch (error) {
+      throw error.response?.data || "Failed to clear cart";
+    }
+  }
+);
+
+// filepath: /Users/brinthan/Development/AppSoftEcom-Front/src/features/cart/cartSlice.js

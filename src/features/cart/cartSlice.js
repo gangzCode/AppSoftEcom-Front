@@ -4,6 +4,7 @@ import {
   fetchCartItems,
   removeItemFromCart,
   updateCartItemQuantity,
+  clearCartThunk,
 } from "./cartThunks";
 
 const initialState = {
@@ -70,6 +71,18 @@ const cartSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateCartItemQuantity.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(clearCartThunk.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(clearCartThunk.fulfilled, (state) => {
+        state.items = [];
+        state.cartCount = 0;
+        state.loading = false;
+      })
+      .addCase(clearCartThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

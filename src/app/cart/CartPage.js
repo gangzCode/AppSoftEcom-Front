@@ -29,8 +29,17 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { LoadingButton } from "@mui/lab";
+import {
+  clearCartThunk,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from "../../features/cart/cartThunks";
+import { useDispatch } from "react-redux";
+import { useSnackbar } from "../../context/SnackbarContext";
 
 const CartPage = () => {
+  const { showSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,21 +83,13 @@ const CartPage = () => {
   const handleDeleteItem = async (cardId) => {
     try {
       setLoadingItems((prev) => ({ ...prev, [cardId]: true }));
-
-      await deleteCartItem(cardId);
-
+      await dispatch(removeItemFromCart(cardId)).unwrap();
       setCartItems((prevItems) =>
         prevItems.filter((item) => item.card_id !== cardId)
       );
-
-      setSnackbarMessage("Item removed from cart");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Item removed from cart", "success");
     } catch (error) {
-      console.error("Failed to delete item:", error);
-      setSnackbarMessage("Failed to remove item");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(error?.message || "Failed to remove item", "error");
     } finally {
       setLoadingItems((prev) => ({ ...prev, [cardId]: false }));
     }
@@ -97,34 +98,15 @@ const CartPage = () => {
   const handleClearCart = async () => {
     try {
       setClearingCart(true);
-      const savedData = localStorage.getItem("user");
-      const user = savedData ? JSON.parse(savedData) : null;
-      const token = user?.token;
-  
-      if (token) {
-        await clearCart(token, null);
-      } else if (ipAddress) {
-        await clearCart(null, ipAddress);
-      } else {
-        throw new Error("Unable to clear cart without token or IP address.");
-      }
-  
+      await dispatch(clearCartThunk()).unwrap();
       setCartItems([]);
-  
-      setSnackbarMessage("Cart cleared successfully.");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-    } catch (err) {
-      setError("Failed to clear cart. Please try again.");
-      setSnackbarMessage("Failed to clear cart.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Cart cleared successfully", "success");
+    } catch (error) {
+      showSnackbar(error?.message || "Failed to clear cart", "error");
     } finally {
       setClearingCart(false);
     }
   };
-  
-  
 
   const handleQuantityChange = async (item, newQuantity) => {
     try {
@@ -144,14 +126,9 @@ const CartPage = () => {
         )
       );
 
-      setSnackbarMessage("Quantity updated successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Quantity updated successfully", "success");
     } catch (error) {
-      console.error("Failed to update quantity:", error);
-      setSnackbarMessage("Failed to update quantity");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(error?.message || "Failed to update quantity", "error");
     } finally {
       setLoadingItems((prev) => ({ ...prev, [item.card_id]: false }));
     }
@@ -356,19 +333,13 @@ const CartPage = () => {
             </Button>
           </Grid>
           <Grid item sx={{ display: "flex", gap: 2 }}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleClearCart}
-            >
+            <Button variant="contained" color="error" onClick={handleClearCart}>
               Clear Cart
             </Button>
           </Grid>
         </Grid>
-
-
       </Grid>
-      
+
       <Grid md={4} container item alignContent={"flex-start"}>
         <Grid item xs={12}>
           <Typography variant="h4" fontSize={30} sx={{ fontWeight: 600 }}>
