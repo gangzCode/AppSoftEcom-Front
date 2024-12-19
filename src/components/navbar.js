@@ -112,7 +112,6 @@ const Navbar = ({ refreshCart, onRemove }) => {
   }, [cartOpen, dispatch]);
 
   useEffect(() => {
-    console.log("cartCount FROM Navbar ", cartCount);
   }, [cartCount]);
 
   const handleProfileClick = () => {

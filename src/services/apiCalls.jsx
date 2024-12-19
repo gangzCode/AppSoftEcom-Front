@@ -1,9 +1,8 @@
 import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
-// export const baseUrl = "https://ecom-test2.yalpos.com/api";
-export const baseUrl =
-  "https://yalpos.com/custom/Electronics/computerzone/public/api";
+//export const baseUrl = "https://ecom-test2.yalpos.com/api";
+export const baseUrl="https://yalpos.com/custom/Electronics/computerzone/public/api";
 
 export const getIPAddress = async () => {
   try {

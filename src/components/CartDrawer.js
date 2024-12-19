@@ -52,7 +52,6 @@ const CartDrawer = ({ open, onClose }) => {
 
   useEffect(() => {
     setCartItems(cartItem);
-    console.log("cartItem UI", cartItems);
   }, [cartItem]);
 
   const handleClearCart = async () => {

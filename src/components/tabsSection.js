@@ -10,6 +10,7 @@ import {
   CardMedia,
   Chip,
   IconButton,
+  Button,
 } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Container } from "../common/Spacing";
@@ -18,6 +19,7 @@ import {
   fetchSystemData,
 } from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -133,106 +135,127 @@ const TabSection = () => {
           >
             {selectedTab === index && (
               <Grid container spacing={3}>
-                {products[tab]?.map((product) => (
-                  <Grid item xs={12} sm={6} md={4} key={product.id}>
-                    <Card
-                      elevation={0}
-                      sx={{
-                        backgroundColor: "#f3f3f3",
-                        display: "flex",
-                        alignItems: "center",
-                        padding: 4,
-                        borderRadius: "20px",
-                        position: "relative",
-                        transition: "transform 0.3s, box-shadow 0.3s",
-                        cursor: "pointer",
-                        "&:hover": {
-                          transform: "translateY(-4px)",
-                          boxShadow: 4,
-                        },
-                      }}
-                      onClick={() => handleCardClick(product.id)}
-                    >
-                      {/* Sold Out Chip */}
-                      {product?.soldOut && (
-                        <Chip
-                          label="Sold Out"
-                          color="error"
-                          sx={{ position: "absolute", top: 16, left: 16 }}
-                        />
-                      )}
-                      {/* Discount Chip */}
-                      {product.discount && (
-                        <Chip
-                          label={"-" + product.discount + "%"}
-                          color="primary"
-                          sx={{
-                            position: "absolute",
-                            top: 10,
-                            right: 10,
-                            backgroundColor: "#ff4646",
-                            color: "white",
-                            padding: "4px 8px",
-                            borderRadius: "4px",
-                            fontWeight: "bold",
-                            zIndex: 1,
-                            fontSize: "14px",
-                          }}
-                        />
-                      )}
-
-                      {/* Product Image */}
-                      <CardMedia
-                        component="img"
-                        image={product.image}
-                        alt={product.title}
+              {products[tab]?.slice(0, 9).map((product) => (
+                <Grid item xs={12} sm={6} md={4} key={product.id}>
+                  <Card
+                    elevation={0}
+                    sx={{
+                      backgroundColor: "#f3f3f3",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 4,
+                      borderRadius: "20px",
+                      position: "relative",
+                      transition: "transform 0.3s, box-shadow 0.3s",
+                      cursor: "pointer",
+                      "&:hover": {
+                        transform: "translateY(-4px)",
+                        boxShadow: 4,
+                      },
+                    }}
+                    onClick={() => handleCardClick(product.id)}
+                  >
+                    {/* Sold Out Chip */}
+                    {product?.soldOut && (
+                      <Chip
+                        label="Sold Out"
+                        color="error"
+                        sx={{ position: "absolute", top: 16, left: 16 }}
+                      />
+                    )}
+                    {/* Discount Chip */}
+                    {product.discount && (
+                      <Chip
+                        label={"-" + product.discount + "%"}
+                        color="primary"
                         sx={{
-                          width: 100,
-                          height: 100,
-                          marginRight: 2,
-                          borderRadius: 1,
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          backgroundColor: "#ff4646",
+                          color: "white",
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          fontWeight: "bold",
+                          zIndex: 1,
+                          fontSize: "14px",
                         }}
                       />
-
-                      {/* Product Details */}
-                      <CardContent sx={{ flex: 1, paddingLeft: 0 }}>
+                    )}
+            
+                    {/* Product Image */}
+                    <CardMedia
+                      component="img"
+                      image={product.image}
+                      alt={product.title}
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        marginRight: 2,
+                        borderRadius: 1,
+                      }}
+                    />
+            
+                    {/* Product Details */}
+                    <CardContent sx={{ flex: 1, paddingLeft: 0 }}>
+                      <Typography
+                        variant="caption"
+                        color="textSecondary"
+                        textTransform="uppercase"
+                      >
+                        {product.category_name}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {product?.name.length > 30
+                          ? product?.name.slice(0, 30) + "..."
+                          : product?.name}
+                      </Typography>
+                      <Typography variant="h5" color="primary" fontWeight="bold">
+                        {product.currency} {product.price.toLocaleString()}
+                      </Typography>
+                      {product.originalPrice && (
                         <Typography
-                          variant="caption"
+                          variant="body2"
                           color="textSecondary"
-                          textTransform="uppercase"
+                          sx={{ textDecoration: "line-through" }}
                         >
-                          {product.category_name}
+                          ${product.originalPrice.toLocaleString()}
                         </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {product?.name.length > 30
-                            ? product?.name.slice(0, 30) + "..."
-                            : product?.name}
-                        </Typography>
-                        <Typography
-                          variant="h5"
-                          color="primary"
-                          fontWeight="bold"
-                        >
-                          {product.currency} {product.price.toLocaleString()}
-                        </Typography>
-                        {product.originalPrice && (
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            sx={{ textDecoration: "line-through" }}
-                          >
-                            ${product.originalPrice.toLocaleString()}
-                          </Typography>
-                        )}
-                      </CardContent>
-                      {/* Icon Button */}
-                      <IconButton>
-                        <ChevronRightIcon />
-                      </IconButton>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+                      )}
+                    </CardContent>
+                    {/* Icon Button */}
+                    <IconButton>
+                      <ChevronRightIcon />
+                    </IconButton>
+                  </Card>
+                </Grid>
+              ))}
+            
+              {/* Add View All Products Button */}
+              {products[tab]?.length > 9 && (
+                <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+                  <Link
+                    to="/custom-products"
+                    state={{ title: tab.replace(/([A-Z])/g, " $1").trim(), products: products[tab] }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      sx={{
+                        borderRadius: "8px",
+                        textTransform: "none",
+                        fontWeight: "bold",
+                        px: 4,
+                      }}
+                    >
+                      View All Products
+                    </Button>
+                  </Link>
+                </Grid>
+              )}
+            </Grid>
             )}
           </Box>
         ))}

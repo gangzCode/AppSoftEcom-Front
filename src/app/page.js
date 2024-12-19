@@ -91,7 +91,6 @@ const HomePage = () => {
         })) || [];
 
         setFilteredCategoryProducts(filteredCategories);
-        console.log('dfadfds',filteredCategories)
         setCategoryProducts(categories);
       } catch (error) {
         console.error("Error fetching category products:", error);
