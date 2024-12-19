@@ -100,7 +100,7 @@ const CartPage = () => {
       const savedData = localStorage.getItem("user");
       const user = savedData ? JSON.parse(savedData) : null;
       const token = user?.token;
-
+  
       if (token) {
         await clearCart(token, null);
       } else if (ipAddress) {
@@ -108,7 +108,9 @@ const CartPage = () => {
       } else {
         throw new Error("Unable to clear cart without token or IP address.");
       }
-
+  
+      setCartItems([]);
+  
       setSnackbarMessage("Cart cleared successfully.");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -121,6 +123,8 @@ const CartPage = () => {
       setClearingCart(false);
     }
   };
+  
+  
 
   const handleQuantityChange = async (item, newQuantity) => {
     try {
@@ -338,7 +342,33 @@ const CartPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{ height: "fit-content" }}
+          justifyContent={"space-between"}
+        >
+          <Grid item>
+            <Button variant="contained" href="/">
+              Continue Shopping
+            </Button>
+          </Grid>
+          <Grid item sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleClearCart}
+            >
+              Clear Cart
+            </Button>
+          </Grid>
+        </Grid>
+
+
       </Grid>
+      
       <Grid md={4} container item alignContent={"flex-start"}>
         <Grid item xs={12}>
           <Typography variant="h4" fontSize={30} sx={{ fontWeight: 600 }}>
