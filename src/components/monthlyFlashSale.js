@@ -18,14 +18,14 @@ import {
   addToCartGuest,
   addToWishlist,
   getAuthToken,
-  getDayFlashSaleProducts,
   getMonthlyFlashSaleProducts,
 } from "../services/apiCalls";
 import { Container } from "../common/Spacing";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../context/SnackbarContext";
 
-const SpecialDayOfferSale = () => {
+const MonthlyFlashSale = () => {
   const scrollContainerRef = useRef(null);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [products, setProducts] = useState([]);
@@ -39,6 +39,7 @@ const SpecialDayOfferSale = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [isInWishlist, setIsInWishlist] = useState({});
   const [isHovered, setIsHovered] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -80,9 +81,7 @@ const SpecialDayOfferSale = () => {
     try {
       // Check stock
       if (product.total_stock <= 0) {
-        setSnackbarMessage("Sorry, this item is out of stock");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar("Sorry, this item is out of stock","error");
         return;
       }
 
@@ -102,11 +101,9 @@ const SpecialDayOfferSale = () => {
       );
 
       if (existingItem) {
-        setSnackbarMessage(
-          "Item already in cart. Please update quantity in cart."
+        showSnackbar(
+          "Item already in cart. Please update quantity in cart.","info"
         );
-        setSnackbarSeverity("info");
-        setSnackbarOpen(true);
         return;
       }
 
@@ -125,14 +122,10 @@ const SpecialDayOfferSale = () => {
       } else {
         await addToCartGuest(cartItem);
       }
-      setSnackbarMessage("Added to cart successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Added to cart successfully","success");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      setSnackbarMessage("Failed to add to cart");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Failed to add to cart","error");
     } finally {
       setAddingToCartId(null);
     }
@@ -146,9 +139,7 @@ const SpecialDayOfferSale = () => {
     }
 
     if (isInWishlist[product.id]) {
-      setSnackbarMessage("This product is already in your wishlist!");
-      setSnackbarSeverity("info");
-      setSnackbarOpen(true);
+      showSnackbar("This product is already in your wishlist!","info");
       return;
     }
 
@@ -158,13 +149,9 @@ const SpecialDayOfferSale = () => {
         ...prev,
         [product.id]: true,
       }));
-      setSnackbarMessage("Added to wishlist successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Added to wishlist successfully!","success");
     } catch (error) {
-      setSnackbarMessage("Failed to add to wishlist");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Failed to add to wishlist","error");
     }
   };
 
@@ -270,4 +257,4 @@ const SpecialDayOfferSale = () => {
   );
 };
 
-export default SpecialDayOfferSale;
+export default MonthlyFlashSale;

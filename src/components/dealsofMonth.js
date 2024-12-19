@@ -10,7 +10,7 @@ import React, { useState,useEffect } from "react";
 import { getDealsofMonthProducts } from "../services/apiCalls"; 
 import { useNavigate } from "react-router-dom";
 
-const DealsofDay = () => {
+const DealsofMonth = () => {
   const [products, setProducts] = useState([]);
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [title, setTitle] = useState();
@@ -149,100 +149,113 @@ const DealsofDay = () => {
       </Typography>
       <Box sx={{ padding: "40px 0" }}>
         <Grid container spacing={4}>
-          <Grid
-            item
-            xs={12}
-            md={5}
-            sx={{ display: "flex", flexDirection: "column", height: "100%" }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: "678px",
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                borderRadius: "20px",
-                overflow: "hidden",
-                backgroundColor: "#fff",
-                flexGrow: 1,
-              }}
-              onClick={() => handleCardClick(products[0]?.id)}
-            >
-              <Box
-                component="img"
-                src={filteredProducts[0]?.thumbnailz}
-                alt={filteredProducts[0]?.name}
-                sx={{
-                  width: "100%",
-                  height: "70%",
-                  objectFit: "cover",
-                }}
-              />
-              {filteredProducts[0]?.soldOut && (
-                        <Chip
-                          label="Sold Out"
-                          color="error"
-                          sx={{ position: "absolute", top: 16, left: 16 }}
-                        />
-                      )}
-                {/* Discount Chip */}
-                {filteredProducts[0]?.discount && (
-                  <Chip
-                    label={'-'+filteredProducts[0]?.discount+'%'}
-                    color="primary"
-                    sx={{
-                      position: "absolute",
-                      top: 10,
-                      right: 10,
-                      backgroundColor: "#ff4646",
-                      color: "white",
-                      padding: "4px 8px",
-                      borderRadius: "4px",
-                      fontWeight: "bold",
-                      zIndex: 1,
-                      fontSize: "14px",
-                    }}
-                  />
-                )}
-              <Box sx={{ padding: "20px", flex: 1 }}>
-                <Typography
-                  variant="h5"
-                  textAlign={"center"}
-                  fontSize={"36px"}
-                  fontWeight={"600"}
-                >
-                  {filteredProducts[0]?.currency} {filteredProducts[0]?.sales_price}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  color="#bebebe"
-                  fontWeight={"500"}
-                  fontSize={"10px"}
-                  letterSpacing={"2px"}
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  {getCategoryName(filteredProducts[0]?.category.name)}
-                </Typography>
+        <Grid
+  item
+  xs={12}
+  md={5}
+  sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+>
+  <Box
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      height: "678px",
+      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+      borderRadius: "20px",
+      overflow: "hidden",
+      backgroundColor: "#fff",
+      flexGrow: 1,
+      position: "relative", // To position chips correctly within the Box
+    }}
+    onClick={() => handleCardClick(products[0]?.id)}
+  >
+    <Box
+      component="img"
+      src={filteredProducts[0]?.thumbnailz}
+      alt={filteredProducts[0]?.name}
+      sx={{
+        width: "100%",
+        height: "70%",
+        objectFit: "cover",
+      }}
+    />
+    {filteredProducts[0]?.soldOut && (
+      <Chip
+        label="Sold Out"
+        color="error"
+        sx={{
+          position: "absolute",
+          top: 16,
+          left: 16,
+          zIndex: 1,
+        }}
+      />
+    )}
+    {filteredProducts[0]?.discount && (
+      <Chip
+        label={"-" + filteredProducts[0]?.discount + "%"}
+        color="primary"
+        sx={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: "#ff4646",
+          color: "white",
+          padding: "4px 8px",
+          borderRadius: "4px",
+          fontWeight: "bold",
+          zIndex: 1,
+          fontSize: "14px",
+        }}
+      />
+    )}
+    <Box sx={{ padding: "20px", flex: 1 }}>
+      <Typography
+        variant="h5"
+        textAlign={"center"}
+        fontSize={"36px"}
+        fontWeight={"600"}
+      >
+        {filteredProducts[0]?.currency}{" "}
+        {(filteredProducts[0]?.sales_price * (1 - filteredProducts[0]?.discount / 100)).toFixed(2)}
 
-                <Box
-                  display={"flex"}
-                  // alignItems="center"
+        <span
+          style={{
+            textDecoration: "line-through",
+            marginLeft: "20px",
+          }}
+        >
+          {filteredProducts[0]?.currency} {filteredProducts[0]?.sales_price}
+        </span>
+      </Typography>
+      <Typography
+        variant="caption"
+        color="#bebebe"
+        fontWeight={"500"}
+        fontSize={"10px"}
+        letterSpacing={"2px"}
+        sx={{ textTransform: "uppercase" }}
+      >
+        {getCategoryName(filteredProducts[0]?.category.name)}
+      </Typography>
 
-                  justifyContent="space-between"
-                  sx={{ marginTop: "auto" }}
-                >
-                  <Typography
-                    variant="body1"
-                    fontSize={"16px"}
-                    fontWeight={"500"}
-                  >
-                    {filteredProducts[0]?.name}
-                  </Typography>
-                  <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
+      <Box
+        display={"flex"}
+        justifyContent="space-between"
+        sx={{ marginTop: "auto" }}
+      >
+        <Typography
+          variant="body1"
+          fontSize={"16px"}
+          fontWeight={"500"}
+        >
+          {filteredProducts[0]?.name}
+        </Typography>
+        <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
+      </Box>
+    </Box>
+  </Box>
+</Grid>
 
           <Grid item xs={12} md={7}>
             <Grid container spacing={4}>
@@ -385,18 +398,24 @@ const DealsofDay = () => {
                         justifyContent="space-between"
                         sx={{ marginTop: "auto" }}
                       >
-                        <Typography
-                          variant="body1"
-                          fontSize={"22px"}
-                          // textAlign="center"
-                          fontWeight={"600"}
-                          sx={{ marginBottom: "8px" }}
-                        >
-                          {card.currency} {card.sales_price}
-                        </Typography>
-                        <ChevronRight
-                          sx={{ color: "#2189ff", marginLeft: "8px" }}
-                        />
+                       <Typography variant="h6" fontSize={"18px"} fontWeight="600">
+                            {card.currency}{" "}
+                            {(card.sales_price * (1 - card.discount / 100)).toFixed(2)}
+                          </Typography>
+                         <Typography
+                            variant="h6"
+                            fontSize={"12px"}
+                            fontWeight="600"
+                            color={"#bebebe"}
+                            sx={{
+                              marginLeft: "8px",
+                              textDecoration: "line-through",
+                              color: "text.secondary",
+                            }}
+                          >
+                            {card.currency} {card.sales_price}
+                          </Typography>
+                        <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                       </Box>
                     </Box>
                   </Box>
@@ -435,8 +454,8 @@ const DealsofDay = () => {
                           right: 10,
                           backgroundColor: "#ff4646",
                           color: "white",
-                          padding: "4px 8px",
-                          borderRadius: "4px",
+                          padding: "3px 7px",
+                          borderRadius: "3px",
                           fontWeight: "bold",
                           zIndex: 1,
                           fontSize: "14px",
@@ -540,17 +559,24 @@ const DealsofDay = () => {
                         justifyContent="space-between"
                         sx={{ marginTop: "auto" }}
                       >
-                        <Typography
-                          variant="body1"
-                          fontSize={"22px"}
-                          fontWeight={"600"}
-                          sx={{ marginBottom: "8px" }}
-                        >
-                          {card.currency} {card.sales_price}
-                        </Typography>
-                        <ChevronRight
-                          sx={{ color: "#2189ff", marginLeft: "8px" }}
-                        />
+                        <Typography variant="h6" fontSize={"13px"} fontWeight="600">
+                            {card.currency}{" "}
+                            {(card.sales_price * (1 - card.discount / 100)).toFixed(2)}
+                          </Typography>
+                         <Typography
+                            variant="h6"
+                            fontSize={"8px"}
+                            fontWeight="600"
+                            color={"#bebebe"}
+                            sx={{
+                              marginLeft: "8px",
+                              textDecoration: "line-through",
+                              color: "text.secondary",
+                            }}
+                          >
+                            {card.currency} {card.sales_price}
+                          </Typography>
+                        <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                       </Box>
                     </Box>
                   </Box>
@@ -564,4 +590,4 @@ const DealsofDay = () => {
   );
 };
 
-export default DealsofDay;
+export default DealsofMonth;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Box, Grid, Typography,Chip } from "@mui/material";
+import { ChevronRight } from "@mui/icons-material";
 
 const CustomProducts = () => {
   const location = useLocation();
@@ -114,9 +115,24 @@ const CustomProducts = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Typography variant="h6" fontWeight="600">
-                    {product.currency} {product.sales_price}
-                  </Typography>
+                <Typography variant="h6" fontSize={"22px"} fontWeight="600">
+                  {product.currency}{" "}
+                  {(product.sales_price * (1 - product.discount / 100)).toFixed(2)}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontSize={"16px"}
+                  fontWeight="600"
+                  color={"#bebebe"}
+                  sx={{
+                    marginLeft: "8px",
+                    textDecoration: "line-through",
+                    color: "text.secondary",
+                  }}
+                >
+                  {product.currency} {product.sales_price}
+                </Typography>
+                <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
               </Link>
             </Box>
