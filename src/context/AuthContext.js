@@ -28,16 +28,16 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
-  }, []);  
-  
+  }, []);
+
   const login = (token, userInfo) => {
-    setUser({ ...jwtDecode(token), ...userInfo }); 
-    localStorage.setItem("user", JSON.stringify({ token, info: userInfo })); 
+    setUser({ ...jwtDecode(token), ...userInfo });
+    localStorage.setItem("user", JSON.stringify({ token, info: userInfo }));
   };
-  
 
   const logout = () => {
     setUser(null);
+
     localStorage.removeItem("user");
   };
 

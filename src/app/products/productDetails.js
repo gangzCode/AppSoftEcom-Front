@@ -629,7 +629,7 @@ const ProductDetailsPage = () => {
       <Box
         padding={{ xs: 1, md: 4 }}
         sx={{
-          width: { xs: "100%", md: "800px", lg: "1300px" },
+          width: { xs: "100%", md: "00px", lg: "1300px" },
           marginX: "auto",
         }}
       >

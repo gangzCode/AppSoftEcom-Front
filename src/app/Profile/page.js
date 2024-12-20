@@ -56,6 +56,9 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { clearCartThunk } from "../../features/cart/cartThunks";
+import { clearWishlist } from "../../features/wishlist/wishlistSlice";
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -128,7 +131,6 @@ function AddressBook() {
     try {
       const response = await getUserAddress(token);
       const fetchedAddresses = response.data || [];
-
 
       setAddresses(Array.isArray(fetchedAddresses) ? fetchedAddresses : []);
     } catch (err) {
@@ -436,12 +438,12 @@ const OrdersHistory = () => {
   };
 
   const handleViewMore = (orderId) => {
-  setExpandedOrders((prevExpandedOrders) =>
-    prevExpandedOrders.includes(orderId)
-      ? prevExpandedOrders.filter((id) => id !== orderId)
-      : [...prevExpandedOrders, orderId]
-  );
-};
+    setExpandedOrders((prevExpandedOrders) =>
+      prevExpandedOrders.includes(orderId)
+        ? prevExpandedOrders.filter((id) => id !== orderId)
+        : [...prevExpandedOrders, orderId]
+    );
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -513,13 +515,12 @@ const OrdersHistory = () => {
                     {expandedOrders.includes(order.id) &&
                       order.sell_lines.slice(1).map((line, index) => (
                         <Typography key={`expanded-${index}`} variant="body2">
-                          {line.quantity}x {JSON.parse(line.product_name).En} - $
-                          {parseFloat(line.line_total).toFixed(2)}
+                          {line.quantity}x {JSON.parse(line.product_name).En} -
+                          ${parseFloat(line.line_total).toFixed(2)}
                         </Typography>
                       ))}
                   </Box>
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
@@ -543,6 +544,8 @@ function ProfilePage() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
 
+  const dispatch = useDispatch();
+
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -561,6 +564,8 @@ function ProfilePage() {
 
   const handleSignOut = () => {
     logout();
+    dispatch(clearCartThunk());
+    dispatch(clearWishlist());
     navigate("/");
   };
 
@@ -578,7 +583,7 @@ function ProfilePage() {
 
     try {
       const response = await updateUserProfile(updatedData, token);
-     
+
       console.log("Profile updated successfully", response);
       setSnackbarMessage("Profile updated successfully");
       setSnackbarSeverity("success");
@@ -676,7 +681,11 @@ function ProfilePage() {
             iconPosition="start"
             label="Address Book"
           />
-          <Tab icon={<ShoppingCartIcon />} iconPosition="start" label="My Orders" />
+          <Tab
+            icon={<ShoppingCartIcon />}
+            iconPosition="start"
+            label="My Orders"
+          />
         </Tabs>
 
         <Box sx={{ flexGrow: 1, ml: { xs: 0, md: 3 }, mt: { xs: 3, md: 0 } }}>
@@ -793,8 +802,8 @@ function ProfilePage() {
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
         anchorOrigin={{
-          vertical: 'top', 
-          horizontal: 'center',
+          vertical: "top",
+          horizontal: "center",
         }}
       >
         <Alert

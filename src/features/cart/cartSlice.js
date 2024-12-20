@@ -21,6 +21,8 @@ const cartSlice = createSlice({
     clearCart: (state) => {
       state.items = [];
       state.cartCount = 0;
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {

@@ -19,6 +19,8 @@ const wishlistSlice = createSlice({
     clearWishlist: (state) => {
       state.items = [];
       state.count = 0;
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
