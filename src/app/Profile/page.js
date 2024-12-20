@@ -432,7 +432,6 @@ const OrdersHistory = () => {
       setOrders(fetchOrders ? fetchOrders : []);
     } catch (err) {
       console.error("Error fetching orders:", err);
-      setError("Failed to load orders. Please try again.");
       setOrders([]);
     }
   };
@@ -477,52 +476,62 @@ const OrdersHistory = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{order.order_no}</TableCell>
-                {/* <TableCell>
-                  {order.order_at
-                    ? new Date(order.order_at).toLocaleDateString()
-                    : "N/A"}
-                </TableCell> */}
-                <TableCell>
-                  <Alert severity={getStatusColor(order.order_status)}>
-                    {order.order_status}
-                  </Alert>
-                </TableCell>
-                <TableCell>{order.total_qty}</TableCell>
-                <TableCell>
-                  ${parseFloat(order.final_total).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <Box>
-                    {order.sell_lines.slice(0, 1).map((line, index) => (
-                      <Typography key={index} variant="body2">
-                        {line.quantity}x {JSON.parse(line.product_name).En} - $
-                        {parseFloat(line.line_total).toFixed(2)}
-                      </Typography>
-                    ))}
-                    {order.sell_lines.length > 1 && (
-                      <Button
-                        size="small"
-                        onClick={() => handleViewMore(order.id)}
-                        variant="text"
-                        color="primary"
-                      >
-                        View More
-                      </Button>
-                    )}
-                    {expandedOrders.includes(order.id) &&
-                      order.sell_lines.slice(1).map((line, index) => (
-                        <Typography key={`expanded-${index}`} variant="body2">
-                          {line.quantity}x {JSON.parse(line.product_name).En} -
-                          ${parseFloat(line.line_total).toFixed(2)}
+          {orders.length > 0 ? (
+              orders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell>{order.order_no}</TableCell>
+                  <TableCell>
+                    <Alert severity={getStatusColor(order.order_status)}>
+                      {order.order_status}
+                    </Alert>
+                  </TableCell>
+                  <TableCell>{order.total_qty}</TableCell>
+                  <TableCell>
+                    ${parseFloat(order.final_total).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <Box>
+                      {order.sell_lines.slice(0, 1).map((line, index) => (
+                        <Typography key={index} variant="body2">
+                          {line.quantity}x{" "}
+                          {JSON.parse(line.product_name).En} - $
+                          {parseFloat(line.line_total).toFixed(2)}
                         </Typography>
                       ))}
-                  </Box>
+                      {order.sell_lines.length > 1 && (
+                        <Button
+                          size="small"
+                          onClick={() => handleViewMore(order.id)}
+                          variant="text"
+                          color="primary"
+                        >
+                          View More
+                        </Button>
+                      )}
+                      {expandedOrders.includes(order.id) &&
+                        order.sell_lines.slice(1).map((line, index) => (
+                          <Typography
+                            key={`expanded-${index}`}
+                            variant="body2"
+                          >
+                            {line.quantity}x{" "}
+                            {JSON.parse(line.product_name).En} - $
+                            {parseFloat(line.line_total).toFixed(2)}
+                          </Typography>
+                        ))}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <Typography variant="body1" color="textSecondary">
+                    No orders to display.
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -573,6 +582,7 @@ function ProfilePage() {
     console.log("ddsds", user);
     const savedData = localStorage.getItem("user");
     const { token } = JSON.parse(savedData);
+
     const updatedData = {
       first_name: firstName,
       last_name: lastName,
