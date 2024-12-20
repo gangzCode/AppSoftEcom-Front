@@ -2,7 +2,8 @@ import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
 //export const baseUrl = "https://ecom-test2.yalpos.com/api";
-export const baseUrl="https://yalpos.com/custom/Electronics/computerzone/public/api";
+export const baseUrl =
+  "https://yalpos.com/custom/Electronics/computerzone/public/api";
 
 export const getIPAddress = async () => {
   try {
@@ -902,6 +903,7 @@ export const placeOrder = async (orderData) => {
       coupon_type: orderData.coupon_type,
       coupon_value: orderData.coupon_value,
       country: orderData.country,
+      address: orderData.address,
       city: orderData.city,
       first_name: orderData.first_name,
       last_name: orderData.last_name || "",

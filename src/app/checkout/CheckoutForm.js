@@ -430,6 +430,21 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
       );
 
       const orderData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phoneNumber,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        postal_code: formData.postal_code,
+        discount_code: discountCode,
+        discount: discount,
+        discount_type: discountCode ? "fixed" : "",
+        apartment: formData.apartment || "",
+        state: formData.state,
+        payment_type: selectedPaymentType,
+
         final_total: total,
         shipping_charge: shippingCharge,
         note: orderNote || "",
