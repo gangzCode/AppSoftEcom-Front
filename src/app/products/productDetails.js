@@ -1120,7 +1120,7 @@ const ProductDetailsPage = () => {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           severity={snackbar.severity}
