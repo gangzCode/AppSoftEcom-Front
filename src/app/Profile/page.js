@@ -21,6 +21,7 @@ import {
   FormControlLabel,
   Select,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
@@ -73,7 +74,7 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-function AddressBook() {
+const AddressBook = () => {
   const { user } = useAuth();
   const [addresses, setAddresses] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -85,14 +86,24 @@ function AddressBook() {
     country: "",
     is_default: 0,
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState("");
 
   useEffect(() => {
-    fetchAddresses();
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await fetchAddresses();
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -233,183 +244,225 @@ function AddressBook() {
 
   return (
     <Box>
-      <Button
-        startIcon={<Add />}
-        variant="contained"
-        onClick={() => handleOpenDialog()}
-        sx={{ mb: 2 }}
-      >
-        Add New Address
-      </Button>
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Street Address</TableCell>
-              <TableCell>City</TableCell>
-              <TableCell>Postal Code</TableCell>
-              <TableCell>Default Address</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Array.isArray(addresses) && addresses.length > 0 ? (
-              addresses.map((address) => (
-                <TableRow key={address.id}>
-                  <TableCell>{address.address}</TableCell>
-                  <TableCell>{address.city}</TableCell>
-                  <TableCell>{address.postal_code || ""}</TableCell>
+      {loading ? (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Street Address</TableCell>
+                <TableCell>City</TableCell>
+                <TableCell>Postal Code</TableCell>
+                <TableCell>Default Address</TableCell>
+                <TableCell>Country</TableCell>
+                <TableCell>Actions</TableCell>{" "}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[1, 2, 3].map((index) => (
+                <TableRow key={index}>
                   <TableCell>
-                    {address.is_default === 1 && (
-                      <Chip
-                        label="DEFAULT"
-                        sx={{
-                          mr: 1,
-                          backgroundColor: "darkgreen",
-                          color: "white",
-                          fontWeight: "bold",
-                        }}
-                      />
-                    )}
+                    <Skeleton variant="text" width="80%" />
                   </TableCell>
-                  <TableCell>{address.country}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleOpenDialog(address)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDeleteAddress(address.id)}>
-                      <Delete />
-                    </IconButton>
+                    <Skeleton variant="text" width="60%" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant="text" width="40%" />
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Skeleton variant="rectangular" width={64} height={36} />
+                      <Skeleton variant="rectangular" width={64} height={36} />
+                    </Box>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6}>
-                  <Typography>No addresses found</Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>
-          {selectedAddress ? "Edit Address" : "Add New Address"}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ pt: 2 }} component="form">
-            <Box display={"flex"} flexDirection={"column"} gap={1}>
-              <Select
-                fullWidth
-                value={formData.country}
-                onChange={(e) => {
-                  const country = countries.find(
-                    (c) => c.name === e.target.value
-                  );
-                  setSelectedCountryId(country?.id || "");
-                  setFormData({
-                    ...formData,
-                    country: e.target.value,
-                    city: "",
-                  });
-                }}
-                displayEmpty
-                // label="Country"
-                margin="dense"
-              >
-                <MenuItem value="" disabled>
-                  Select Country
-                </MenuItem>
-                {countries.map((country) => (
-                  <MenuItem key={country.id} value={country.name}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </Select>
-
-              <Select
-                fullWidth
-                value={formData.city}
-                onChange={(e) =>
-                  setFormData({ ...formData, city: e.target.value })
-                }
-                displayEmpty
-                // label="City"
-                margin="dense"
-                disabled={!selectedCountryId || cities.length === 0}
-              >
-                <MenuItem value="" disabled>
-                  Select City
-                </MenuItem>
-                {cities.map((city) => (
-                  <MenuItem key={city.id} value={city.name_en}>
-                    {city.name_en}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Box>
-
-            <TextField
-              fullWidth
-              label="Street Address"
-              value={formData.address}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
-              margin="dense"
-            />
-
-            {/* <TextField
-              fullWidth
-              label="State"
-              value={formData.state}
-              onChange={(e) =>
-                setFormData({ ...formData, state: e.target.value })
-              }
-              margin="dense"
-            /> */}
-
-            <TextField
-              fullWidth
-              label="Postal Code"
-              value={formData.postal_code}
-              onChange={(e) =>
-                setFormData({ ...formData, postal_code: e.target.value })
-              }
-              margin="dense"
-            />
-
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.is_default === 1}
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      is_default: e.target.checked ? 1 : 0,
-                    });
-                  }}
-                />
-              }
-              label="Set as Default Address"
-              sx={{ mt: 2 }}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSaveAddress} variant="contained">
-            Save
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <>
+          <Button
+            startIcon={<Add />}
+            variant="contained"
+            onClick={() => handleOpenDialog()}
+            sx={{ mb: 2 }}
+          >
+            Add New Address
           </Button>
-        </DialogActions>
-      </Dialog>
+
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Street Address</TableCell>
+                  <TableCell>City</TableCell>
+                  <TableCell>Postal Code</TableCell>
+                  <TableCell>Default Address</TableCell>
+                  <TableCell>Country</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Array.isArray(addresses) && addresses.length > 0 ? (
+                  addresses.map((address) => (
+                    <TableRow key={address.id}>
+                      <TableCell>{address.address}</TableCell>
+                      <TableCell>{address.city}</TableCell>
+                      <TableCell>{address.postal_code || ""}</TableCell>
+                      <TableCell>
+                        {address.is_default === 1 && (
+                          <Chip
+                            label="DEFAULT"
+                            sx={{
+                              mr: 1,
+                              backgroundColor: "darkgreen",
+                              color: "white",
+                              fontWeight: "bold",
+                            }}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>{address.country}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleOpenDialog(address)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteAddress(address.id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6}>
+                      <Typography>No addresses found</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <Dialog open={openDialog} onClose={handleCloseDialog}>
+            <DialogTitle>
+              {selectedAddress ? "Edit Address" : "Add New Address"}
+            </DialogTitle>
+            <DialogContent>
+              <Box sx={{ pt: 2 }} component="form">
+                <Box display={"flex"} flexDirection={"column"} gap={1}>
+                  <Select
+                    fullWidth
+                    value={formData.country}
+                    onChange={(e) => {
+                      const country = countries.find(
+                        (c) => c.name === e.target.value
+                      );
+                      setSelectedCountryId(country?.id || "");
+                      setFormData({
+                        ...formData,
+                        country: e.target.value,
+                        city: "",
+                      });
+                    }}
+                    displayEmpty
+                    // label="Country"
+                    margin="dense"
+                  >
+                    <MenuItem value="" disabled>
+                      Select Country
+                    </MenuItem>
+                    {countries.map((country) => (
+                      <MenuItem key={country.id} value={country.name}>
+                        {country.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+
+                  <Select
+                    fullWidth
+                    value={formData.city}
+                    onChange={(e) =>
+                      setFormData({ ...formData, city: e.target.value })
+                    }
+                    displayEmpty
+                    // label="City"
+                    margin="dense"
+                    disabled={!selectedCountryId || cities.length === 0}
+                  >
+                    <MenuItem value="" disabled>
+                      Select City
+                    </MenuItem>
+                    {cities.map((city) => (
+                      <MenuItem key={city.id} value={city.name_en}>
+                        {city.name_en}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+
+                <TextField
+                  fullWidth
+                  label="Street Address"
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
+                  margin="dense"
+                />
+
+                {/* <TextField
+                  fullWidth
+                  label="State"
+                  value={formData.state}
+                  onChange={(e) =>
+                    setFormData({ ...formData, state: e.target.value })
+                  }
+                  margin="dense"
+                /> */}
+
+                <TextField
+                  fullWidth
+                  label="Postal Code"
+                  value={formData.postal_code}
+                  onChange={(e) =>
+                    setFormData({ ...formData, postal_code: e.target.value })
+                  }
+                  margin="dense"
+                />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData.is_default === 1}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          is_default: e.target.checked ? 1 : 0,
+                        });
+                      }}
+                    />
+                  }
+                  label="Set as Default Address"
+                  sx={{ mt: 2 }}
+                />
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog}>Cancel</Button>
+              <Button onClick={handleSaveAddress} variant="contained">
+                Save
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      )}
     </Box>
   );
-}
+};
 
 const OrdersHistory = () => {
   const { user } = useAuth();

@@ -514,41 +514,46 @@ function CheckoutForm({ onShippingChargeUpdate, onDiscountUpdate }) {
         borderRadius: 2,
       }}
     >
-      {
-        !isGuest && addresses.length > 0 && (
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <FormControl sx={{ flexGrow: 1 }}>
-              <InputLabel>Select Address</InputLabel>
-              <Select
-                value={selectedAddressId}
-                onChange={handleAddressSelect}
-                label="Select Address"
+      {!isGuest && (
+        <>
+          {addresses.length > 0 ? (
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <FormControl sx={{ flexGrow: 1 }}>
+                <InputLabel>Select Address</InputLabel>
+                <Select
+                  value={selectedAddressId}
+                  onChange={handleAddressSelect}
+                  label="Select Address"
+                >
+                  {addresses.map((address) => (
+                    <MenuItem key={address.id} value={address.id}>
+                      {address.address}, {address.city}, {address.country}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button
+                variant="contained"
+                onClick={handleOpenAddressDialog}
+                sx={{ minWidth: "auto", px: 3 }}
               >
-                {addresses.map((address) => (
-                  <MenuItem key={address.id} value={address.id}>
-                    {address.address}, {address.city}, {address.country}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              variant="contained"
-              onClick={handleOpenAddressDialog}
-              sx={{ minWidth: "auto", px: 3 }}
-            >
-              Add New Address
-            </Button>
-          </Box>
-        ) /* || (
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleOpenAddressDialog}
-          sx={{ minWidth: "auto", px: 3 }}
-        >
-          Add New Address
-        </Button> }*/
-      }
+                Add New Address
+              </Button>
+            </Box>
+          ) : (
+            <Box sx={{ mb: 2 }}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleOpenAddressDialog}
+                sx={{ py: 1.5 }}
+              >
+                Add New Address
+              </Button>
+            </Box>
+          )}
+        </>
+      )}
 
       {/* Contact Section */}
       {/* <Typography variant="h5" sx={{ mb: 2 }}>
