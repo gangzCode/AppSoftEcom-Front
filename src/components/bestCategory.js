@@ -22,6 +22,13 @@ import { Container } from "../common/Spacing";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../context/SnackbarContext";
+import { addItemToCart } from "../features/cart/cartThunks";
+import { useDispatch } from "react-redux";
+import useAppSelector from "../hooks/useAppSelector";
+import {
+  addWishlistItem,
+  removeWishlistItem,
+} from "../features/wishlist/wishlistThunks";
 
 const BestCategory = ({title,subTitle,filteredProducts,products}) => {
   const scrollContainerRef = useRef(null);
@@ -35,6 +42,14 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
   const [isHovered, setIsHovered] = useState(false);
   const { showSnackbar } = useSnackbar();
 
+  const dispatch = useDispatch();
+
+  const { items: wishlistItems, loading: wishlistLoading } = useAppSelector(
+    (state) => state.wishlist
+  );
+  const { items: cartItems, loading: cartLoading } = useAppSelector(
+    (state) => state.cart
+  );
 
   const handlers = useSwipeable({
     onSwipedLeft: () => {
@@ -55,7 +70,7 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
     try {
       // Check stock
       if (product.total_stock <= 0) {
-        showSnackbar("Sorry, this item is out of stock","error");
+        showSnackbar("Sorry, this item is out of stock", "error");
         return;
       }
 
@@ -76,7 +91,8 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
 
       if (existingItem) {
         showSnackbar(
-          "Item already in cart. Please update quantity in cart.","info"
+          "Item already in cart. Please update quantity in cart.",
+          "error"
         );
         return;
       }
@@ -90,18 +106,40 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
         unit_price: product.sales_price.toString(),
       };
 
-      const userStr = localStorage.getItem("user");
-      if (userStr) {
-        await addToCart(getAuthToken(), cartItem);
-      } else {
-        await addToCartGuest(cartItem);
-      }
-      showSnackbar("Added to cart successfully","success");
+      await dispatch(addItemToCart(cartItem)).unwrap();
+      showSnackbar("Added to cart successfully", "success");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      showSnackbar("Failed to add to cart","error");
+
+      showSnackbar("Failed to add to cart", "error");
     } finally {
       setAddingToCartId(null);
+    }
+  };
+
+  const handleWishlistAction = async (product) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      navigate("/signin");
+      return;
+    }
+
+    try {
+      if (isInWishlist) {
+        const wishlistItem = wishlistItems.find(
+          (item) => item.id === product.id
+        );
+        await dispatch(removeWishlistItem(wishlistItem.wishlist_id)).unwrap();
+      } else {
+        await dispatch(addWishlistItem(product.id)).unwrap();
+      }
+
+      showSnackbar(
+        isInWishlist ? "Removed from wishlist" : "Added to wishlist",
+        "success"
+      );
+    } catch (error) {
+      showSnackbar(error?.message || "Failed to update wishlist", "error");
     }
   };
 
@@ -113,7 +151,7 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
     }
 
     if (isInWishlist[product.id]) {
-      showSnackbar("This product is already in your wishlist!","info");
+      showSnackbar("This product is already in your wishlist!", "info");
       return;
     }
 
@@ -123,9 +161,9 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
         ...prev,
         [product.id]: true,
       }));
-      showSnackbar("Added to wishlist successfully!","success");
+      showSnackbar("Added to wishlist successfully", "success");
     } catch (error) {
-      showSnackbar("Failed to add to wishlist","error");
+      showSnackbar("Failed to add to wishlist", "error");
     }
   };
 
@@ -196,7 +234,7 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
           },
         }}
       >
-        {filteredProducts?.length > 0 && filteredProducts !== null ? (
+        {filteredProducts.length > 0 && filteredProducts !== null ? (
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -204,7 +242,7 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
               hoveredProductId={hoveredProductId}
               setHoveredProductId={setHoveredProductId}
               handleAddToCart={handleAddToCart}
-              handleAddToWishlist={handleAddToWishlist}
+              handleAddToWishlist={handleWishlistAction}
               addingToCartId={addingToCartId}
               isInWishlist={isInWishlist}
               isHovered={isHovered}
@@ -214,19 +252,6 @@ const BestCategory = ({title,subTitle,filteredProducts,products}) => {
           <Typography variant="body1">No products available.</Typography>
         )}
       </Box>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
     </Container>
   );
 };
