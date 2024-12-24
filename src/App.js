@@ -31,6 +31,7 @@ import Snow from "./components/Snow";
 import ContactUsPage from "./app/ContactUs/page";
 import TermsPage from "./app/Terms/page";
 import { SnackbarProvider } from "./context/SnackbarContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 
 // Define theme
 /* const theme = createTheme({
@@ -49,9 +50,9 @@ function Layout() {
       <Box sx={{ minHeight: "100vh", position: "relative" }}>
         <Snow />
         <DynamicFavicon />
-        {/* <Box>
+        <Box>
           <TopBar />
-        </Box> */}
+        </Box>
         {<Navbar />}
         <Box paddingX={{ xs: "1em", md: "4em", lg: "6em", xl: "8em" }}>
           <Routes>
@@ -97,9 +98,11 @@ const App = () => (
   <Provider store={store}>
     <AuthProvider>
       <SnackbarProvider>
-        <BrowserRouter>
-          <Layout />
-        </BrowserRouter>
+        <CurrencyProvider>
+          <BrowserRouter>
+            <Layout />
+          </BrowserRouter>
+        </CurrencyProvider>
       </SnackbarProvider>
     </AuthProvider>
   </Provider>

@@ -968,3 +968,16 @@ export const validateCoupon = async (code) => {
     throw error.response?.data || error;
   }
 };
+
+export const getCurrencies = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/currencies`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};

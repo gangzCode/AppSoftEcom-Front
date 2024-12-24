@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useContext,
+} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -52,8 +58,10 @@ import {
   removeWishlistItem,
 } from "../../features/wishlist/wishlistThunks";
 import { FavoriteOutlined } from "@mui/icons-material";
+import { CurrencyContext } from "../../context/CurrencyContext";
 
 const ProductDetailsPage = () => {
+  const { selectedCurrency } = useContext(CurrencyContext);
   const [product, setproduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSpecification, setSelectedSpecification] = useState("");
@@ -225,8 +233,8 @@ const ProductDetailsPage = () => {
       basePrice = product.sales_price;
     }
 
-    return basePrice * quantity;
-  }, [product, selectedVariations, quantity]);
+    return basePrice * parseFloat(selectedCurrency.ratio) * quantity;
+  }, [product, selectedVariations, selectedCurrency.ratio, quantity]);
 
   const totalPrice = calculateTotalPrice();
 

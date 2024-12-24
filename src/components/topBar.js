@@ -1,16 +1,35 @@
 import { Box, MenuItem, Select, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { getCurrencies } from "../services/apiCalls";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const TopBar = () => {
   const [language, setLanguage] = useState("EN");
-  const [currency, setCurrency] = useState("USD");
+  const [currencies, setCurrencies] = useState([]);
+  const { selectedCurrency, setSelectedCurrency } = useContext(CurrencyContext);
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const response = await getCurrencies();
+        setCurrencies(response.data.currencies);
+        setSelectedCurrency(response.data.default_currency);
+      } catch (error) {
+        console.error("Error fetching currencies:", error);
+      }
+    };
+    fetchCurrencies();
+  }, []);
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
   };
 
   const handleCurrencyChange = (event) => {
-    setCurrency(event.target.value);
+    const newCurrency = currencies.find(
+      (curr) => curr.code === event.target.value
+    );
+    setSelectedCurrency(newCurrency);
   };
 
   return (
@@ -62,7 +81,7 @@ const TopBar = () => {
             Currency:
           </Typography>
           <Select
-            value={currency}
+            value={selectedCurrency?.code || ""}
             onChange={handleCurrencyChange}
             variant="outlined"
             size="small"
@@ -74,10 +93,11 @@ const TopBar = () => {
               fontSize: "0.8rem",
             }}
           >
-            <MenuItem value="USD">USD</MenuItem>
-            <MenuItem value="EUR">EUR</MenuItem>
-            <MenuItem value="JPY">JPY</MenuItem>
-            <MenuItem value="GBP">GBP</MenuItem>
+            {currencies.map((curr) => (
+              <MenuItem key={curr.id} value={curr.code}>
+                {curr.code}
+              </MenuItem>
+            ))}
           </Select>
         </Box>
       </Box>
