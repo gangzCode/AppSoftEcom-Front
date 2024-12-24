@@ -233,7 +233,7 @@ const ProductDetailsPage = () => {
       basePrice = product.sales_price;
     }
 
-    return basePrice * parseFloat(selectedCurrency.ratio) * quantity;
+    return (basePrice / parseFloat(selectedCurrency.ratio)) * quantity;
   }, [product, selectedVariations, selectedCurrency.ratio, quantity]);
 
   const totalPrice = calculateTotalPrice();
@@ -700,7 +700,7 @@ const ProductDetailsPage = () => {
                     sx={{ color: "#2189ff" }}
                     gutterBottom
                   >
-                    {product.currency}{" "}
+                    {selectedCurrency.code}{" "}
                     {(totalPrice * (1 - product.discount / 100)).toFixed(2)}
                   </Typography>
                   <Typography
@@ -711,7 +711,7 @@ const ProductDetailsPage = () => {
                     }}
                     gutterBottom
                   >
-                    {product.currency} {totalPrice}
+                    {selectedCurrency.code} {totalPrice}
                   </Typography>
                   <Chip
                     label={`${product.discount}% OFF`}
@@ -735,7 +735,7 @@ const ProductDetailsPage = () => {
                   fontWeight="bold"
                   gutterBottom
                 >
-                  {product.currency} {totalPrice || 0}
+                  {selectedCurrency.code} {totalPrice || 0}
                 </Typography>
               )}
             </Box>
@@ -877,7 +877,7 @@ const ProductDetailsPage = () => {
                 color="subtitle1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Total Price: {product.currency}{" "}
+                Total Price: {selectedCurrency.code}{" "}
                 {(totalPrice * (1 - product.discount / 100)).toFixed(2)}
               </Typography>
             ) : (
@@ -887,7 +887,7 @@ const ProductDetailsPage = () => {
                 color="subtitle1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Total Price: {product.currency} {totalPrice}
+                Total Price: {selectedCurrency.code} {totalPrice}
               </Typography>
             )}
 
