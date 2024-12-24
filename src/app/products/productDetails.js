@@ -233,8 +233,18 @@ const ProductDetailsPage = () => {
       basePrice = product.sales_price;
     }
 
-    return (basePrice / parseFloat(selectedCurrency.ratio)) * quantity;
-  }, [product, selectedVariations, selectedCurrency.ratio, quantity]);
+    if (selectedCurrency.code === "Rs") {
+      return basePrice * quantity;
+    } else {
+      return (basePrice / parseFloat(selectedCurrency.ratio)) * quantity;
+    }
+  }, [
+    product,
+    selectedVariations,
+    selectedCurrency.code,
+    selectedCurrency.ratio,
+    quantity,
+  ]);
 
   const totalPrice = calculateTotalPrice();
 
