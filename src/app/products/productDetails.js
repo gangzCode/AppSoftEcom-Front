@@ -745,7 +745,7 @@ const ProductDetailsPage = () => {
                   fontWeight="bold"
                   gutterBottom
                 >
-                  {selectedCurrency.code} {totalPrice || 0}
+                  {selectedCurrency.code} {totalPrice.toFixed(2) || 0}
                 </Typography>
               )}
             </Box>
@@ -897,7 +897,7 @@ const ProductDetailsPage = () => {
                 color="subtitle1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Total Price: {selectedCurrency.code} {totalPrice}
+                Total Price: {selectedCurrency.code} {totalPrice.toFixed(2)}
               </Typography>
             )}
 
