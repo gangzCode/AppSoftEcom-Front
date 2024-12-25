@@ -29,6 +29,7 @@ import {
   removeWishlistItem,
 } from "../features/wishlist/wishlistThunks";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "../hooks/useTranslation";
 
 const DealsofMonth = () => {
   const [products, setProducts] = useState([]);
@@ -44,6 +45,7 @@ const DealsofMonth = () => {
   const { items: wishlistItems, loading: wishlistLoading } = useAppSelector(
     (state) => state.wishlist
   );
+  const translate = useTranslation();
 
   useEffect(() => {
     const fetchGetProducts = async () => {
@@ -65,16 +67,6 @@ const DealsofMonth = () => {
 
     fetchGetProducts();
   }, []);
-
-  const getCategoryName = (categoryName) => {
-    try {
-      const parsed = JSON.parse(categoryName);
-      return parsed.En || "Unknown Category";
-    } catch (error) {
-      console.error("Error parsing category name:", error);
-      return "Unknown Category";
-    }
-  };
 
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -291,7 +283,7 @@ const DealsofMonth = () => {
                   letterSpacing={"2px"}
                   sx={{ textTransform: "uppercase" }}
                 >
-                  {getCategoryName(filteredProducts[0]?.category.name)}
+                  {translate(filteredProducts[0]?.category.name)}
                 </Typography>
 
                 <Box
@@ -398,7 +390,7 @@ const DealsofMonth = () => {
                           color={"#bebebe"}
                           sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                         >
-                          {getCategoryName(card.category.name)}
+                          {translate(card.category.name)}
                         </Typography>
                         <Typography
                           variant="body1"
@@ -595,7 +587,7 @@ const DealsofMonth = () => {
                             color={"#bebebe"}
                             sx={{ letterSpacing: "1px", marginBottom: "3x" }}
                           >
-                            {getCategoryName(card.category.name)}
+                            {translate(card.category.name)}
                           </Typography>
                           <Typography
                             variant="body1"

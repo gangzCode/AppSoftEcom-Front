@@ -73,6 +73,7 @@ import {
   removeWishlistItem,
 } from "../../features/wishlist/wishlistThunks";
 import { useSnackbar } from "../../context/SnackbarContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -93,6 +94,7 @@ const ProductsPage = () => {
   // const [wishlistItems, setWishlistItems] = useState([]);
   const [isInWishlist, setIsInWishlist] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+  const translate = useTranslation();
 
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
@@ -198,9 +200,9 @@ const ProductsPage = () => {
 
     products.forEach((product) => {
       try {
-        const categoryName = JSON.parse(product.category?.name)?.En;
+        const categoryName = translate(product.category?.name);
         const subCategoryName = product.sub_category
-          ? JSON.parse(product.sub_category?.name)?.En
+          ? translate(product.sub_category?.name)
           : null;
 
         if (!categoriesMap.has(categoryName)) {
@@ -228,7 +230,7 @@ const ProductsPage = () => {
     products.forEach((product) => {
       if (product.brand?.name) {
         try {
-          const brandName = JSON.parse(product.brand.name)?.En;
+          const brandName = translate(product.brand.name);
           if (brandName) brandsSet.add(brandName);
         } catch (e) {
           console.error("Error parsing brand name:", e);
@@ -251,7 +253,7 @@ const ProductsPage = () => {
       filtered = filtered.filter((product) => {
         try {
           const subCategoryName = product.sub_category
-            ? JSON.parse(product.sub_category?.name)?.En
+            ? translate(product.sub_category?.name)
             : null;
           return subCategoryName === selectedSubCategory;
         } catch (e) {
@@ -282,7 +284,7 @@ const ProductsPage = () => {
       filtered = filtered.filter((product) => {
         try {
           const brandName = product.brand
-            ? JSON.parse(product.brand.name)?.En
+            ? translate(product.brand.name)
             : null;
           return brandName === selectedBrand;
         } catch (e) {
@@ -458,7 +460,7 @@ const ProductsPage = () => {
                       <MenuItem value="">All Subcategories</MenuItem>
                       {products[0]?.category &&
                         getCategoriesAndSubcategories()[
-                          JSON.parse(products[0]?.category?.name)?.En
+                          translate(products[0]?.category?.name)
                         ]?.map((subCategory) => (
                           <MenuItem key={subCategory} value={subCategory}>
                             {subCategory}
@@ -686,7 +688,7 @@ const ProductsPage = () => {
           >
             <Typography variant="h3" fontWeight="500">
               {products[0]?.category
-                ? JSON.parse(products[0]?.category?.name)?.En
+                ? translate(products[0]?.category?.name)
                 : "Products"}
             </Typography>
             <Typography
@@ -973,11 +975,9 @@ const ProductsPage = () => {
                     >
                       {(() => {
                         try {
-                          const category = JSON.parse(
-                            product.category?.name
-                          )?.En;
+                          const category = translate(product.category?.name);
                           const subCategory = product.sub_category
-                            ? JSON.parse(product.sub_category?.name)?.En
+                            ? translate(product.sub_category?.name)
                             : null;
                           return subCategory
                             ? `${category} > ${subCategory}`
@@ -1198,7 +1198,7 @@ const ProductsPage = () => {
                     <MenuItem value="">All Subcategories</MenuItem>
                     {products[0]?.category &&
                       getCategoriesAndSubcategories()[
-                        JSON.parse(products[0]?.category?.name)?.En
+                        translate(products[0]?.category?.name)
                       ]?.map((subCategory) => (
                         <MenuItem key={subCategory} value={subCategory}>
                           {subCategory}

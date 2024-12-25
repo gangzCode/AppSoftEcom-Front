@@ -60,6 +60,7 @@ import {
 import { FavoriteOutlined } from "@mui/icons-material";
 import { CurrencyContext } from "../../context/CurrencyContext";
 import { LanguageContext } from "../../context/LanguageContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ProductDetailsPage = () => {
   const { selectedCurrency } = useContext(CurrencyContext);
@@ -78,6 +79,8 @@ const ProductDetailsPage = () => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [isBuyingNow, setIsBuyingNow] = useState(false);
+  const translate = useTranslation();
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -96,18 +99,6 @@ const ProductDetailsPage = () => {
   const dispatch = useAppDispatch();
   const { items: wishlistItems, loading: wishlistLoading } = useSelector(
     (state) => state.wishlist
-  );
-
-  const getTranslation = useCallback(
-    (jsonString) => {
-      try {
-        const translations = JSON.parse(jsonString);
-        return translations[selectedLanguage?.code] || translations.En || "";
-      } catch (error) {
-        return jsonString;
-      }
-    },
-    [selectedLanguage]
   );
 
   useEffect(() => {
@@ -712,7 +703,7 @@ const ProductDetailsPage = () => {
               fontSize={"36px"}
               gutterBottom
             >
-              {getTranslation(product.name)}
+              {translate(product.name)}
             </Typography>
 
             <Box display="flex" alignItems="center" gap={2}>
@@ -921,7 +912,7 @@ const ProductDetailsPage = () => {
                 variant="body1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Brand: {getTranslation(product.product_brand.name)}
+                Brand: {translate(product.product_brand.name)}
               </Typography>
             )}
             {product.warranty && (
@@ -930,7 +921,7 @@ const ProductDetailsPage = () => {
                 variant="body1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Warranty: {getTranslation(product.warranty.name)}
+                Warranty: {translate(product.warranty.name)}
               </Typography>
             )}
 

@@ -60,6 +60,7 @@ import {
 import { useDispatch } from "react-redux";
 import { clearCartThunk } from "../../features/cart/cartThunks";
 import { clearWishlist } from "../../features/wishlist/wishlistSlice";
+import { useTranslation } from "../../hooks/useTranslation";
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -469,6 +470,7 @@ const OrdersHistory = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [expandedOrders, setExpandedOrders] = useState([]);
+  const translate = useTranslation();
 
   useEffect(() => {
     fetchOrders();
@@ -529,7 +531,7 @@ const OrdersHistory = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-          {orders.length > 0 ? (
+            {orders.length > 0 ? (
               orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>{order.order_no}</TableCell>
@@ -546,8 +548,7 @@ const OrdersHistory = () => {
                     <Box>
                       {order.sell_lines.slice(0, 1).map((line, index) => (
                         <Typography key={index} variant="body2">
-                          {line.quantity}x{" "}
-                          {JSON.parse(line.product_name).En} - $
+                          {line.quantity}x {translate(line.product_name)} - $
                           {parseFloat(line.line_total).toFixed(2)}
                         </Typography>
                       ))}
@@ -563,12 +564,8 @@ const OrdersHistory = () => {
                       )}
                       {expandedOrders.includes(order.id) &&
                         order.sell_lines.slice(1).map((line, index) => (
-                          <Typography
-                            key={`expanded-${index}`}
-                            variant="body2"
-                          >
-                            {line.quantity}x{" "}
-                            {JSON.parse(line.product_name).En} - $
+                          <Typography key={`expanded-${index}`} variant="body2">
+                            {line.quantity}x {translate(line.product_name)} - $
                             {parseFloat(line.line_total).toFixed(2)}
                           </Typography>
                         ))}
