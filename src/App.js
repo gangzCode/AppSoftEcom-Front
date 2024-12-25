@@ -32,6 +32,7 @@ import ContactUsPage from "./app/ContactUs/page";
 import TermsPage from "./app/Terms/page";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 // Define theme
 /* const theme = createTheme({
@@ -97,13 +98,15 @@ function Layout() {
 const App = () => (
   <Provider store={store}>
     <AuthProvider>
-      <SnackbarProvider>
-        <CurrencyProvider>
-          <BrowserRouter>
-            <Layout />
-          </BrowserRouter>
-        </CurrencyProvider>
-      </SnackbarProvider>
+      <LanguageProvider>
+        <SnackbarProvider>
+          <CurrencyProvider>
+            <BrowserRouter>
+              <Layout />
+            </BrowserRouter>
+          </CurrencyProvider>
+        </SnackbarProvider>
+      </LanguageProvider>
     </AuthProvider>
   </Provider>
 );

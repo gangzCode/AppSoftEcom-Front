@@ -2,19 +2,20 @@ import { Box, MenuItem, Select, Typography } from "@mui/material";
 import React, { useState, useEffect, useContext } from "react";
 import { getCurrencies, getLanguages } from "../services/apiCalls";
 import { CurrencyContext } from "../context/CurrencyContext";
+import { LanguageContext } from "../context/LanguageContext";
 
 const TopBar = () => {
   const [languages, setLanguages] = useState([]);
-  const [language, setLanguage] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const { selectedCurrency, setSelectedCurrency } = useContext(CurrencyContext);
+  const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext);
 
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
         const response = await getLanguages();
         setLanguages(response.data.languages);
-        setLanguage(response.data.default_language);
+        setSelectedLanguage(response.data.default_language);
       } catch (error) {
         console.error("Error fetching languages:", error);
       }
@@ -39,7 +40,7 @@ const TopBar = () => {
     const newLanguage = languages.find(
       (lang) => lang.code === event.target.value
     );
-    setLanguage(newLanguage);
+    setSelectedLanguage(newLanguage);
   };
 
   const handleCurrencyChange = (event) => {
@@ -70,7 +71,7 @@ const TopBar = () => {
             Language:
           </Typography>
           <Select
-            value={language?.code || ""}
+            value={selectedLanguage?.code || ""}
             onChange={handleLanguageChange}
             variant="outlined"
             size="small"

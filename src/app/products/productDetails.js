@@ -59,9 +59,11 @@ import {
 } from "../../features/wishlist/wishlistThunks";
 import { FavoriteOutlined } from "@mui/icons-material";
 import { CurrencyContext } from "../../context/CurrencyContext";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const ProductDetailsPage = () => {
   const { selectedCurrency } = useContext(CurrencyContext);
+  const { selectedLanguage } = useContext(LanguageContext);
   const [product, setproduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSpecification, setSelectedSpecification] = useState("");
@@ -94,6 +96,18 @@ const ProductDetailsPage = () => {
   const dispatch = useAppDispatch();
   const { items: wishlistItems, loading: wishlistLoading } = useSelector(
     (state) => state.wishlist
+  );
+
+  const getTranslation = useCallback(
+    (jsonString) => {
+      try {
+        const translations = JSON.parse(jsonString);
+        return translations[selectedLanguage?.code] || translations.En || "";
+      } catch (error) {
+        return jsonString;
+      }
+    },
+    [selectedLanguage]
   );
 
   useEffect(() => {
@@ -698,7 +712,7 @@ const ProductDetailsPage = () => {
               fontSize={"36px"}
               gutterBottom
             >
-              {product.name}
+              {getTranslation(product.name)}
             </Typography>
 
             <Box display="flex" alignItems="center" gap={2}>
@@ -907,7 +921,7 @@ const ProductDetailsPage = () => {
                 variant="body1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Brand: {JSON.parse(product.product_brand.name)?.En}
+                Brand: {getTranslation(product.product_brand.name)}
               </Typography>
             )}
             {product.warranty && (
@@ -916,7 +930,7 @@ const ProductDetailsPage = () => {
                 variant="body1"
                 sx={{ marginTop: "16px", fontWeight: "500" }}
               >
-                Warranty: {JSON.parse(product.warranty.name)?.En}
+                Warranty: {getTranslation(product.warranty.name)}
               </Typography>
             )}
 
