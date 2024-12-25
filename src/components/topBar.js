@@ -1,12 +1,26 @@
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 import React, { useState, useEffect, useContext } from "react";
-import { getCurrencies } from "../services/apiCalls";
+import { getCurrencies, getLanguages } from "../services/apiCalls";
 import { CurrencyContext } from "../context/CurrencyContext";
 
 const TopBar = () => {
-  const [language, setLanguage] = useState("EN");
+  const [languages, setLanguages] = useState([]);
+  const [language, setLanguage] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const { selectedCurrency, setSelectedCurrency } = useContext(CurrencyContext);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await getLanguages();
+        setLanguages(response.data.languages);
+        setLanguage(response.data.default_language);
+      } catch (error) {
+        console.error("Error fetching languages:", error);
+      }
+    };
+    fetchLanguages();
+  }, []);
 
   useEffect(() => {
     const fetchCurrencies = async () => {
@@ -22,7 +36,10 @@ const TopBar = () => {
   }, []);
 
   const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
+    const newLanguage = languages.find(
+      (lang) => lang.code === event.target.value
+    );
+    setLanguage(newLanguage);
   };
 
   const handleCurrencyChange = (event) => {
@@ -53,7 +70,7 @@ const TopBar = () => {
             Language:
           </Typography>
           <Select
-            value={language}
+            value={language?.code || ""}
             onChange={handleLanguageChange}
             variant="outlined"
             size="small"
@@ -65,10 +82,11 @@ const TopBar = () => {
               fontSize: "0.8rem",
             }}
           >
-            <MenuItem value="EN">EN</MenuItem>
-            <MenuItem value="ES">ES</MenuItem>
-            <MenuItem value="FR">FR</MenuItem>
-            <MenuItem value="DE">DE</MenuItem>
+            {languages.map((lang) => (
+              <MenuItem key={lang.id} value={lang.code}>
+                {lang.name}
+              </MenuItem>
+            ))}
           </Select>
         </Box>
 

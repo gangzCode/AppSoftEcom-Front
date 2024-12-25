@@ -981,3 +981,16 @@ export const getCurrencies = async () => {
     throw error.response?.data || error;
   }
 };
+
+export const getLanguages = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/languages`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
