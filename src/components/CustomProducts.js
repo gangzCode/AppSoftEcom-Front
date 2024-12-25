@@ -63,7 +63,7 @@ const CustomProducts = () => {
                 >
                   <Box
                     component="img"
-                    src={product.thumbnailz || product.image}
+                    src={product.thumbnailz || "https://placehold.co/360x340"}
                     alt={product.name}
                     sx={{
                       width: "100%",
@@ -115,12 +115,11 @@ const CustomProducts = () => {
                     alignItems: "center",
                   }}
                 >
-                <Typography variant="h6" fontSize="22px" fontWeight="600">
+                <Typography variant="h6" fontSize={"22px"} fontWeight="600">
                   {product.currency}{" "}
-                  {(
-                    product?.price * (1 - (product?.discount || 0) / 100) || product?.sales_price * (1 - (product?.discount || 0) / 100)
-                  ).toFixed(2)}
+                  {(product.sales_price * (1 - product.discount / 100)).toFixed(2)}
                 </Typography>
+                {product?.discount && (
                 <Typography
                   variant="h6"
                   fontSize={"16px"}
@@ -132,8 +131,9 @@ const CustomProducts = () => {
                     color: "text.secondary",
                   }}
                 >
-                  {product.currency} {product.price}
+                  {product.currency} {product.sales_price}
                 </Typography>
+                )}
                 <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />
                 </Box>
               </Link>
