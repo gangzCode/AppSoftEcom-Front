@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Link as RouterLink,
   useParams,
@@ -74,6 +74,7 @@ import {
 } from "../../features/wishlist/wishlistThunks";
 import { useSnackbar } from "../../context/SnackbarContext";
 import { useTranslation } from "../../hooks/useTranslation";
+import { CurrencyContext } from "../../context/CurrencyContext";
 
 const ProductsPage = () => {
   const [sort, setSort] = useState("Sort By");
@@ -95,6 +96,7 @@ const ProductsPage = () => {
   const [isInWishlist, setIsInWishlist] = useState({});
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const translate = useTranslation();
+  const { selectedCurrency } = useContext(CurrencyContext);
 
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
@@ -541,7 +543,7 @@ const ProductsPage = () => {
                   textAlign="left"
                   sx={{ marginBottom: "4px" }}
                 >
-                  Price Range: ${priceRange[0]} - ${priceRange[1]}
+                  Price Range: {selectedCurrency.code} {priceRange[0]} -  {selectedCurrency.code} {priceRange[1]}
                 </Typography>
                 <Slider
                   value={priceRange}
@@ -559,7 +561,7 @@ const ProductsPage = () => {
                       textAlign="left"
                       sx={{ marginBottom: "4px" }}
                     >
-                      From $
+                      From {selectedCurrency.code}
                     </Typography>
                     <TextField
                       variant="outlined"
@@ -588,7 +590,7 @@ const ProductsPage = () => {
                       textAlign="left"
                       sx={{ marginBottom: "4px" }}
                     >
-                      To $
+                      To  {selectedCurrency.code}
                     </Typography>
                     <TextField
                       variant="outlined"
@@ -1012,13 +1014,10 @@ const ProductsPage = () => {
                     >
                       <Box display="flex" alignItems="center" gap={1}>
                         <Typography variant="h6" fontWeight="600">
-                          {product.currency}{" "}
-                          {product.discount
-                            ? (
-                                product.sales_price -
-                                (product.sales_price * product.discount) / 100
-                              ).toFixed(2)
-                            : product.sales_price}
+                        {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${(product.sales_price * (1 - product.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((product.sales_price * (1 - product.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                         </Typography>
                         {product.discount && (
                           <Typography
@@ -1028,7 +1027,10 @@ const ProductsPage = () => {
                               color: "#bebebe",
                             }}
                           >
-                            {product.currency} {product.sales_price}
+                            {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${product.sales_price}`
+      : `${selectedCurrency.code} ${(product.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                           </Typography>
                         )}
                       </Box>
@@ -1279,7 +1281,7 @@ const ProductsPage = () => {
                 textAlign="left"
                 sx={{ marginBottom: "4px" }}
               >
-                Price Range: ${priceRange[0]} - ${priceRange[1]}
+                Price Range:  {selectedCurrency.code} {priceRange[0]} - ${priceRange[1]}
               </Typography>
               <Slider
                 value={priceRange}

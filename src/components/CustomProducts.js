@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Box, Grid, Typography,Chip } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const CustomProducts = () => {
   const location = useLocation();
   const { title, products } = location.state || [];
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const { selectedCurrency } = useContext(CurrencyContext);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -116,8 +118,10 @@ const CustomProducts = () => {
                   }}
                 >
                 <Typography variant="h6" fontSize={"22px"} fontWeight="600">
-                  {product.currency}{" "}
-                  {(product.sales_price * (1 - product.discount / 100)).toFixed(2)}
+                {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${(product.sales_price * (1 - product.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((product.sales_price * (1 - product.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                 </Typography>
                 {product?.discount && (
                 <Typography
@@ -131,7 +135,10 @@ const CustomProducts = () => {
                     color: "text.secondary",
                   }}
                 >
-                  {product.currency} {product.sales_price}
+                 {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${product.sales_price}`
+      : `${selectedCurrency.code} ${(product.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                 </Typography>
                 )}
                 <ChevronRight sx={{ color: "#2189ff", marginLeft: "8px" }} />

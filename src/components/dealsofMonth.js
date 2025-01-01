@@ -14,7 +14,7 @@ import {
   Chip,
   CircularProgress,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import {
   addToWishlist,
   getCartDetails,
@@ -30,6 +30,7 @@ import {
 } from "../features/wishlist/wishlistThunks";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "../hooks/useTranslation";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const DealsofMonth = () => {
   const [products, setProducts] = useState([]);
@@ -46,6 +47,7 @@ const DealsofMonth = () => {
     (state) => state.wishlist
   );
   const translate = useTranslation();
+  const { selectedCurrency } = useContext(CurrencyContext);
 
   useEffect(() => {
     const fetchGetProducts = async () => {
@@ -260,19 +262,21 @@ const DealsofMonth = () => {
                   fontSize={"36px"}
                   fontWeight={"600"}
                 >
-                  {filteredProducts[0]?.currency}{" "}
-                  {(
-                    filteredProducts[0]?.sales_price *
-                    (1 - filteredProducts[0]?.discount / 100)
-                  ).toFixed(2)}
+                   {selectedCurrency.code === "Rs" 
+      ? `${filteredProducts[0]?.currency} ${(filteredProducts[0]?.sales_price * (1 - filteredProducts[0]?.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((filteredProducts[0]?.sales_price * (1 - filteredProducts[0]?.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
+                
                   <span
                     style={{
                       textDecoration: "line-through",
                       marginLeft: "20px",
                     }}
                   >
-                    {filteredProducts[0]?.currency}{" "}
-                    {filteredProducts[0]?.sales_price}
+                    {selectedCurrency.code === "Rs" 
+      ? `${filteredProducts[0]?.currency} ${filteredProducts[0]?.sales_price}`
+      : `${selectedCurrency.code} ${(filteredProducts[0]?.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                   </span>
                 </Typography>
                 <Typography
@@ -414,11 +418,10 @@ const DealsofMonth = () => {
                             fontSize={"18px"}
                             fontWeight="600"
                           >
-                            {card.currency}{" "}
-                            {(
-                              card.sales_price *
-                              (1 - card.discount / 100)
-                            ).toFixed(2)}
+                            {selectedCurrency.code === "Rs" 
+      ? `${card.currency} ${(card.sales_price * (1 - card.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((card.sales_price * (1 - card.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                           </Typography>
                           <Typography
                             variant="h6"
@@ -431,7 +434,10 @@ const DealsofMonth = () => {
                               color: "text.secondary",
                             }}
                           >
-                            {card.currency} {card.sales_price}
+                             {selectedCurrency.code === "Rs" 
+      ? `${card.currency} ${card.sales_price}`
+      : `${selectedCurrency.code} ${(card.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                           </Typography>
                           <ChevronRight
                             sx={{ color: "#2189ff", marginLeft: "8px" }}
@@ -608,11 +614,10 @@ const DealsofMonth = () => {
                               fontSize={"13px"}
                               fontWeight="600"
                             >
-                              {card.currency}{" "}
-                              {(
-                                card.sales_price *
-                                (1 - card.discount / 100)
-                              ).toFixed(2)}
+                               {selectedCurrency.code === "Rs" 
+      ? `${card.currency} ${(card.sales_price * (1 - card.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((card.sales_price * (1 - card.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                             </Typography>
                             <Typography
                               variant="h6"
@@ -625,7 +630,10 @@ const DealsofMonth = () => {
                                 color: "text.secondary",
                               }}
                             >
-                              {card.currency} {card.sales_price}
+                               {selectedCurrency.code === "Rs" 
+      ? `${card.currency} ${card.sales_price}`
+      : `${selectedCurrency.code} ${(card.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                             </Typography>
                             <ChevronRight
                               sx={{ color: "#2189ff", marginLeft: "8px" }}

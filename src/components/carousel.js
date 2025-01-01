@@ -145,11 +145,11 @@ const CarouselSection = () => {
                 target={slide.link ? "_blank" : undefined}
                 rel={slide.link ? "noopener noreferrer" : undefined}
                 sx={{
-                  height: { xs: "200px", md: "500px" },
+                  height: { xs: "140px", md: "500px" },
                   backgroundImage: `url(${slide.image})`,
                   backgroundSize: "cover",
-
                   backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
                   position: "relative",
                   display: "flex",
                   alignItems: "center",
@@ -157,6 +157,9 @@ const CarouselSection = () => {
                   color: "#fff",
                   textDecoration: "none",
                   padding: "2em",
+                  borderRadius: "16px", // Maintain curvy edges
+                  overflow: "hidden",
+                  
                 }}
               ></Box>
             ))}

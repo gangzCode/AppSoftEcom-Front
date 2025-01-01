@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import {
   Box,
   Tabs,
@@ -20,6 +20,7 @@ import {
 } from "../services/apiCalls";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const TabSection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -30,6 +31,7 @@ const TabSection = () => {
     TopSellings: [],
   });
   const navigate = useNavigate();
+  const { selectedCurrency } = useContext(CurrencyContext);
 
   // Fetch system settings
   useEffect(() => {
@@ -211,7 +213,10 @@ const TabSection = () => {
                           : product?.name}
                       </Typography>
                       <Typography variant="h5" color="primary" fontWeight="bold">
-                        {product.currency} {product.price.toLocaleString()}
+                      {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${(product.price * (1 - product.discount / 100)).toFixed(2)}`
+      : `${selectedCurrency.code} ${((product.price * (1 - product.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                       </Typography>
                       {product.originalPrice && (
                         <Typography
@@ -219,7 +224,10 @@ const TabSection = () => {
                           color="textSecondary"
                           sx={{ textDecoration: "line-through" }}
                         >
-                          ${product.originalPrice.toLocaleString()}
+                           {selectedCurrency.code === "Rs" 
+      ? `${product.currency} ${product.originalPrice}`
+      : `${selectedCurrency.code} ${(product.originalPrice / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
+    }
                         </Typography>
                       )}
                     </CardContent>
