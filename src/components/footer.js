@@ -20,7 +20,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   const footerLinks = [
-    { name: "Return Policy", path: "#" },
+    { name: "Shipping condition", path: "/shipping" },
     { name: "Privacy Policy", path: "/privacy" },
     { name: "Terms of Service", path: "/terms" },
     { name: "FAQ", path: "/faq" },
@@ -29,7 +29,7 @@ const Footer = () => {
   const footerUsefulLinks = [
     { name: "Contact Us", path: "/contact" },
     { name: "About Us", path: "/about" },
-    { name: "Shipping condition", path: "/shipping" },
+    { name: "Track Order", path: "/profile" },
   ];
 
   useEffect(() => {
