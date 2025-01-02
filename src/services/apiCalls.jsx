@@ -2,7 +2,8 @@ import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
 //export const baseUrl = "https://ecom-test2.yalpos.com/api";
-export const baseUrl = "https://yalpos.com/custom/Electronics/computerzone/public/api";
+export const baseUrl =
+  "https://yalpos.com/custom/Electronics/computerzone/public/api";
 
 export const getIPAddress = async () => {
   try {
@@ -984,6 +985,84 @@ export const getCurrencies = async () => {
 export const getLanguages = async () => {
   try {
     const response = await axios.get(`${baseUrl}/languages`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getAboutUs = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/about-us`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getFaqs = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/faqs`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getTermsCondition = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/terms-condition`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getPrivacyPolicy = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/privacy-policy`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getShippingCondition = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/shiping-condition`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const submitContactForm = async (formData) => {
+  try {
+    const response = await axios.post(`${baseUrl}/contact-us`, formData, {
       headers: {
         "Content-Type": "application/json",
       },

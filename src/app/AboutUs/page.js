@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Container, Typography, Box, CircularProgress } from "@mui/material";
-import { getTermsCondition } from "../../services/apiCalls";
+import { getAboutUs } from "../../services/apiCalls";
 
-function TermsPage() {
+function AboutUsPage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await getTermsCondition();
+        const response = await getAboutUs();
         setContent(response.data.content);
       } catch (error) {
-        console.error("Error fetching terms:", error);
+        console.error("Error fetching content:", error);
       } finally {
         setLoading(false);
       }
@@ -23,26 +23,20 @@ function TermsPage() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Container sx={{ display: "flex", justifyContent: "center", py: 8 }}>
         <CircularProgress />
-      </Box>
+      </Container>
     );
   }
 
   return (
     <Container maxWidth="lg" sx={{ marginY: 8 }}>
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Terms and Conditions
+      <Typography variant="h4" mb={4} gutterBottom textAlign="center">
+        About Us
       </Typography>
-      <Box
-        dangerouslySetInnerHTML={{ __html: content }}
-        sx={{
-          "& p": { mb: 2 },
-          "& strong": { fontWeight: 600 },
-        }}
-      />
+      <Box dangerouslySetInnerHTML={{ __html: content }} />
     </Container>
   );
 }
 
-export default TermsPage;
+export default AboutUsPage;

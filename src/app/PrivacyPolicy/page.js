@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Container, Typography, Box, CircularProgress } from "@mui/material";
-import { getTermsCondition } from "../../services/apiCalls";
+import { getPrivacyPolicy } from "../../services/apiCalls";
 
-function TermsPage() {
+function PrivacyPolicy() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await getTermsCondition();
+        const response = await getPrivacyPolicy();
         setContent(response.data.content);
       } catch (error) {
-        console.error("Error fetching terms:", error);
+        console.error("Error fetching privacy policy:", error);
       } finally {
         setLoading(false);
       }
@@ -31,8 +31,8 @@ function TermsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ marginY: 8 }}>
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Terms and Conditions
+      <Typography variant="h4" mb={4} gutterBottom textAlign="center">
+        Privacy Policy
       </Typography>
       <Box
         dangerouslySetInnerHTML={{ __html: content }}
@@ -45,4 +45,4 @@ function TermsPage() {
   );
 }
 
-export default TermsPage;
+export default PrivacyPolicy;

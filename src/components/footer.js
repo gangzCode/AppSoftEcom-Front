@@ -21,14 +21,15 @@ const Footer = () => {
 
   const footerLinks = [
     { name: "Return Policy", path: "#" },
-    { name: "Privacy Policy", path: "#" },
+    { name: "Privacy Policy", path: "/privacy" },
     { name: "Terms of Service", path: "/terms" },
     { name: "FAQ", path: "/faq" },
   ];
 
   const footerUsefulLinks = [
     { name: "Contact Us", path: "/contact" },
-    { name: "Track Order", path: "/profile#orders" },
+    { name: "About Us", path: "/about" },
+    { name: "Shipping condition", path: "/shipping" },
   ];
 
   useEffect(() => {

@@ -33,6 +33,9 @@ import TermsPage from "./app/Terms/page";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import { LanguageProvider } from "./context/LanguageContext";
+import AboutUsPage from "./app/AboutUs/page";
+import PrivacyPolicy from "./app/PrivacyPolicy/page";
+import ShippingCondition from "./app/ShippingCondition/page";
 
 // Define theme
 /* const theme = createTheme({
@@ -82,6 +85,9 @@ function Layout() {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/custom-products" element={<CustomProducts />} />
             <Route path="/contact" element={<ContactUsPage />} />
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/shipping" element={<ShippingCondition />} />
             <Route path="/terms" element={<TermsPage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>

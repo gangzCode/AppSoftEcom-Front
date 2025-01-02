@@ -1,48 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  CircularProgress,
   Paper,
   Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { getFaqs } from "../../services/apiCalls";
 
 function FAQPage() {
-  const faqs = [
-    {
-      category: "Orders & Shipping",
-      items: [
-        {
-          question: "How do I track my order?",
-          answer:
-            "You can track your order by logging into your account and viewing the order status under 'My Orders'.",
-        },
-        {
-          question: "What are the shipping costs?",
-          answer:
-            "Shipping costs vary based on your location and the items purchased. Free shipping is available for orders over $100.",
-        },
-      ],
-    },
-    {
-      category: "Returns & Refunds",
-      items: [
-        {
-          question: "What is your return policy?",
-          answer:
-            "We accept returns within 30 days of purchase. Items must be unused and in original packaging.",
-        },
-        {
-          question: "How long do refunds take?",
-          answer:
-            "Refunds are typically processed within 5-7 business days after we receive your return.",
-        },
-      ],
-    },
-  ];
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const response = await getFaqs();
+        setFaqs(response.data || []);
+      } catch (error) {
+        console.error("Error fetching FAQs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFaqs();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" p={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg" sx={{ marginY: 8 }}>
@@ -79,61 +74,48 @@ function FAQPage() {
         </Typography>
       </Paper>
 
-      {faqs.map((category, index) => (
-        <Box key={index} sx={{ mb: 4 }}>
-          <Typography
-            variant="h6"
+      <Box sx={{ mb: 4 }}>
+        {faqs?.map((faq, faqIndex) => (
+          <Accordion
+            key={faqIndex}
+            disableGutters
+            elevation={0}
             sx={{
-              fontWeight: 500,
-              color: "#2189ff",
+              border: "1px solid #E0E0E0",
+              borderRadius: "8px !important",
               mb: 2,
+              "&:before": { display: "none" },
+              "&:hover": {
+                borderColor: "#2189ff",
+                transition: "all 0.3s ease",
+              },
             }}
           >
-            {category.category}
-          </Typography>
-
-          {category.items.map((faq, faqIndex) => (
-            <Accordion
-              key={faqIndex}
-              disableGutters
-              elevation={0}
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
               sx={{
-                border: "1px solid #E0E0E0",
-                borderRadius: "8px !important",
-                mb: 2,
-                "&:before": { display: "none" },
-                "&:hover": {
-                  borderColor: "#2189ff",
-                  transition: "all 0.3s ease",
+                padding: 2,
+                "& .MuiAccordionSummary-content": {
+                  margin: 0,
                 },
               }}
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                sx={{
-                  padding: 2,
-                  "& .MuiAccordionSummary-content": {
-                    margin: 0,
-                  },
-                }}
-              >
-                <Typography sx={{ fontWeight: 500, color: "#333" }}>
-                  {faq.question}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                sx={{
-                  padding: 2,
-                  backgroundColor: "#f8f9fa",
-                  color: "#666",
-                }}
-              >
-                <Typography>{faq.answer}</Typography>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
-      ))}
+              <Typography sx={{ fontWeight: 500, color: "#333" }}>
+                {faq.question}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                padding: 2,
+                backgroundColor: "#f8f9fa",
+                color: "#666",
+              }}
+            >
+              <Typography>{faq.answer}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
     </Container>
   );
 }
