@@ -13,9 +13,22 @@ const TopBar = () => {
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
+        const savedLanguage = localStorage.getItem("selectedLanguage");
+
         const response = await getLanguages();
+        console.log(JSON.stringify(response.data) + "Lang response");
+
         setLanguages(response.data.languages);
-        setSelectedLanguage(response.data.default_language);
+
+        if (savedLanguage) {
+          setSelectedLanguage(JSON.parse(savedLanguage));
+        } else {
+          setSelectedLanguage(response.data.default_language);
+          localStorage.setItem(
+            "selectedCurrency",
+            JSON.stringify(response.data.default_language)
+          );
+        }
       } catch (error) {
         console.error("Error fetching languages:", error);
       }
@@ -26,9 +39,19 @@ const TopBar = () => {
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
+        const savedCurrency = localStorage.getItem("selectedCurrency");
         const response = await getCurrencies();
         setCurrencies(response.data.currencies);
-        setSelectedCurrency(response.data.default_currency);
+
+        if (savedCurrency) {
+          setSelectedCurrency(JSON.parse(savedCurrency));
+        } else {
+          setSelectedCurrency(response.data.default_currency);
+          localStorage.setItem(
+            "selectedCurrency",
+            JSON.stringify(response.data.default_currency)
+          );
+        }
       } catch (error) {
         console.error("Error fetching currencies:", error);
       }
@@ -41,6 +64,7 @@ const TopBar = () => {
       (lang) => lang.code === event.target.value
     );
     setSelectedLanguage(newLanguage);
+    localStorage.setItem("selectedLanguage", JSON.stringify(newLanguage));
   };
 
   const handleCurrencyChange = (event) => {
@@ -48,6 +72,7 @@ const TopBar = () => {
       (curr) => curr.code === event.target.value
     );
     setSelectedCurrency(newCurrency);
+    localStorage.setItem("selectedCurrency", JSON.stringify(newCurrency));
   };
 
   return (

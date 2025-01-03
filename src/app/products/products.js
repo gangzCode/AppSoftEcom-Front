@@ -445,6 +445,7 @@ const ProductsPage = () => {
           <Box>
             <Accordion
               expanded={subcategoryName?.length}
+              defaultExpanded
               sx={{ boxShadow: "none" }}
             >
               <AccordionSummary expandIcon={<Add />}>
@@ -474,7 +475,7 @@ const ProductsPage = () => {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion sx={{ boxShadow: "none" }}>
+            <Accordion defaultExpanded sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Brands</Typography>
               </AccordionSummary>
@@ -499,7 +500,7 @@ const ProductsPage = () => {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion sx={{ boxShadow: "none" }}>
+            <Accordion defaultExpanded sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Availability</Typography>
               </AccordionSummary>
@@ -531,7 +532,7 @@ const ProductsPage = () => {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion sx={{ boxShadow: "none" }}>
+            <Accordion defaultExpanded sx={{ boxShadow: "none" }}>
               <AccordionSummary expandIcon={<Add />}>
                 <Typography>Price Range</Typography>
               </AccordionSummary>
@@ -543,7 +544,8 @@ const ProductsPage = () => {
                   textAlign="left"
                   sx={{ marginBottom: "4px" }}
                 >
-                  Price Range: {selectedCurrency.code} {priceRange[0]} -  {selectedCurrency.code} {priceRange[1]}
+                  Price Range: {selectedCurrency.code} {priceRange[0]} -{" "}
+                  {selectedCurrency.code} {priceRange[1]}
                 </Typography>
                 <Slider
                   value={priceRange}
@@ -590,7 +592,7 @@ const ProductsPage = () => {
                       textAlign="left"
                       sx={{ marginBottom: "4px" }}
                     >
-                      To  {selectedCurrency.code}
+                      To {selectedCurrency.code}
                     </Typography>
                     <TextField
                       variant="outlined"
@@ -1014,10 +1016,16 @@ const ProductsPage = () => {
                     >
                       <Box display="flex" alignItems="center" gap={1}>
                         <Typography variant="h6" fontWeight="600">
-                        {selectedCurrency.code === "Rs" 
-      ? `${product.currency} ${(product.sales_price * (1 - product.discount / 100)).toFixed(2)}`
-      : `${selectedCurrency.code} ${((product.sales_price * (1 - product.discount / 100)) / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
-    }
+                          {selectedCurrency.code === "Rs"
+                            ? `${product.currency} ${(
+                                product.sales_price *
+                                (1 - product.discount / 100)
+                              ).toFixed(2)}`
+                            : `${selectedCurrency.code} ${(
+                                (product.sales_price *
+                                  (1 - product.discount / 100)) /
+                                parseFloat(selectedCurrency.ratio)
+                              ).toFixed(2)}`}
                         </Typography>
                         {product.discount && (
                           <Typography
@@ -1027,10 +1035,12 @@ const ProductsPage = () => {
                               color: "#bebebe",
                             }}
                           >
-                            {selectedCurrency.code === "Rs" 
-      ? `${product.currency} ${product.sales_price}`
-      : `${selectedCurrency.code} ${(product.sales_price / parseFloat(selectedCurrency.ratio)).toFixed(2)}`
-    }
+                            {selectedCurrency.code === "Rs"
+                              ? `${product.currency} ${product.sales_price}`
+                              : `${selectedCurrency.code} ${(
+                                  product.sales_price /
+                                  parseFloat(selectedCurrency.ratio)
+                                ).toFixed(2)}`}
                           </Typography>
                         )}
                       </Box>
@@ -1281,7 +1291,8 @@ const ProductsPage = () => {
                 textAlign="left"
                 sx={{ marginBottom: "4px" }}
               >
-                Price Range:  {selectedCurrency.code} {priceRange[0]} - ${priceRange[1]}
+                Price Range: {selectedCurrency.code} {priceRange[0]} - $
+                {priceRange[1]}
               </Typography>
               <Slider
                 value={priceRange}
